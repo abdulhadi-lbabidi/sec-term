@@ -8,7 +8,19 @@
   "hero": {
     "title": "خبز طازج كل يوم",
     "subtitle": "اكتشف فن الخبز التقليدي مع خبزنا وحلوياتنا المصنوعة يدويًا.",
-    "cta": "تسوق الآن"
+    "cta": "تسوق الآن",
+    "tag": "طازج وصحي 100%",
+    "highlight1": "أسرع",
+    "title_part1": "توصيل",
+    "highlight2": "وأسهل",
+    "title_part2": "استلام.",
+    "user1_alt": "مستخدم 1",
+    "user2_alt": "مستخدم 2",
+    "user3_alt": "مستخدم 3",
+    "happy_customers": "عملاؤنا السعداء",
+    "rating": "4.9",
+    "review_count": "1.5k تقييم",
+    "main_image_alt": "سلة خضروات طازجة"
   },
   "about": {
     "title": "قصتنا",
@@ -16,18 +28,19 @@
     "expertise": "الخبرة والحرفية",
     "heritage": "تراثنا"
   },
+  "categories": {
+    "all": "الكل",
+    "bread": "خبز",
+    "pastry": "حلويات",
+    "cake": "كيك",
+    "title": "تسوق حسب الفئة"
+  },
   "shop": {
     "title": "مخبزنا",
     "filter_category": "الفئة",
     "filter_price": "السعر",
     "filter_size": "الحجم",
     "filter_material": "المكونات",
-    "categories": {
-      "all": "الكل",
-      "bread": "خبز",
-      "pastry": "حلويات",
-      "cake": "كيك"
-    },
     "product": {
       "code": "كود",
       "material": "المكون",
@@ -35,6 +48,41 @@
     }
   },
   "footer": {
-    "copyright": "© 2026 اسم المخبز. جميع الحقوق محفوظة."
+    "copyright": "© 2024 إيزي مارت. جميع الحقوق محفوظة.",
+    "brand": "إيزي مارت",
+    "address": "شارع واشنطن 4517، مانشستر، كنتاكي 39495",
+    "about_title": "من نحن",
+    "about_us": "قصتنا",
+    "careers": "الوظائف",
+    "contact_us": "تواصل معنا",
+    "categories": "الفئات",
+    "company_title": "الشركة",
+    "my_account": "حسابي",
+    "terms": "شروط الاستخدام",
+    "faq": "الأسئلة الشائعة",
+    "support_title": "الدعم",
+    "contact": "اتصل بنا",
+    "support_center": "مركز الدعم",
+    "feedback": "الملاحظات",
+    "accessibility": "سهولة الوصول",
+    "quick_touch": "تواصل سريع",
+    "download_app": "حمل التطبيق"
+  },
+  "newsletter": {
+    "title_part1": "احصل على تحديثات منتظمة وأفضل",
+    "title_part2": "العروض اشترك معنا",
+    "placeholder": "hello@easymart.com",
+    "button": "اشترك",
+    "image_alt": "طاهي"
+  },
+  "header": {
+    "brand": "إيزي مارت",
+    "catalog": "الكتالوج",
+    "blog": "المدونة",
+    "pages": "الصفحات",
+    "all_categories": "جميع الفئات",
+    "search": "ابحث...",
+    "profile": "حسابي",
+    "signup": "إنشاء حساب"
   }
 }

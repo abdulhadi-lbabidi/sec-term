@@ -8,7 +8,19 @@
   "hero": {
     "title": "Freshly Baked Every Day",
     "subtitle": "Discover the art of traditional baking with our artisanal bread and pastries.",
-    "cta": "Shop Now"
+    "cta": "Shop Now",
+    "tag": "Fresh & Healthy 100%",
+    "highlight1": "Fastest",
+    "title_part1": "Delivery",
+    "highlight2": "Easy",
+    "title_part2": "Pickup.",
+    "user1_alt": "User 1",
+    "user2_alt": "User 2",
+    "user3_alt": "User 3",
+    "happy_customers": "Our Happy Customer",
+    "rating": "4.9",
+    "review_count": "1.5k Review",
+    "main_image_alt": "Fresh Vegetables Basket"
   },
   "about": {
     "title": "Our Story",
@@ -16,18 +28,19 @@
     "expertise": "Expertise & Craftsmanship",
     "heritage": "Our Heritage"
   },
+  "categories": {
+    "all": "All",
+    "bread": "Bread",
+    "pastry": "Pastry",
+    "cake": "Cake",
+    "title": "Shop By Category"
+  },
   "shop": {
     "title": "Our Bakery",
     "filter_category": "Category",
     "filter_price": "Price",
     "filter_size": "Size",
     "filter_material": "Ingredient",
-    "categories": {
-      "all": "All",
-      "bread": "Bread",
-      "pastry": "Pastry",
-      "cake": "Cake"
-    },
     "product": {
       "code": "Code",
       "material": "Material",
@@ -35,6 +48,41 @@
     }
   },
   "footer": {
-    "copyright": "© 2026 Bakery Name. All rights reserved."
+    "copyright": "© 2024 EasyMart. All rights reserved.",
+    "brand": "EasyMart",
+    "address": "4517 Washington Ave. Manchester, Kentucky 39495",
+    "about_title": "About",
+    "about_us": "About Us",
+    "careers": "Careers",
+    "contact_us": "Contact Us",
+    "categories": "Categories",
+    "company_title": "Company",
+    "my_account": "My Account",
+    "terms": "Terms of Use",
+    "faq": "FAQ",
+    "support_title": "Support",
+    "contact": "Contact",
+    "support_center": "Support Center",
+    "feedback": "Feedback",
+    "accessibility": "Accessibility",
+    "quick_touch": "Quick Touch",
+    "download_app": "Download App"
+  },
+  "newsletter": {
+    "title_part1": "Get update regularly and best",
+    "title_part2": "offer subscribe us",
+    "placeholder": "hello@easymart.com",
+    "button": "Subscribe",
+    "image_alt": "Chef"
+  },
+  "header": {
+    "brand": "EasyMart",
+    "catalog": "Catalog",
+    "blog": "Blog",
+    "pages": "Pages",
+    "all_categories": "All Categories",
+    "search": "Search...",
+    "profile": "Profile",
+    "signup": "Sign Up"
   }
 }
