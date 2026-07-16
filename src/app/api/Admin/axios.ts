@@ -1,5 +1,5 @@
 import axios from 'axios';
-import i18n from '../i18n/config';
+import i18n from '../../i18n/config';
 
 declare global {
   interface ImportMeta {
@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
   const lang = i18n.language || 'ar';
   config.headers['Accept-Language'] = lang;
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('nouh_carting_roken');
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { SidebarProvider, useSidebar } from '../../components/ui/sidebar';
 import { AdminSidebar } from '../../components/Admin/Layout/Sidebar';
 import { useLocalization } from '../../hooks/useLocalization';
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, Scale, Layers } from 'lucide-react';
 
 const AdminLayoutContent = () => {
   const { state } = useSidebar();
@@ -15,6 +15,8 @@ const AdminLayoutContent = () => {
   const [headerAction, setHeaderAction] = useState<React.ReactNode | null>(null);
 
   const isCategoriesPage = location.pathname === '/admin/categories';
+  const isSizesPage = location.pathname === '/admin/products/sizes';
+  const isMaterialsPage = location.pathname === '/admin/products/materials';
 
   return (
     <div className="flex w-full min-h-screen bg-[#fcfaf7] text-black">
@@ -28,18 +30,24 @@ const AdminLayoutContent = () => {
       <div className="flex w-full flex-1 flex-col">
         <header className="border-b border-black/5 bg-[#fefcfa]/90 px-5 py-4 backdrop-blur md:px-8">
           <div className="flex items-center justify-between gap-4">
-            {isCategoriesPage ? (
+            {isCategoriesPage || isSizesPage || isMaterialsPage ? (
               <>
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl bg-black/5 p-2 text-black">
-                    <FolderOpen className="h-6 w-6" />
+                    {isCategoriesPage && <FolderOpen className="h-6 w-6" />}
+                    {isSizesPage && <Scale className="h-6 w-6" />}
+                    {isMaterialsPage && <Layers className="h-6 w-6" />}
                   </div>
                   <div>
                     <h1 className="text-lg font-black tracking-tight">
-                      {isRtl ? 'إدارة الفئات' : 'Manage Categories'}
+                      {isCategoriesPage && t('admin.manage_categories')}
+                      {isSizesPage && t('admin.manage_sizes')}
+                      {isMaterialsPage && t('admin.manage_materials')}
                     </h1>
                     <p className="text-xs text-black/60 mt-0.5">
-                      {isRtl ? 'عرض وإضافة وحذف فئات الملاعب والأنشطة' : 'View, add, and delete court categories and activities'}
+                      {isCategoriesPage && t('admin.categories_description')}
+                      {isSizesPage && t('admin.sizes_description')}
+                      {isMaterialsPage && t('admin.materials_description')}
                     </p>
                   </div>
                 </div>

@@ -4,28 +4,54 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
+import api from '../../api/Admin/axios';
 
 export const Login = () => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem('nouh_carting_roken');
   if (token) {
     return <Navigate to="/admin/dashboard" replace />;
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError(isRtl ? 'الرجاء ملء جميع الحقول' : 'Please fill in all fields');
+      setError(t('admin.fill_fields'));
       return;
     }
-    localStorage.setItem('nouh_carting_roken', 'mock-admin-token-value-12345');
-    navigate('/admin/dashboard');
+
+    setLoading(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+
+    try {
+      const response = await api.post('/login', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const data = response.data;
+      if (data.token) {
+        localStorage.setItem('nouh_carting_roken', data.token);
+        navigate('/admin/dashboard');
+      } else {
+        setError(t('admin.auth_error'));
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.message || t('admin.login_failed'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,10 +59,10 @@ export const Login = () => {
       <div className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
         <div className="text-center">
           <h2 className="text-3xl font-black tracking-tight">
-            {isRtl ? 'تسجيل الدخول للمشرف' : 'Admin Login'}
+            {t('admin.admin_login')}
           </h2>
           <p className="mt-2 text-sm text-black/60">
-            {isRtl ? 'أدخل بيانات الاعتماد الخاصة بك للوصول' : 'Enter your credentials to access the workspace'}
+            {t('admin.login_credentials')}
           </p>
         </div>
 
@@ -49,7 +75,7 @@ export const Login = () => {
 
           <div className="space-y-2">
             <Label htmlFor="email">
-              {isRtl ? 'البريد الإلكتروني' : 'Email Address'}
+              {t('admin.email')}
             </Label>
             <Input
               id="email"
@@ -62,7 +88,7 @@ export const Login = () => {
 
           <div className="space-y-2">
             <Label htmlFor="password">
-              {isRtl ? 'كلمة المرور' : 'Password'}
+              {t('admin.password')}
             </Label>
             <Input
               id="password"
@@ -73,8 +99,8 @@ export const Login = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full">
-            {isRtl ? 'تسجيل الدخول' : 'Sign In'}
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? t('admin.loading') : t('admin.signin')}
           </Button>
         </form>
       </div>
