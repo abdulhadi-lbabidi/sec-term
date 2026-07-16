@@ -36,5 +36,22 @@
   },
   "footer": {
     "copyright": "© 2026 Bakery Name. All rights reserved."
+  },
+  "admin": {
+    "brand": "Bakery Admin",
+    "workspace": "Admin Workspace",
+    "navigation": "Navigation",
+    "dashboard": "Dashboard",
+    "products": "Products",
+    "orders": "Orders",
+    "customers": "Customers",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "view_site": "View Site",
+    "toggle_sidebar": "Toggle sidebar",
+    "sidebar_title": "Control Room",
+    "sidebar_description": "Manage products, orders, and store activity from one place.",
+    "sidebar_help": "Jump back to the storefront whenever you need to review the customer experience.",
+    "language": "Language"
   }
 }

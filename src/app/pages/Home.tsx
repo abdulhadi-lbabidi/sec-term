@@ -47,7 +47,7 @@ export const Home = () => {
               {t('hero.subtitle')}
             </p>
             <Link
-              to="/shop"
+              to="/client/shop"
               className="inline-flex items-center space-x-3 bg-[#fefcfa] text-black px-10 py-5 text-sm font-bold uppercase tracking-widest hover:bg-black hover:text-white transition-all duration-300"
             >
               <span>{t('hero.cta')}</span>
@@ -73,7 +73,7 @@ export const Home = () => {
             <p className="text-lg text-black/60 leading-relaxed">
               {t('about.summary')}
             </p>
-            <Link to="/about" className="inline-flex items-center text-black border-b border-black pb-1 text-sm font-bold uppercase tracking-widest hover:text-black/60 transition-colors">
+            <Link to="/client/about" className="inline-flex items-center text-black border-b border-black pb-1 text-sm font-bold uppercase tracking-widest hover:text-black/60 transition-colors">
               Learn More
             </Link>
           </motion.div>
@@ -95,7 +95,7 @@ export const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-end mb-16">
             <h2 className="text-4xl font-bold tracking-tighter text-black">Best Sellers</h2>
-            <Link to="/shop" className="text-sm font-bold uppercase tracking-widest border-b border-black pb-1">View All</Link>
+            <Link to="/client/shop" className="text-sm font-bold uppercase tracking-widest border-b border-black pb-1">View All</Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

@@ -1,45 +1,45 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import React, { Suspense, useEffect } from 'react';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import './i18n/config';
 
-import { Navbar } from './components/Navbar';
-import { Footer } from './components/Footer';
-import { Home } from './pages/Home';
-import { Shop } from './pages/Shop';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { Login, Register } from './pages/Auth';
-import { Checkout, ProtectedRoute } from './pages/Checkout';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { ClientRoutes } from './Routes/routes_client';
+import { AdminRoutes } from './Routes/routes_admin';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+
   return null;
 };
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { i18n } = useTranslation();
-  
-  useEffect(() => {
-    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = i18n.language;
-  }, [i18n.language]);
+const PageFallback = () => (
+  <div className="flex min-h-[60vh] items-center justify-center px-4">
+    <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/15 border-t-black" />
+  </div>
+);
 
+function RouteFallbacks() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-grow">
-        {children}
-      </main>
-      <Footer />
-    </div>
+    <Suspense fallback={<PageFallback />}>
+      <Routes>
+        {ClientRoutes}
+        {AdminRoutes}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
-};
+}
 
 export default function App() {
   return (
@@ -47,23 +47,10 @@ export default function App() {
       <CartProvider>
         <Router>
           <ScrollToTop />
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/checkout" element={
-                <ProtectedRoute>
-                  <Checkout />
-                </ProtectedRoute>
-              } />
-            </Routes>
-          </Layout>
+          <RouteFallbacks />
         </Router>
       </CartProvider>
     </AuthProvider>
   );
 }
+

@@ -10,10 +10,10 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = React.useState(false);
 
   const navLinks = [
-    { name: t('nav.home'), path: '/' },
-    { name: t('nav.shop'), path: '/shop' },
-    { name: t('nav.about'), path: '/about' },
-    { name: t('nav.contact'), path: '/contact' },
+    { name: t('nav.home'), path: '/client' },
+    { name: t('nav.shop'), path: '/client/shop' },
+    { name: t('nav.about'), path: '/client/about' },
+    { name: t('nav.contact'), path: '/client/contact' },
   ];
 
   const isDark = location.pathname === '/'; // Hero might need transparency or contrast
@@ -23,7 +23,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="text-2xl font-bold tracking-tighter text-black">
+            <Link to="/client" className="text-2xl font-bold tracking-tighter text-black">
               BAKERY<span className="text-[#000000]/40">.</span>
             </Link>
           </div>

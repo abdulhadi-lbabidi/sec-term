@@ -9,7 +9,7 @@ export const Login = () => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     login();
-    navigate('/checkout');
+    navigate('/client/checkout');
   };
 
   return (
@@ -42,7 +42,7 @@ export const Register = () => {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     login();
-    navigate('/checkout');
+    navigate('/client/checkout');
   };
 
   return (
