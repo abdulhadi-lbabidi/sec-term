@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Freshly Baked Every Day",
+    "subtitle": "Discover the art of traditional baking with our artisanal bread and pastries.",
+    "cta": "Shop Now"
+  },
+  "about": {
+    "title": "Our Story",
+    "summary": "Since 1985, we've been crafting the finest artisanal pastries using traditional methods and the freshest ingredients.",
+    "expertise": "Expertise & Craftsmanship",
+    "heritage": "Our Heritage"
+  },
+  "shop": {
+    "title": "Our Bakery",
+    "filter_category": "Category",
+    "filter_price": "Price",
+    "filter_size": "Size",
+    "filter_material": "Ingredient",
+    "categories": {
+      "all": "All",
+      "bread": "Bread",
+      "pastry": "Pastry",
+      "cake": "Cake"
+    },
+    "product": {
+      "code": "Code",
+      "material": "Material",
+      "size": "Size"
+    }
+  },
+  "footer": {
+    "copyright": "© 2026 Bakery Name. All rights reserved."
+  }
+}
