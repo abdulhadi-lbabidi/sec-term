@@ -11,6 +11,7 @@ import {
   ChevronRight,
   PanelLeft,
   Globe,
+  FolderOpen,
 } from 'lucide-react';
 import { useLocalization } from '../../../hooks/useLocalization';
 import { useSidebar } from '../../../components/ui/sidebar';
@@ -26,15 +27,18 @@ export const AdminSidebar = () => {
   const { toggleSidebar, state } = useSidebar();
   const { t, i18n, toggleLanguage } = useLocalization();
   const collapsed = state === 'collapsed';
+  const isRtl = i18n.language === 'ar';
 
   const items: SidebarItem[] = [
     { label: t('admin.dashboard'), to: '/admin/dashboard', icon: LayoutDashboard },
+    { label: isRtl ? 'الفئات' : 'Categories', to: '/admin/categories', icon: FolderOpen },
     { label: t('admin.products'), to: '/admin/products', icon: Package },
     { label: t('admin.orders'), to: '/admin/orders', icon: ShoppingCart },
     { label: t('admin.customers'), to: '/admin/customers', icon: Users },
     { label: t('admin.analytics'), to: '/admin/analytics', icon: BarChart3 },
     { label: t('admin.settings'), to: '/admin/settings', icon: Settings },
   ];
+
 
   return (
     <aside className="flex h-full w-full flex-col border-r border-[#2d0d39]/10 bg-[#fefcfa] text-black shadow-[8px_0_40px_rgba(45,13,57,0.04)]">

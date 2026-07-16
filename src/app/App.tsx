@@ -12,7 +12,10 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ClientRoutes } from './Routes/routes_client';
 import { AdminRoutes } from './Routes/routes_admin';
-
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
@@ -42,15 +45,18 @@ function RouteFallbacks() {
 }
 
 export default function App() {
+  const queryClient = new QueryClient()
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <ScrollToTop />
-          <RouteFallbacks />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <ScrollToTop />
+            <RouteFallbacks />
+          </Router>
+        </CartProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
