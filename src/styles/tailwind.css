@@ -1,4 +1,27 @@
 @import 'tailwindcss' source(none);
 @source '../**/*.{js,ts,jsx,tsx}';
 
+@theme {
+  --font-serif: "Poppins", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --color-primary: #165F36;
+  --color-secondary: #FF7A30;
+  --color-background: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-background text-black;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif font-bold tracking-tight;
+  }
+}
+
 @import 'tw-animate-css';
