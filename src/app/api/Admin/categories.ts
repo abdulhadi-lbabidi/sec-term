@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../axios';
+import api from './axios';
 import { Category, CategoriesResponse } from '../../../types/Admin/categories';
 export type { Category, CategoriesResponse };
 
@@ -48,6 +48,37 @@ export const useDeleteCategoryMutation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+    },
+  });
+};
+
+export const fetchCategory = async (id: number): Promise<{ data: Category }> => {
+  const response = await api.get<{ data: Category }>(`/categories/${id}`);
+  return response.data;
+};
+
+export const useCategoryQuery = (id: number | null) => {
+  return useQuery({
+    queryKey: ['adminCategory', id],
+    queryFn: () => fetchCategory(id!),
+    enabled: id !== null,
+  });
+};
+
+export const useUpdateCategoryMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
+      const response = await api.post(`/categories/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminCategories'] });
+      queryClient.invalidateQueries({ queryKey: ['adminCategory'] });
     },
   });
 };

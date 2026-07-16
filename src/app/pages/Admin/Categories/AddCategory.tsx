@@ -13,12 +13,14 @@ import {
   DialogFooter,
   DialogTitle,
 } from '../../../components/ui/dialog';
+import { useCategoryQuery } from '../../../api/Admin/categories';
 
 interface AddCategoryProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (data: FormData) => void;
   isPending?: boolean;
+  categoryId?: number | null;
 }
 
 interface FormValues {
@@ -29,7 +31,7 @@ interface FormValues {
   images: FileList;
 }
 
-export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryProps) => {
+export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: AddCategoryProps) => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
 
@@ -44,32 +46,60 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
     mode: 'onChange',
   });
 
+  const { data: categoryData } = useCategoryQuery(categoryId || null);
+
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [deletedMediaIds, setDeletedMediaIds] = useState<number[]>([]);
   const watchedImages = watch('images');
 
   useEffect(() => {
     if (!isOpen) {
       reset();
       setImagePreviews([]);
+      setDeletedMediaIds([]);
     }
   }, [isOpen, reset]);
+
+  useEffect(() => {
+    if (categoryData?.data && categoryId) {
+      const cat = categoryData.data;
+      reset({
+        nameAr: cat.name,
+        nameEn: cat.name,
+        descriptionAr: cat.description,
+        descriptionEn: cat.description,
+      });
+      if (cat.all_images) {
+        setImagePreviews(cat.all_images);
+      } else if (cat.images) {
+        setImagePreviews([cat.images]);
+      }
+    }
+  }, [categoryData, categoryId, reset]);
 
   useEffect(() => {
     if (watchedImages && watchedImages.length > 0) {
       const filesArray = Array.from(watchedImages);
       const urls = filesArray.map((file) => URL.createObjectURL(file));
-      setImagePreviews(urls);
+      setImagePreviews((prev) => {
+        const existing = prev.filter(url => url.startsWith('http'));
+        return [...existing, ...urls];
+      });
 
       return () => {
         urls.forEach((url) => URL.revokeObjectURL(url));
       };
-    } else {
-      setImagePreviews([]);
     }
   }, [watchedImages]);
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
+    if (categoryId) {
+      formData.append('_method', 'PUT');
+      deletedMediaIds.forEach((id, index) => {
+        formData.append(`deleted_media_ids[${index}]`, String(id));
+      });
+    }
     formData.append('name[ar]', data.nameAr);
     formData.append('name[en]', data.nameEn);
     formData.append('description[ar]', data.descriptionAr);
@@ -87,6 +117,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
   const handleClose = () => {
     reset();
     setImagePreviews([]);
+    setDeletedMediaIds([]);
     onClose();
   };
 
@@ -95,22 +126,24 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
       <DialogContent className="max-w-2xl bg-white p-6 text-black">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {isRtl ? 'إضافة فئة جديدة' : 'Add New Category'}
+            {categoryId
+              ? t('admin.edit_category')
+              : t('admin.add_new_category')}
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {/* Name AR */}
+
             <div className="space-y-2">
               <Label htmlFor="nameAr" className="text-sm font-semibold">
-                {isRtl ? 'الاسم (بالعربية) *' : 'Name (Arabic) *'}
+                {t('admin.name_ar')}
               </Label>
               <Input
                 id="nameAr"
-                placeholder={isRtl ? 'مثال: ملاعب' : 'e.g. ملاعب'}
+                placeholder={t('admin.name_ar_placeholder')}
                 {...register('nameAr', {
-                  required: isRtl ? 'هذا الحقل مطلوب' : 'This field is required',
+                  required: t('admin.required_field'),
                 })}
                 className={errors.nameAr ? 'border-destructive focus-visible:ring-destructive/20' : ''}
               />
@@ -119,16 +152,16 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
               )}
             </div>
 
-            {/* Name EN */}
+
             <div className="space-y-2">
               <Label htmlFor="nameEn" className="text-sm font-semibold">
-                {isRtl ? 'الاسم (بالإنجليزية) *' : 'Name (English) *'}
+                {t('admin.name_en')}
               </Label>
               <Input
                 id="nameEn"
-                placeholder={isRtl ? 'مثال: court' : 'e.g. court'}
+                placeholder={t('admin.name_en_placeholder')}
                 {...register('nameEn', {
-                  required: isRtl ? 'هذا الحقل مطلوب' : 'This field is required',
+                  required: t('admin.required_field'),
                 })}
                 className={errors.nameEn ? 'border-destructive focus-visible:ring-destructive/20' : ''}
               />
@@ -139,16 +172,16 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {/* Description AR */}
+
             <div className="space-y-2">
               <Label htmlFor="descriptionAr" className="text-sm font-semibold">
-                {isRtl ? 'الوصف (بالعربية) *' : 'Description (Arabic) *'}
+                {t('admin.description_ar')}
               </Label>
               <Textarea
                 id="descriptionAr"
-                placeholder={isRtl ? 'هذا وصف الملعب...' : 'This is court description...'}
+                placeholder={t('admin.description_ar_placeholder')}
                 {...register('descriptionAr', {
-                  required: isRtl ? 'هذا الحقل مطلوب' : 'This field is required',
+                  required: t('admin.required_field'),
                 })}
                 className={errors.descriptionAr ? 'border-destructive focus-visible:ring-destructive/20' : ''}
               />
@@ -157,16 +190,16 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
               )}
             </div>
 
-            {/* Description EN */}
+
             <div className="space-y-2">
               <Label htmlFor="descriptionEn" className="text-sm font-semibold">
-                {isRtl ? 'الوصف (بالإنجليزية) *' : 'Description (English) *'}
+                {t('admin.description_en')}
               </Label>
               <Textarea
                 id="descriptionEn"
-                placeholder={isRtl ? 'this is court...' : 'this is court...'}
+                placeholder={t('admin.description_en_placeholder')}
                 {...register('descriptionEn', {
-                  required: isRtl ? 'هذا الحقل مطلوب' : 'This field is required',
+                  required: t('admin.required_field'),
                 })}
                 className={errors.descriptionEn ? 'border-destructive focus-visible:ring-destructive/20' : ''}
               />
@@ -176,10 +209,9 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
             </div>
           </div>
 
-          {/* Image Upload */}
           <div className="space-y-2">
             <Label className="text-sm font-semibold">
-              {isRtl ? 'الصور *' : 'Images *'}
+              {t('admin.images')}
             </Label>
             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition-colors hover:border-gray-400">
               <input
@@ -189,7 +221,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
                 accept="image/*"
                 className="hidden"
                 {...register('images', {
-                  required: isRtl ? 'يجب تحميل صورة واحدة على الأقل' : 'Please upload at least one image',
+                  required: categoryId ? false : t('admin.required_image'),
                 })}
               />
               <Label htmlFor="images" className="flex cursor-pointer flex-col items-center justify-center gap-2">
@@ -197,7 +229,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
                   <Upload className="h-6 w-6 text-gray-500" />
                 </div>
                 <span className="text-sm font-medium text-gray-600">
-                  {isRtl ? 'اضغط هنا لرفع الصور' : 'Click here to upload images'}
+                  {t('admin.click_to_upload')}
                 </span>
                 <span className="text-xs text-gray-400">
                   PNG, JPG, JPEG (Max 5MB)
@@ -208,7 +240,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
               <p className="text-xs font-medium text-destructive">{errors.images.message}</p>
             )}
 
-            {/* Previews */}
+
             {imagePreviews.length > 0 && (
               <div className="mt-4 grid grid-cols-4 gap-4">
                 {imagePreviews.map((url, index) => (
@@ -217,11 +249,13 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
                     <button
                       type="button"
                       onClick={() => {
-                        // Clear selected files when individual delete is clicked (simplification)
-                        setValue('images', null as any);
-                        setImagePreviews([]);
+                        const urlToDelete = imagePreviews[index];
+                        if (urlToDelete.startsWith('http')) {
+                          setDeletedMediaIds((prev) => [...prev, index + 1]);
+                        }
+                        setImagePreviews((prev) => prev.filter((_, i) => i !== index));
                       }}
-                      className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -233,10 +267,12 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending }: AddCategoryPr
 
           <DialogFooter className="mt-6 flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={handleClose} disabled={isPending}>
-              {isRtl ? 'إلغاء' : 'Cancel'}
+              {t('admin.cancel')}
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isRtl ? 'إضافة الفئة' : 'Add Category'}
+              {categoryId
+                ? t('admin.save_changes')
+                : t('admin.add_category')}
             </Button>
           </DialogFooter>
         </form>
