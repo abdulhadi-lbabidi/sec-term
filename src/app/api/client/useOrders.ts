@@ -26,3 +26,15 @@ export const usePlaceOrder = () => {
     }
   });
 };
+
+export const useOrder = (id: string | number) => {
+  return useQuery({
+    queryKey: ['orders', id],
+    queryFn: async () => {
+      const response = await ApiClient.get<any>(`/orders/${id}`);
+      if (response.isError) throw new Error(response.message);
+      return response.data;
+    },
+    enabled: !!id && !!localStorage.getItem("token"),
+  });
+};
