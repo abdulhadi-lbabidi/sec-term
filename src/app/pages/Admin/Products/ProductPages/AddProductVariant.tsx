@@ -79,8 +79,8 @@ export const AddProductVariant = () => {
     if (isEditMode && variantData?.data) {
       const vData = variantData.data;
       reset({
-        sizeId: String(vData.size_id || ''),
-        materialId: String(vData.material_id || ''),
+        sizeId: String(vData.current_size?.id || vData.size_id || ''),
+        materialId: String(vData.current_material?.id || vData.material_id || ''),
         price: vData.price || 0,
         discaount: vData.discount || vData.discaount || 0,
         stockQuantity: vData.stock_quantity || 0,

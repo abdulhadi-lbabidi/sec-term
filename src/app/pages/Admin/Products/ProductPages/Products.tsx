@@ -27,7 +27,7 @@ interface VariantSize {
   sku?: string;
   barcode?: string;
   images?: string[];
-  packages?: { id: number; name: string; price: number; quantity: number }[];
+  packages?: { id: number; name: any; price: number; quantity: number }[];
 }
 
 interface AvailableOption {
