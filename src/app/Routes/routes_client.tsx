@@ -1,42 +1,50 @@
-import React, { Suspense, lazy, useEffect } from 'react';
+import React, { lazy, useEffect, useState } from 'react';
 import { Route, Navigate, Outlet } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useAppStore } from '../store/useAppStore';
 
-import { Navbar } from '../components/Navbar';
-import { Footer } from '../components/Footer';
-import { useAuth } from '../context/AuthContext';
+import { Header } from '../components/client/layout/Header';
+import { Footer } from '../components/client/layout/Footer';
+import { CartDrawer } from '../components/client/cart/CartDrawer';
 
-const Home = lazy(() => import('../pages/Home').then((mod) => ({ default: mod.Home })));
-const Shop = lazy(() => import('../pages/Shop').then((mod) => ({ default: mod.Shop })));
-const About = lazy(() => import('../pages/About').then((mod) => ({ default: mod.About })));
-const Contact = lazy(() => import('../pages/Contact').then((mod) => ({ default: mod.Contact })));
-const Login = lazy(() => import('../pages/Auth').then((mod) => ({ default: mod.Login })));
-const Register = lazy(() => import('../pages/Auth').then((mod) => ({ default: mod.Register })));
-const Checkout = lazy(() => import('../pages/Checkout').then((mod) => ({ default: mod.Checkout })));
+// Lazy loading our new components
+const Home = lazy(() => import('../pages/client/HomePage'));
+const Shop = lazy(() => import('../pages/client/ShopPage'));
+const Product = lazy(() => import('../pages/client/ProductPage'));
+const Checkout = lazy(() => import('../pages/client/CheckoutPage'));
+const Orders = lazy(() => import('../pages/client/OrdersPage'));
+// Stubs for remaining ones that might be implemented later or use existing ones
+const Login = lazy(() => import('../pages/Auth').then(m => ({ default: m.Login })).catch(() => ({ default: () => <div>Login</div> })));
+const Register = lazy(() => import('../pages/Auth').then(m => ({ default: m.Register })).catch(() => ({ default: () => <div>Register</div> })));
 
 const ClientLayout = () => {
-  const { i18n } = useTranslation();
+  const { language } = useAppStore();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = i18n.language;
-  }, [i18n.language]);
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+    // Removed hardcoded font-family to allow tailwind CSS to handle it
+    document.documentElement.style.fontFamily = ''; 
+  }, [language]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
+    <div className="flex min-h-screen flex-col bg-background text-black antialiased font-sans">
+      <Header />
       <main className="flex-grow">
         <Outlet />
       </main>
       <Footer />
+      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      {/* Exposing globally for easy access, in real app this could be triggered via store or context */}
+      <div id="cart-trigger" style={{display: 'none'}} onClick={() => setIsCartOpen(true)}></div>
     </div>
   );
 };
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { user } = useAppStore();
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
@@ -47,8 +55,12 @@ export const ClientRoutes = (
   <Route path="/" element={<ClientLayout />}>
     <Route index element={<Home />} />
     <Route path="shop" element={<Shop />} />
-    <Route path="about" element={<About />} />
-    <Route path="contact" element={<Contact />} />
+    <Route path="product/:id" element={<Product />} />
+    <Route path="orders" element={
+      <RequireAuth>
+        <Orders />
+      </RequireAuth>
+    } />
     <Route path="login" element={<Login />} />
     <Route path="register" element={<Register />} />
     <Route
