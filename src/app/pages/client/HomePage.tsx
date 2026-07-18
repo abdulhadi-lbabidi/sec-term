@@ -20,11 +20,11 @@ export default function HomePage() {
 
   return (
     <div className="w-full bg-white text-gray-900 pb-20 max-w-7xl mx-auto">
-      {/* <HeroSection /> */}
+      <HeroSection />
       <CategorySection categories={categories} />
-      {/* <PromoBannersRow1 /> */}
+      <PromoBannersRow1 />
       <ProductSection products={products} />
-      {/* <PromoBannersRow2 /> */}
+      <PromoBannersRow2 />
       <BrandLogosSection />
       <NewsletterSection />
     </div>

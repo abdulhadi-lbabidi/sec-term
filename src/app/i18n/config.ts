@@ -1,15 +1,17 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import en from "../assets/locales/en/translation.json";
-import ar from "../assets/locales/ar/translation.json";
+import enClient from "../assets/locales/en/client.json";
+import enAdmin from "../assets/locales/en/admin.json";
+import arClient from "../assets/locales/ar/client.json";
+import arAdmin from "../assets/locales/ar/admin.json";
 
 i18n
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translation: en },
-      ar: { translation: ar },
+      en: { translation: { ...enClient, admin: enAdmin } },
+      ar: { translation: { ...arClient, admin: arAdmin } },
     },
     lng: localStorage.getItem('lang') || "en",
     fallbackLng: "en",

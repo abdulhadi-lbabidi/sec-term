@@ -1,3 +1,4 @@
+import i18n from "../i18n/config";
 
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -666,7 +667,7 @@ export const ApiClient = createApi({
   getToken: () => localStorage.getItem("token"),
   getCsrfToken: () =>
     document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
-  getLang: () => "ar",
+  getLang: () => i18n.language,
   credentials: "omit",
   // retry: 3,
   // retryDelay: 10000
