@@ -183,7 +183,7 @@ export const Products = () => {
           </div>
         ) : productsList.length === 0 ? (
           <div className="flex h-64 items-center justify-center rounded-2xl border border-dashed border-black/10 bg-white p-6 text-black/40">
-            {t('admin.no_products') || (isRtl ? 'لا يوجد منتجات' : 'No products found')}
+            {t('title.no_products_found')}
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -214,7 +214,7 @@ export const Products = () => {
                       {product.is_featured && (
                         <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
                           <Star className="h-3 w-3 fill-white" />
-                          <span>{isRtl ? 'مميز' : 'Featured'}</span>
+                          <span>{t('title.featured')}</span>
                         </div>
                       )}
                       {hasOptions && (
@@ -223,7 +223,7 @@ export const Products = () => {
                           className="absolute top-2 right-2 flex items-center gap-1.5 rounded-xl bg-white/90 hover:bg-white border border-black/10 px-2.5 py-1.5 text-[11px] font-bold text-black shadow-sm backdrop-blur-sm transition-all cursor-pointer hover:shadow-md"
                         >
                           <Layers className="h-3.5 w-3.5 text-black/60" />
-                          <span>{isRtl ? 'المتغيرات' : 'Variants'}</span>
+                          <span>{t('title.variants')}</span>
                           <span className="flex items-center justify-center h-4 w-4 rounded-full bg-black text-white text-[9px] font-bold">
                             {flattenVariants(product.available_options).length}
                           </span>
@@ -256,7 +256,7 @@ export const Products = () => {
                           )}
                           {product.stock !== null && product.stock !== undefined && (
                             <span className={`text-[10px] font-bold ${product.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
-                              {isRtl ? 'المخزون' : 'Stock'}: {product.stock}
+                              {t('title.stock')}: {product.stock}
                             </span>
                           )}
                         </div>
@@ -268,14 +268,14 @@ export const Products = () => {
                       <div className="space-y-1.5 border-t border-black/5 pt-3 text-xs text-black/70">
                         {materials.length > 0 && (
                           <div className="truncate">
-                            <span className="font-semibold text-black/85">{isRtl ? 'المواد:' : 'Materials:'} </span>
+                            <span className="font-semibold text-black/85">{t('title.materials')} </span>
                             {materials.join(', ')}
                           </div>
                         )}
                         <div className="flex items-center justify-between mt-1 h-8">
                           {uniqueSizes.length > 0 ? (
                             <div className="truncate pr-2">
-                              <span className="font-semibold text-black/85">{isRtl ? 'الأحجام:' : 'Sizes:'} </span>
+                              <span className="font-semibold text-black/85">{t('title.sizes')} </span>
                               {uniqueSizes.join(', ')}
                             </div>
                           ) : (
@@ -403,7 +403,7 @@ export const Products = () => {
                       {activeOptionsProduct.is_featured && (
                         <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shrink-0">
                           <Star className="h-2.5 w-2.5 fill-white" />
-                          {isRtl ? 'مميز' : 'Featured'}
+                          {t('title.featured')}
                         </span>
                       )}
                     </div>
@@ -423,7 +423,7 @@ export const Products = () => {
                     size="icon"
                     variant="ghost"
                     onClick={() => navigate(`/admin/products/add-variant/${activeOptionsProduct.id}`)}
-                    title={isRtl ? 'إضافة متغير' : 'Add Variant'}
+                    title={t('title.add_variant')}
                     className="h-8 w-8 text-black/50 hover:text-black hover:bg-black/5 rounded-full"
                   >
                     <Plus className="h-4 w-4" />
@@ -434,7 +434,7 @@ export const Products = () => {
                         size="icon"
                         variant="ghost"
                         onClick={() => navigate(`/admin/products/edit-variant/${currentVariant.variant_id}`)}
-                        title={isRtl ? 'تعديل هذا المتغير' : 'Edit Variant'}
+                        title={t('title.edit_variant')}
                         className="h-8 w-8 text-black/50 hover:text-black hover:bg-black/5 rounded-full"
                       >
                         <Pencil className="h-4 w-4" />
@@ -443,7 +443,7 @@ export const Products = () => {
                         size="icon"
                         variant="ghost"
                         onClick={() => handleDeleteVariant(currentVariant.variant_id)}
-                        title={isRtl ? 'حذف هذا المتغير' : 'Delete Variant'}
+                        title={t('title.delete_variant')}
                         className="h-8 w-8 text-destructive/70 hover:text-destructive hover:bg-destructive/10 rounded-full"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -480,15 +480,15 @@ export const Products = () => {
                   <div className="flex-1 overflow-y-auto px-5 py-5 space-y-4">
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="rounded-xl bg-black/[0.03] border border-black/6 px-3.5 py-3">
-                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{isRtl ? 'المادة' : 'Material'}</p>
+                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{t('title.material')}</p>
                         <p className="text-xs font-semibold text-black leading-snug">{currentVariant.material_name}</p>
                       </div>
                       <div className="rounded-xl bg-black/[0.03] border border-black/6 px-3.5 py-3">
-                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{isRtl ? 'الحجم' : 'Size'}</p>
+                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{t('title.size')}</p>
                         <p className="text-xs font-semibold text-black">{currentVariant.size_name}</p>
                       </div>
                       <div className="rounded-xl bg-black/[0.03] border border-black/6 px-3.5 py-3">
-                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{isRtl ? 'السعر' : 'Price'}</p>
+                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{t('title.price')}</p>
                         <p className="text-sm font-bold text-black">
                           {currentVariant.discount > 0 ? (
                             <span className="flex items-baseline gap-1.5">
@@ -502,7 +502,7 @@ export const Products = () => {
                         </p>
                       </div>
                       <div className="rounded-xl bg-black/[0.03] border border-black/6 px-3.5 py-3">
-                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{isRtl ? 'المخزون' : 'Stock'}</p>
+                        <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-1">{t('title.stock')}</p>
                         <p className={`text-sm font-bold ${currentVariant.stock_quantity > 0 ? 'text-green-600' : 'text-red-500'}`}>
                           {currentVariant.stock_quantity}
                         </p>
@@ -510,7 +510,7 @@ export const Products = () => {
                       {currentVariant.barcode && (
                         <div className="col-span-2 rounded-xl bg-black/[0.03] border border-black/6 px-3.5 py-3 flex flex-col items-center justify-center">
                           <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-2 flex items-center gap-1 self-start">
-                            <Barcode className="h-2.5 w-2.5" /> {isRtl ? 'الباركود' : 'Barcode'}
+                            <Barcode className="h-2.5 w-2.5" /> {t('title.barcode')}
                           </p>
                           <div className="bg-white p-2 rounded-lg border border-black/5">
                             <ReactBarcode value={currentVariant.barcode} height={35} width={1.2} fontSize={12} margin={0} />
@@ -523,7 +523,7 @@ export const Products = () => {
                       <div>
                         <p className="text-[10px] font-semibold text-black/35 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <Package className="h-3 w-3" />
-                          {isRtl ? 'الباقات' : 'Packages'}
+                          {t('title.packages')}
                         </p>
                         <div className="space-y-1.5">
                           {currentVariant.packages.map((pkg) => (
@@ -550,7 +550,7 @@ export const Products = () => {
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-black/60 hover:bg-black/5 hover:text-black disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    {isRtl ? 'السابق' : 'Prev'}
+                    {t('title.prev')}
                   </button>
                   <div className="flex items-center gap-2">
                     {flatVariants.map((_, i) => (
@@ -566,7 +566,7 @@ export const Products = () => {
                     disabled={activeVariantIndex === flatVariants.length - 1}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-black/60 hover:bg-black/5 hover:text-black disabled:opacity-25 disabled:cursor-not-allowed transition-colors cursor-pointer"
                   >
-                    {isRtl ? 'التالي' : 'Next'}
+                    {t('title.next')}
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>

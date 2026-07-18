@@ -1,7 +1,6 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
 
 export const About = () => {
   const { t } = useTranslation();
@@ -29,8 +28,8 @@ export const About = () => {
         <div className="max-w-5xl mx-auto space-y-24">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
             <ImageWithFallback
-               src="https://images.unsplash.com/photo-1587241321921-91a834d6d191?auto=format&fit=crop&q=80&w=1000"
-               className="aspect-[4/5] object-cover grayscale"
+              src="https://images.unsplash.com/photo-1587241321921-91a834d6d191?auto=format&fit=crop&q=80&w=1000"
+              className="aspect-[4/5] object-cover grayscale"
             />
             <div className="space-y-8">
               <span className="text-xs font-bold uppercase tracking-[0.3em] text-black/40">Our Beginnings</span>
@@ -49,9 +48,9 @@ export const About = () => {
                 Every loaf is shaped by hand. Every pastry is laminated with care. Our master bakers bring decades of experience to the table, ensuring that the texture, crumb, and crust meet our exacting standards every single morning.
               </p>
             </div>
-             <ImageWithFallback
-               src="https://images.unsplash.com/photo-1571942948809-74637bfc59b9?auto=format&fit=crop&q=80&w=1000"
-               className="aspect-[4/5] object-cover order-1 md:order-2"
+            <ImageWithFallback
+              src="https://images.unsplash.com/photo-1571942948809-74637bfc59b9?auto=format&fit=crop&q=80&w=1000"
+              className="aspect-[4/5] object-cover order-1 md:order-2"
             />
           </div>
         </div>

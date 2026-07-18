@@ -22,7 +22,7 @@ export const NewsletterSection = ({ className }: NewsletterSectionProps) => {
           <div className="flex items-center bg-white rounded-full p-1.5 max-w-md w-full focus-within:ring-2 ring-secondary transition-shadow shadow-xl">
             <input
               type="email"
-              placeholder={t('newsletter.placeholder', 'hello@easymart.com')}
+              placeholder={t('newsletter.placeholder', 'hello@bakery.com')}
               className="flex-1 bg-transparent border-none outline-none px-4 text-sm text-gray-700 placeholder:text-gray-400"
             />
             <button className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-6 py-3 rounded-full text-sm font-semibold transition-colors">

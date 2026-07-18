@@ -28,7 +28,6 @@ interface FormValues {
   bodyEn: string;
   categoryId: string;
   isFeatured: boolean;
-  images: FileList;
 }
 
 export const AddProduct = () => {
@@ -57,10 +56,6 @@ export const AddProduct = () => {
     },
   });
 
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [deletedMediaIds, setDeletedMediaIds] = useState<number[]>([]);
-  const watchedImages = watch('images');
-
   useEffect(() => {
     if (productData?.data && productId) {
       const prod = productData.data;
@@ -72,36 +67,13 @@ export const AddProduct = () => {
         categoryId: String(prod.category?.id || ''),
         isFeatured: prod.is_featured,
       });
-      if (prod.all_images) {
-        setImagePreviews(prod.all_images);
-      } else if (prod.images) {
-        setImagePreviews([prod.images]);
-      }
     }
   }, [productData, productId, reset]);
-
-  useEffect(() => {
-    if (watchedImages && watchedImages.length > 0) {
-      const filesArray = Array.from(watchedImages);
-      const urls = filesArray.map((file) => URL.createObjectURL(file));
-      setImagePreviews((prev) => {
-        const existing = prev.filter((url) => url.startsWith('http'));
-        return [...existing, ...urls];
-      });
-
-      return () => {
-        urls.forEach((url) => URL.revokeObjectURL(url));
-      };
-    }
-  }, [watchedImages]);
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
     if (productId) {
       formData.append('_method', 'PUT');
-      deletedMediaIds.forEach((mediaId, index) => {
-        formData.append(`deleted_media_ids[${index}]`, String(mediaId));
-      });
     }
 
     formData.append('name[ar]', data.nameAr);
@@ -111,11 +83,7 @@ export const AddProduct = () => {
     formData.append('category_id', data.categoryId);
     formData.append('is_featured', data.isFeatured ? '1' : '0');
 
-    if (data.images) {
-      Array.from(data.images).forEach((file, index) => {
-        formData.append(`images[${index}]`, file);
-      });
-    }
+
 
     if (productId) {
       updateMutation.mutate(
@@ -131,7 +99,7 @@ export const AddProduct = () => {
         onSuccess: (res) => {
           const newProductId = res?.data?.id || res?.id;
           if (newProductId) {
-             navigate('/admin/products');
+             navigate(`/admin/products/add-variant/${newProductId}`);
           } else {
             navigate('/admin/products');
           }
@@ -153,21 +121,7 @@ export const AddProduct = () => {
 
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-6 text-black">
-      <div className="flex items-center gap-4 border-b border-black/5 pb-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate('/admin/products')}
-          className="rounded-full hover:bg-black/5"
-        >
-          <ArrowLeft className={`h-5 w-5 ${isRtl ? 'rotate-180' : ''}`} />
-        </Button>
-        <h1 className="text-xl font-bold">
-          {productId ? t('admin.editProduct') : t('admin.addNewProduct')}
-        </h1>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="nameAr" className="text-sm font-semibold">
@@ -246,7 +200,7 @@ export const AddProduct = () => {
                   <SelectTrigger
                     className={errors.categoryId ? 'border-destructive focus-visible:ring-destructive/20' : ''}
                   >
-                    <SelectValue placeholder={isRtl ? 'اختر الفئة' : 'Select Category'} />
+                    <SelectValue placeholder={t('title.select_category')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -271,59 +225,12 @@ export const AddProduct = () => {
               className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <Label htmlFor="isFeatured" className="text-sm font-semibold cursor-pointer">
-              {isRtl ? 'منتج مميز (يظهر في الواجهة)' : 'Featured Product (Shows on homepage)'}
+              {t('title.featured_product')}
             </Label>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold">{t('admin.images')}</Label>
-          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition-colors hover:border-gray-400">
-            <input
-              type="file"
-              id="images"
-              multiple
-              accept="image/*"
-              className="hidden"
-              {...register('images', {
-                required: productId ? false : (t('admin.required_image') || 'Required image'),
-              })}
-            />
-            <Label htmlFor="images" className="flex cursor-pointer flex-col items-center justify-center gap-2">
-              <div className="rounded-full bg-gray-100 p-3">
-                <Upload className="h-6 w-6 text-gray-500" />
-              </div>
-              <span className="text-sm font-medium text-gray-600">{t('admin.click_to_upload')}</span>
-              <span className="text-xs text-gray-400">PNG, JPG, JPEG (Max 5MB)</span>
-            </Label>
-          </div>
-          {errors.images && (
-            <p className="text-xs font-medium text-destructive">{errors.images.message}</p>
-          )}
 
-          {imagePreviews.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
-              {imagePreviews.map((url, index) => (
-                <div key={index} className="group relative aspect-square rounded-md border overflow-hidden">
-                  <img src={url} alt="preview" className="h-full w-full object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const urlToDelete = imagePreviews[index];
-                      if (urlToDelete.startsWith('http')) {
-                        setDeletedMediaIds((prev) => [...prev, index + 1]);
-                      }
-                      setImagePreviews((prev) => prev.filter((_, i) => i !== index));
-                    }}
-                    className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
 
         <div className="flex justify-end gap-3 border-t border-black/5 pt-4">
           <Button
@@ -338,9 +245,9 @@ export const AddProduct = () => {
             {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : productId ? (
-              t('save')
+              t('title.save_changes')
             ) : (
-              t('add')
+              t('title.add')
             )}
           </Button>
         </div>

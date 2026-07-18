@@ -8,6 +8,7 @@ interface ApiResponse<T = unknown> {
   isError: boolean;
   data: T;
   message?: string;
+  errors?: Record<string, string[]>;
   status?: number;
   meta?: {
     current_page: number;
@@ -57,21 +58,6 @@ interface ApiConfig {
   retry?: number;
   retryDelay?: number;
   exposeErrorDetails?: boolean;
-}
-
-interface UploadImageOptions {
-  onProgress?: (progress: number) => void;
-  showSuccessToast?: boolean;
-  showErrorToast?: boolean;
-}
-
-interface UploadResponse {
-  url?: string;
-  image_url?: string;
-  imageUrl?: string;
-  path?: string;
-  image_name?: string;
-  filename?: string;
 }
 
 interface ApiInstance {
@@ -606,65 +592,9 @@ function linkAbortSignal(
   external.addEventListener("abort", () => controller.abort(), { once: true });
 }
 
-type FetchApiOptions = RequestInit & { token?: string };
-
-type FetchApiResult<T> = {
-  success: boolean;
-  message: string;
-  data?: T;
-  errors?: Record<string, string[]>;
-  meta?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
-
-/** Simple fetch helper for BeePlay `{ success, data, message }` responses */
-function createFetchApi(baseUrl: string, fetchImpl?: typeof fetch) {
-  return async function api<T>(
-    path: string,
-    options?: FetchApiOptions
-  ): Promise<FetchApiResult<T>> {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-    };
-
-    if (options?.token) {
-      headers.Authorization = `Bearer ${options.token}`;
-    }
-
-    mergeSafeHeaders(headers, options?.headers as Record<string, string> | undefined);
-
-    const fetchFn =
-      fetchImpl ?? (typeof fetch !== "undefined" ? fetch : undefined);
-    if (!fetchFn) {
-      throw new Error(
-        "Fetch implementation missing. Pass fetchImpl as the second argument."
-      );
-    }
-
-    const res = await fetchFn(`${baseUrl}${path}`, {
-      ...options,
-      headers,
-      credentials: options?.credentials ?? "include",
-    });
-
-    const body = await parseBodyFromResponse(res);
-    if (body === null) {
-      return {
-        success: res.ok,
-        message: res.ok ? "" : "Empty response",
-      };
-    }
-
-    return body as FetchApiResult<T>;
-  };
-}
 export const ApiClient = createApi({
   baseUrl: (import.meta.env.VITE_API_BASE_URL as string) || "",
-  getToken: () => localStorage.getItem("token"),
+  getToken: () => localStorage.getItem("nouh_carting_roken"),
   getCsrfToken: () =>
     document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
   getLang: () => i18n.language,

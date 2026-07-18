@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Navigate,
@@ -17,6 +17,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { Toaster } from './components/ui/sonner';
+import { HelmetProvider } from 'react-helmet-async';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -52,21 +54,9 @@ function RouteFallbacks() {
 const VALID_LANGS = ['en', 'ar'];
 const DEFAULT_LANG = localStorage.getItem('lang') || 'ar';
 
-function initializeLang(): string | null {
-  const path = window.location.pathname;
-  // Match the first URL segment, ignoring leading slash
-  const match = path.match(/^\/([a-z]{2})(\/|$)/);
-  let lang = match ? match[1] : null;
-
-  if (!lang || !VALID_LANGS.includes(lang)) {
-    // If no valid language is found in URL, redirect to default language prefix
-    // For example: /shop -> /ar/shop
-    lang = VALID_LANGS.includes(DEFAULT_LANG) ? DEFAULT_LANG : 'ar';
-    const cleanPath = path === '/' ? '' : path;
-    window.location.replace(`/${lang}${cleanPath}${window.location.search}`);
-    return null; // Don't render until redirected
-  }
-
+function initializeLang(): string {
+  const lang = VALID_LANGS.includes(DEFAULT_LANG) ? DEFAULT_LANG : 'ar';
+  
   // Persist language preference
   localStorage.setItem('lang', lang);
   return lang;
@@ -74,14 +64,18 @@ function initializeLang(): string | null {
 
 export default function App() {
   const lang = initializeLang();
-  
-  if (!lang) return null; // Wait for redirect to complete
 
   // Sync i18n and global store with URL language immediately
   if (i18n.language !== lang) {
     i18n.changeLanguage(lang);
   }
-  
+
+  // Set RTL direction and language for the document
+  useEffect(() => {
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   // Safe to call synchronously to ensure early setup before rendering layouts
   const { language: storeLang, setLanguage } = useAppStore.getState();
   if (storeLang !== lang) {
@@ -90,15 +84,18 @@ export default function App() {
 
   const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
-          <Router basename={`/${lang}`}>
-            <ScrollToTop />
-            <RouteFallbacks />
-          </Router>
-        </CartProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CartProvider>
+            <Router>
+              <ScrollToTop />
+              <RouteFallbacks />
+            </Router>
+            <Toaster />
+          </CartProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }

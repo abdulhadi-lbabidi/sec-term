@@ -5,7 +5,7 @@ export type Language = 'ar' | 'en';
 export type UserRole = 'admin' | 'customer';
 
 export interface User {
-  username: string;
+  name: string;
   email: string;
   role: UserRole;
 }
@@ -41,13 +41,13 @@ export const useAppStore = create<AppState>()(
       setLanguage: (lang: Language) => set({ language: lang }),
 
       user: {
-        username: 'ضيفنا الكريم',
+        name: 'ضيفنا الكريم',
         email: '',
         role: 'customer' as UserRole
       },
       loginUser: (email: string, role: UserRole) => set({
         user: {
-          username: role === 'admin' ? 'الخباز الرئيسي (أدمن)' : 'ضيفنا الكريم',
+          name: role === 'admin' ? 'الخباز الرئيسي (أدمن)' : 'ضيفنا الكريم',
           email,
           role
         }

@@ -5,6 +5,7 @@ import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 
 import { cn } from "./utils";
+import i18n from "@/app/i18n/config";
 
 function DropdownMenu({
   ...props
@@ -26,6 +27,7 @@ function DropdownMenuTrigger({
   return (
     <DropdownMenuPrimitive.Trigger
       data-slot="dropdown-menu-trigger"
+      dir={i18n.language == 'ar' ? "rtl" : "ltr"}
       {...props}
     />
   );
@@ -70,6 +72,7 @@ function DropdownMenuItem({
 }) {
   return (
     <DropdownMenuPrimitive.Item
+      dir={i18n.language == 'ar' ? "rtl" : "ltr"}
       data-slot="dropdown-menu-item"
       data-inset={inset}
       data-variant={variant}

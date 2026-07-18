@@ -1,110 +1,147 @@
-import React, { useState } from 'react';
-import { Filter, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppStore } from '../../store/useAppStore';
 import { translations } from '../../i18n/translations';
 import { useProducts } from '../../api/client/useProducts';
-import { useCategories } from '../../api/client/useCategories';
 import { ProductCard } from '../../components/client/product/ProductCard';
+import { ProductSkeleton } from '../../components/client/product/ProductSkeleton';
+import { ProductFilters } from '../../components/client/product/ProductFilters';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/app/components/ui/pagination';
 
 export default function ShopPage() {
   const { language } = useAppStore();
   const t = translations[language];
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeCategoryId = searchParams.get('category') || 'all';
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('rating');
-
-  const { data: products = [], isLoading: loadingProducts } = useProducts();
-  const { data: categories = [], isLoading: loadingCategories } = useCategories();
-
-  // Client-side filtering as a fallback/enhancement
-  const filteredProducts = products.filter((p: any) => {
-    const matchesCategory = activeCategoryId === 'all' || p.category === activeCategoryId;
-    const searchString = language === 'ar' ? p.nameAr : p.nameEn;
-    const matchesSearch = searchString.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  }).sort((a: any, b: any) => {
-    if (sortBy === 'priceAsc') return a.price - b.price;
-    if (sortBy === 'priceDesc') return b.price - a.price;
-    return b.rating - a.rating;
+  const [filters, setFilters] = useState({
+    category_id: searchParams.get('category_id') || 'all',
+    size_id: searchParams.get('size_id') || 'all',
+    min_price: Number(searchParams.get('min_price')) || 0,
+    max_price: Number(searchParams.get('max_price')) || 1000,
+    search: searchParams.get('search') || '',
   });
 
+  const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
+  const perPage = 12;
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.category_id !== 'all') params.set('category_id', filters.category_id);
+    if (filters.size_id !== 'all') params.set('size_id', filters.size_id);
+    if (filters.min_price > 0) params.set('min_price', filters.min_price.toString());
+    if (filters.max_price < 1000) params.set('max_price', filters.max_price.toString());
+    if (filters.search) params.set('search', filters.search);
+    if (page > 1) params.set('page', page.toString());
+    setSearchParams(params, { replace: true });
+  }, [filters, page, setSearchParams]);
+
+  // Handle server-side query payload format
+  const queryPayload: Record<string, any> = {
+    paginate: 1,
+    per_page: perPage,
+    page: page,
+  };
+
+  if (filters.search) queryPayload['filter[search]'] = filters.search;
+  if (filters.category_id !== 'all') queryPayload['filter[category_id]'] = filters.category_id;
+  if (filters.size_id !== 'all') queryPayload['filter[size_id]'] = filters.size_id;
+  if (filters.min_price > 0) queryPayload['filter[min_price]'] = filters.min_price;
+  if (filters.max_price < 1000) queryPayload['filter[max_price]'] = filters.max_price;
+
+  const { data, isLoading: loadingProducts, isFetching } = useProducts(queryPayload);
+
+  const products = data?.products || [];
+  const meta = data?.meta;
+  const totalPages = meta?.last_page || 1;
+
+  const handleFilterChange = (key: string, value: string | number) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setPage(1); // Reset page on filter change
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      category_id: 'all',
+      size_id: 'all',
+      min_price: 0,
+      max_price: 1000,
+      search: '',
+    });
+    setPage(1);
+  };
+
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto max-w-7xl px-4 py-12">
       <div className="flex flex-col md:flex-row gap-8">
-        
+
         {/* Sidebar Filters */}
-        <aside className="w-full md:w-1/4 shrink-0 space-y-8">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-[#EAE5DF]">
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <Filter size={20} className="text-[#C5A880]" />
-              {t.filterCategory}
-            </h3>
-            <div className="space-y-2">
-              {loadingCategories ? (
-                <div className="text-gray-500">{t.loading}</div>
-              ) : (
-                categories.map((cat: any) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => setSearchParams(prev => { prev.set('category', cat.id); return prev; })}
-                    className={`w-full text-start px-4 py-3 rounded-xl transition-all ${
-                      activeCategoryId === cat.id 
-                      ? 'bg-[#1C1A17] text-white font-bold' 
-                      : 'hover:bg-[#FCFAF7] text-gray-600'
-                    }`}
-                  >
-                    {language === 'ar' ? cat.nameAr : cat.nameEn}
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
+        <aside className="w-full md:w-1/4 shrink-0">
+          <ProductFilters
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onClearFilters={handleClearFilters}
+          />
         </aside>
 
         {/* Main Content */}
         <main className="flex-1">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-            <div className="relative w-full md:w-96">
-              <Search className={`absolute ${language === 'ar' ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-gray-400`} size={20} />
-              <input 
-                type="text" 
-                placeholder={t.searchPlaceholder}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className={`w-full bg-white border border-[#EAE5DF] rounded-2xl h-14 ${language === 'ar' ? 'pr-12 pl-4' : 'pl-12 pr-4'} focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] transition-all`}
-              />
-            </div>
-            
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <span className="text-gray-500 text-sm whitespace-nowrap">{t.sortBy}:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white border border-[#EAE5DF] rounded-xl h-12 px-4 focus:outline-none focus:border-[#C5A880]"
-              >
-                <option value="rating">{t.sortRating}</option>
-                <option value="priceAsc">{t.sortPriceAsc}</option>
-                <option value="priceDesc">{t.sortPriceDesc}</option>
-              </select>
-            </div>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {loadingProducts ? (
-              <div className="col-span-full py-12 text-center text-gray-500 font-bold">{t.loading}</div>
-            ) : filteredProducts.length === 0 ? (
+            {(loadingProducts || isFetching) ? (
+              Array.from({ length: perPage }).map((_, i) => <ProductSkeleton key={i} />)
+            ) : products.length === 0 ? (
               <div className="col-span-full py-20 text-center">
-                <p className="text-gray-500 text-lg">لم نجد ما تبحث عنه، ربما نفد من الفرن!</p>
+                <p className="text-gray-500 text-lg">{language === 'ar' ? 'لم نجد ما تبحث عنه، ربما نفد من الفرن!' : 'No products found!'}</p>
               </div>
-            ) : (
-              filteredProducts.map((product: any) => (
-                <ProductCard key={product.id} product={product} />
-              ))
-            )}
+            ) : products.map((product: any) => <ProductCard key={product.id} product={product} />)
+            }
           </div>
+
+          {/* Pagination */}
+          {!loadingProducts && totalPages > 1 && (
+            <div className="mt-12">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setPage(p => Math.max(1, p - 1)); }}
+                      className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
+                    />
+                  </PaginationItem>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    <PaginationItem key={p}>
+                      <PaginationLink
+                        href="#"
+                        isActive={page === p}
+                        onClick={(e) => { e.preventDefault(); setPage(p); }}
+                        className={page === p ? 'bg-[#C5A880] text-white border-[#C5A880] hover:bg-[#b09672]' : ''}
+                      >
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setPage(p => Math.min(totalPages, p + 1)); }}
+                      className={page >= totalPages ? 'pointer-events-none opacity-50' : ''}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </main>
       </div>
     </div>

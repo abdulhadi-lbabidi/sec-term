@@ -48,8 +48,8 @@
     }
   },
   "footer": {
-    "copyright": "© 2024 إيزي مارت. جميع الحقوق محفوظة.",
-    "brand": "إيزي مارت",
+    "copyright": "© 2024 المخبز. جميع الحقوق محفوظة.",
+    "brand": "المخبز",
     "address": "شارع واشنطن 4517، مانشستر، كنتاكي 39495",
     "about_title": "من نحن",
     "about_us": "قصتنا",
@@ -71,18 +71,108 @@
   "newsletter": {
     "title_part1": "احصل على تحديثات منتظمة وأفضل",
     "title_part2": "العروض اشترك معنا",
-    "placeholder": "hello@easymart.com",
+    "placeholder": "hello@bakery.com",
     "button": "اشترك",
     "image_alt": "طاهي"
   },
   "header": {
-    "brand": "إيزي مارت",
-    "catalog": "الكتالوج",
+    "brand": "Bakery",
+    "products": "المنتجات",
     "blog": "المدونة",
     "pages": "الصفحات",
     "all_categories": "جميع الفئات",
     "search": "ابحث...",
     "profile": "حسابي",
     "signup": "إنشاء حساب"
+  },
+  "cart": {
+    "title": "سلة المشتريات",
+    "empty_title": "سلة المشتريات فارغة",
+    "empty_message": "يبدو أنك لم تضف أي مخبوزات لذيذة إلى سلتك حتى الآن.",
+    "continue_shopping": "متابعة التسوق",
+    "package": "باقة",
+    "each": "للقطعة",
+    "summary": "ملخص الطلب",
+    "subtotal": "المجموع الفرعي",
+    "shipping": "الشحن",
+    "calculated_at_checkout": "يتم حسابه عند الدفع",
+    "total": "الإجمالي",
+    "checkout_button": "إتمام الطلب",
+    "secure_checkout": "عملية دفع آمنة ومشفرة"
+  },
+  "wishlist": {
+    "title": "مفضلتي",
+    "loading": "جاري تحميل المفضلة...",
+    "empty_title": "مفضلتك فارغة",
+    "empty_message": "يبدو أنك لم تضف أي منتج إلى مفضلتك حتى الآن. استكشف منتجاتنا واحفظ ما يعجبك!",
+    "explore": "استكشاف المنتجات"
+  },
+  "auth": {
+    "login_title": "تسجيل الدخول",
+    "register_title": "إنشاء حساب جديد",
+    "name": "الاسم الكامل",
+    "name_placeholder": "أحمد محمد",
+    "email": "البريد الإلكتروني",
+    "email_placeholder": "you@example.com",
+    "password": "كلمة المرور",
+    "password_placeholder": "••••••••",
+    "signin": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "logging_in": "جاري تسجيل الدخول...",
+    "registering": "جاري إنشاء الحساب...",
+    "no_account": "ليس لديك حساب؟",
+    "has_account": "لديك حساب بالفعل؟",
+    "register_link": "سجل الآن",
+    "login_link": "سجل دخولك",
+    "login_success": "تم تسجيل الدخول بنجاح!",
+    "register_success": "تم إنشاء الحساب بنجاح!",
+    "confirm_password": "تأكيد كلمة المرور"
+  },
+  "recovery": {
+    "forgot_title": "نسيت كلمة المرور؟",
+    "forgot_desc": "أدخل بريدك الإلكتروني وسنرسل لك رمز تحقق (OTP) لإعادة تعيين كلمة المرور.",
+    "send_otp": "إرسال الرمز",
+    "back_to_login": "العودة لتسجيل الدخول",
+    "otp_title": "التحقق من الرمز",
+    "otp_desc": "أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك.",
+    "verify": "تحقق",
+    "resend": "إعادة إرسال الرمز",
+    "reset_title": "إعادة تعيين كلمة المرور",
+    "reset_desc": "أدخل كلمة المرور الجديدة أدناه.",
+    "new_password": "كلمة المرور الجديدة",
+    "confirm_password": "تأكيد كلمة المرور",
+    "reset_btn": "تحديث كلمة المرور",
+    "success": "تم تغيير كلمة المرور بنجاح!"
+  },
+  "profile": {
+    "tabs": {
+      "info": "المعلومات الشخصية",
+      "password": "تغيير كلمة المرور",
+      "addresses": "إدارة العناوين"
+    },
+    "update_btn": "تحديث البيانات",
+    "update_success": "تم تحديث البيانات بنجاح!",
+    "password": {
+      "current": "كلمة المرور الحالية",
+      "new": "كلمة المرور الجديدة",
+      "confirm": "تأكيد كلمة المرور",
+      "change_btn": "تغيير كلمة المرور",
+      "success": "تم تغيير كلمة المرور بنجاح!"
+    },
+    "addresses": {
+      "title": "عناويني",
+      "add_new": "إضافة عنوان جديد",
+      "empty": "لم تقم بحفظ أي عناوين حتى الآن.",
+      "name": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "city": "المدينة",
+      "street": "اسم الشارع",
+      "zip": "الرمز البريدي",
+      "save_btn": "حفظ العنوان"
+    }
+  },
+  "products": {
+    "sectionTitle": "جميع منتجاتنا",
+    "viewAllText": "عرض الكل"
   }
 }

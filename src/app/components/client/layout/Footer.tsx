@@ -1,5 +1,6 @@
-import { ShoppingCart, Phone, Mail, Facebook, Twitter, Instagram } from 'lucide-react';
+import { Phone, Mail, Facebook, Twitter, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logoImg from '@/imports/noughs-signe.png';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
@@ -18,10 +19,7 @@ export const Footer = ({ className }: FooterProps) => {
           {/* Column 1: Brand & Contact */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 text-secondary">
-                <ShoppingCart className="w-full h-full fill-current" />
-              </div>
-              <span className="text-xl font-serif font-bold text-secondary">{t('footer.brand', 'EasyMart')}</span>
+              <img src={logoImg} alt="Logo" className="h-10 md:h-12 w-auto object-contain" />
             </Link>
 
             <div className="space-y-3 mb-6">
@@ -31,7 +29,7 @@ export const Footer = ({ className }: FooterProps) => {
               </div>
               <div className="flex items-center gap-3 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 text-muted-foreground/80" />
-                <span>hello@easymart.com</span>
+                <span>hello@bakery.com</span>
               </div>
             </div>
 
@@ -98,7 +96,7 @@ export const Footer = ({ className }: FooterProps) => {
         </div>
 
         <div className="text-center pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground">{t('footer.copyright', '© 2024 EasyMart. All rights reserved.')}</p>
+          <p className="text-sm text-muted-foreground">{t('footer.copyright', '© 2024 Bakery. All rights reserved.')}</p>
         </div>
       </div>
     </footer>
