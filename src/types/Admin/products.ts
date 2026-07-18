@@ -1,15 +1,18 @@
-export interface Category {
-  image: string;
+import { Category } from './categories';
+
+export interface Product {
   id: number;
   name: any;
-  description: any;
-  images: string;
+  body: any;
+  category: Category;
+  is_featured: boolean;
+  images?: string;
   all_images: string[];
-  created_at: string;
+  created_at?: string;
 }
 
-export interface CategoriesResponse {
-  data: Category[];
+export interface ProductsResponse {
+  data: Product[];
   links: {
     first: string;
     last: string;

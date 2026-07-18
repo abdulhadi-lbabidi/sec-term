@@ -12,6 +12,8 @@ import {
   PanelLeft,
   Globe,
   FolderOpen,
+  Gift,
+  Star,
 } from 'lucide-react';
 import { useLocalization } from '../../../hooks/useLocalization';
 import { useSidebar } from '../../../components/ui/sidebar';
@@ -40,10 +42,13 @@ export const AdminSidebar = () => {
   const items: SidebarItem[] = [
     { label: t('admin.dashboard'), to: '/admin/dashboard', icon: LayoutDashboard },
     { label: isRtl ? 'الفئات' : 'Categories', to: '/admin/categories', icon: FolderOpen },
+    { label: isRtl ? 'المراجعات' : 'Reviews', to: '/admin/reviews', icon: Star },
+    { label: isRtl ? 'الباقات' : 'Packages', to: '/admin/packages', icon: Gift },
     {
       label: t('admin.products'),
       icon: Package,
       subItems: [
+        { label: isRtl ? 'المنتجات' : 'Products', to: '/admin/products' },
         { label: isRtl ? 'الأحجام' : 'Sizes', to: '/admin/products/sizes' },
         { label: isRtl ? 'المكونات' : 'Materials', to: '/admin/products/materials' }
       ]
@@ -159,14 +164,6 @@ export const AdminSidebar = () => {
                     </span>
                     {!collapsed && <span>{item.label}</span>}
                   </span>
-                  {!collapsed && (
-                    <ChevronRight
-                      size={16}
-                      className={`transition-transform rtl:rotate-180 ${
-                        active ? 'translate-x-0 text-white/90' : 'text-black/30 group-hover:translate-x-0.5'
-                      }`}
-                    />
-                  )}
                 </Link>
               </li>
             );

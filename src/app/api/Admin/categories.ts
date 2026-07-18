@@ -53,7 +53,7 @@ export const useDeleteCategoryMutation = () => {
 };
 
 export const fetchCategory = async (id: number): Promise<{ data: Category }> => {
-  const response = await api.get<{ data: Category }>(`/categories/${id}`);
+  const response = await api.get<{ data: Category }>(`/categories/${id}?all_languages=true`);
   return response.data;
 };
 

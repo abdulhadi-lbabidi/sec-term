@@ -27,4 +27,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      localStorage.removeItem('nouh_carting_roken');
+      window.location.href = '/admin/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

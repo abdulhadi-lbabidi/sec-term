@@ -28,7 +28,7 @@ interface FormValues {
   nameEn: string;
   descriptionAr: string;
   descriptionEn: string;
-  images: FileList;
+  image: FileList;
 }
 
 export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: AddCategoryProps) => {
@@ -50,7 +50,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [deletedMediaIds, setDeletedMediaIds] = useState<number[]>([]);
-  const watchedImages = watch('images');
+  const watchedImages = watch('image');
 
   useEffect(() => {
     if (!isOpen) {
@@ -64,15 +64,15 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
     if (categoryData?.data && categoryId) {
       const cat = categoryData.data;
       reset({
-        nameAr: cat.name,
-        nameEn: cat.name,
-        descriptionAr: cat.description,
-        descriptionEn: cat.description,
+        nameAr: cat.name?.ar || '',
+        nameEn: cat.name?.en || '',
+        descriptionAr: cat.description?.ar || '',
+        descriptionEn: cat.description?.en || '',
       });
       if (cat.all_images) {
         setImagePreviews(cat.all_images);
-      } else if (cat.images) {
-        setImagePreviews([cat.images]);
+      } else if (cat.image) {
+        setImagePreviews([cat.image]);
       }
     }
   }, [categoryData, categoryId, reset]);
@@ -105,9 +105,9 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
     formData.append('description[ar]', data.descriptionAr);
     formData.append('description[en]', data.descriptionEn);
 
-    if (data.images) {
-      Array.from(data.images).forEach((file, index) => {
-        formData.append(`images[${index}]`, file);
+    if (data.image) {
+      Array.from(data.image).forEach((file, index) => {
+        formData.append(`image[${index}]`, file);
       });
     }
 
@@ -216,15 +216,15 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition-colors hover:border-gray-400">
               <input
                 type="file"
-                id="images"
+                id="image"
                 multiple
                 accept="image/*"
                 className="hidden"
-                {...register('images', {
+                {...register('image', {
                   required: categoryId ? false : t('admin.required_image'),
                 })}
               />
-              <Label htmlFor="images" className="flex cursor-pointer flex-col items-center justify-center gap-2">
+              <Label htmlFor="image" className="flex cursor-pointer flex-col items-center justify-center gap-2">
                 <div className="rounded-full bg-gray-100 p-3">
                   <Upload className="h-6 w-6 text-gray-500" />
                 </div>
@@ -236,8 +236,8 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                 </span>
               </Label>
             </div>
-            {errors.images && (
-              <p className="text-xs font-medium text-destructive">{errors.images.message}</p>
+            {errors.image && (
+              <p className="text-xs font-medium text-destructive">{errors.image.message}</p>
             )}
 
 

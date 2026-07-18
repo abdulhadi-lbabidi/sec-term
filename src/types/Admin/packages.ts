@@ -1,15 +1,12 @@
-export interface Category {
-  image: string;
+export interface PackageItem {
   id: number;
   name: any;
-  description: any;
-  images: string;
-  all_images: string[];
+  price: number;
   created_at: string;
 }
 
-export interface CategoriesResponse {
-  data: Category[];
+export interface PackagesResponse {
+  data: PackageItem[];
   links: {
     first: string;
     last: string;

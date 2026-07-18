@@ -23,7 +23,7 @@ export const Sizes = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [sizeIdToDelete, setSizeIdToDelete] = useState<number | null>(null);
   const [page, setPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage, setPerPage] = useState(10);
 
   const { data, isLoading, isError, error } = useSizesQuery(page, perPage);
   const createMutation = useCreateSizeMutation();
@@ -161,6 +161,11 @@ export const Sizes = () => {
         lastPage={data?.meta?.last_page || 1}
         onPageChange={(p) => setPage(p)}
         isRtl={isRtl}
+        perPage={perPage}
+        onPerPageChange={(val) => {
+          setPerPage(val);
+          setPage(1);
+        }}
       />
 
       <AddSize

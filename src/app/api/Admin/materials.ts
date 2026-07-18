@@ -95,7 +95,7 @@ export const useDeleteMaterialMutation = () => {
 };
 
 export const fetchMaterial = async (id: number): Promise<any> => {
-  const response = await api.get(`/materials/${id}`);
+  const response = await api.get(`/materials/${id}?all_languages=true`);
   return response.data;
 };
 

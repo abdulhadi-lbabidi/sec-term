@@ -51,8 +51,8 @@ export const AddMaterial = ({
     if (isOpen) {
       if (materialId && detailData) {
         reset({
-          materialAr: detailData.material?.ar || '',
-          materialEn: detailData.material?.en || '',
+          materialAr: detailData.data?.material?.ar || detailData.material?.ar || '',
+          materialEn: detailData.data?.material?.en || detailData.material?.en || '',
         });
       } else {
         reset({

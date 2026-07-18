@@ -23,7 +23,7 @@ export const Materials = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [materialIdToDelete, setMaterialIdToDelete] = useState<number | null>(null);
   const [page, setPage] = useState(1);
-  const [perPage] = useState(8);
+  const [perPage, setPerPage] = useState(10);
 
   const { data, isLoading, isError, error } = useMaterialsQuery(page, perPage);
   const createMutation = useCreateMaterialMutation();
@@ -164,6 +164,11 @@ export const Materials = () => {
         lastPage={data?.meta?.last_page || 1}
         onPageChange={(p) => setPage(p)}
         isRtl={isRtl}
+        perPage={perPage}
+        onPerPageChange={(val) => {
+          setPerPage(val);
+          setPage(1);
+        }}
       />
 
       <AddMaterial

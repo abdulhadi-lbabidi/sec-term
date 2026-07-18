@@ -35,10 +35,10 @@ export const DeleteConfirmationModal = ({
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="bg-white text-black border border-black/10">
         <AlertDialogHeader className={isRtl ? 'text-right' : 'text-left'}>
-          <AlertDialogTitle className="text-xl font-bold">
+          <AlertDialogTitle className="text-xl text-start font-bold">
             {title || t('admin.confirm_delete_title')}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-black/60">
+          <AlertDialogDescription className="text-black/60 text-start">
             {description || t('admin.confirm_delete_desc')}
           </AlertDialogDescription>
         </AlertDialogHeader>
