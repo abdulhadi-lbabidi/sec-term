@@ -3,6 +3,7 @@ import { Heart, Maximize2 } from 'lucide-react';
 import { Skeleton } from '../../ui/skeleton';
 import { Carousel, CarouselContent, CarouselItem, CarouselApi } from '../../ui/carousel';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../ui/dialog';
+import { useAppStore } from '@/app/store/useAppStore';
 
 interface ProductGalleryProps {
   activeImage: string;
@@ -23,6 +24,7 @@ export function ProductGallery({
 }: ProductGalleryProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { language } = useAppStore();
 
   // States for desktop zoom magnifier
   const [isHovering, setIsHovering] = useState(false);
@@ -73,12 +75,12 @@ export function ProductGallery({
     setMousePos({ x, y });
   };
 
-  const imagesToRender = allImages && allImages.length > 0 ? allImages : [activeImage];
+  const imagesToRender = allImages && allImages.length > 0 ? allImages : (activeImage ? [activeImage] : ['/images/placeholder.png']);
 
   return (
-    <div className="lg:w-1/2 relative flex flex-col gap-4">
+    <div className="lg:w-1/2 relative flex flex-col gap-4" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Main Image Carousel */}
-      <Carousel setApi={setApi} className="w-full">
+      <Carousel setApi={setApi} className="w-full" opts={{ direction: language === 'ar' ? 'rtl' : 'ltr' }}>
         <CarouselContent>
           {imagesToRender.map((img, idx) => (
             <CarouselItem key={idx}>

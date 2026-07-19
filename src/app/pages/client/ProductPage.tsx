@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, data } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/app/store/useAppStore';
 import { translations } from '@/app/i18n/translations';
 import { useProductDetailsQuery } from '@/app/api/client/useProducts';
 import { toast } from 'sonner';
+import { useAddToCartMutation } from '@/app/api/client/useCart';
 
 import { Package } from '@/types/Client/product';
 import { ProductGallery, ProductGallerySkeleton } from '@/app/components/client/product/ProductGallery';
@@ -18,12 +19,13 @@ import { ReviewForm } from '@/app/components/client/review/ReviewForm';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
-  const { language, addToCart, wishlist, toggleWishlist, user, cart } = useAppStore();
+  const { language, wishlist, toggleWishlist, user, cart } = useAppStore();
   const t = translations[language];
   const [qty, setQty] = useState(1);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const { mutate: addToCartApi, isPending: isAdding } = useAddToCartMutation();
 
-  const { data: product, isLoading } = useProductDetailsQuery(id!);
+  const { data: product, isLoading }: any = useProductDetailsQuery(id!);
 
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
   const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
@@ -44,8 +46,8 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (product && selectedMaterialId && selectedSizeId) {
-      const material = product.available_options?.find(m => m.material_id === selectedMaterialId);
-      const size = material?.available_sizes?.find(s => s.size_id === selectedSizeId);
+      const material = product.available_options?.find((m: any) => m.material_id === selectedMaterialId);
+      const size = material?.available_sizes?.find((s: any) => s.size_id === selectedSizeId);
       if (size && size.images && size.images.length > 0) {
         setActiveImage(size.images[0]);
       } else if (product.image) {
@@ -58,8 +60,8 @@ export default function ProductPage() {
 
   const isFav = product ? wishlist.some(p => p.id === product.id) : false;
 
-  const selectedMaterial = product?.available_options?.find(m => m.material_id === selectedMaterialId);
-  const selectedSize = selectedMaterial?.available_sizes?.find(s => s.size_id === selectedSizeId);
+  const selectedMaterial = product?.available_options?.find((m: any) => m.material_id === selectedMaterialId);
+  const selectedSize = selectedMaterial?.available_sizes?.find((s: any) => s.size_id === selectedSizeId);
 
   const currentPrice = selectedSize ? selectedSize.final_price : (product?.final_price || 0);
   const currentStock = selectedSize ? selectedSize.stock_quantity : (product?.stock || 0);
@@ -80,38 +82,54 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     if (!product) return;
-    const cartProduct = {
-      ...product,
-      id: selectedSize ? `${product.id}-${selectedSize.variant_id}` : product.id,
-      originalId: product.id,
-      price: currentPrice,
-      image: activeImage,
-      selectedVariant: selectedSize,
-      selectedMaterial: selectedMaterial,
-    };
 
-    addToCart(cartProduct, qty);
-    toast.success(language === 'ar' ? 'تمت الإضافة للسلة' : 'Added to cart');
+    let variantId = selectedSize?.variant_id || product?.variants?.[0]?.id;
+    if (!variantId && product.available_options?.length > 0) {
+      variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
+    }
+
+    if (!variantId) {
+      toast.error(language === 'ar' ? 'عذراً، المنتج غير متوفر' : 'Product not available');
+      return;
+    }
+
+    addToCartApi({ product_variant_id: variantId, quantity: qty }, {
+      onSuccess: () => {
+        toast.success(language === 'ar' ? 'تمت الإضافة للسلة' : 'Added to cart');
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || (language === 'ar' ? 'فشل إضافة المنتج للسلة' : 'Failed to add to cart'));
+      }
+    });
   };
 
   const handleAddPackageToCart = (pkg: Package) => {
     if (!product) return;
-    const cartProduct = {
-      ...product,
-      id: `${product.id}-pkg-${pkg.id}`,
-      originalId: product.id,
-      price: pkg.price,
-      image: activeImage,
-      selectedPackage: pkg,
-    };
-    addToCart(cartProduct, pkg.quantity, true);
-    toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+
+    let variantId = selectedSize?.variant_id || product?.variants?.[0]?.id;
+    if (!variantId && product.available_options?.length > 0) {
+        variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
+    }
+    
+    if (!variantId) {
+        toast.error(language === 'ar' ? 'عذراً، الخيار غير متوفر' : 'Variant not available');
+        return;
+    }
+    
+    addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: pkg.quantity || 1 }, {
+      onSuccess: () => {
+        toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || (language === 'ar' ? 'فشل إضافة الباقة للسلة' : 'Failed to add package to cart'));
+      }
+    });
   };
 
   const handleMaterialSelect = (materialId: number) => {
     setSelectedMaterialId(materialId);
     if (product) {
-      const material = product.available_options.find(m => m.material_id === materialId);
+      const material = product.available_options.find((m: any) => m.material_id === materialId);
       if (material && material.available_sizes.length > 0) {
         setSelectedSizeId(material.available_sizes[0].size_id);
       } else {
@@ -222,7 +240,7 @@ export default function ProductPage() {
               onDecreaseQty={() => setQty(Math.max(1, qty - 1))}
               onIncreaseQty={() => setQty(qty + 1)}
               onAddToCart={handleAddToCart}
-              addToCartLabel={t.addToCart || 'Add to Cart'}
+              addToCartLabel={isAdding ? (language === 'ar' ? 'جاري الإضافة...' : 'Adding...') : (t.addToCart || 'Add to Cart')}
               outOfStockLabel={t.outOfStock || 'Out of Stock'}
               isInCart={isInCart}
               inCartLabel={language === 'ar' ? 'في السلة' : 'In Cart'}

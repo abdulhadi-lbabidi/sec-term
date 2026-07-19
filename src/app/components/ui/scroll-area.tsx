@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+import i18n from "@/app/i18n/config";
 
 import { cn } from "./utils";
 
@@ -12,6 +13,7 @@ function ScrollArea({
 }: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
   return (
     <ScrollAreaPrimitive.Root
+      dir={i18n.language === 'ar' ? "rtl" : "ltr"}
       data-slot="scroll-area"
       className={cn("relative", className)}
       {...props}
@@ -40,7 +42,7 @@ function ScrollBar({
       className={cn(
         "flex touch-none p-px transition-colors select-none",
         orientation === "vertical" &&
-          "h-full w-2.5 border-l border-l-transparent",
+          "h-full w-2.5 border-l rtl:border-r rtl:border-l-0 border-l-transparent rtl:border-r-transparent",
         orientation === "horizontal" &&
           "h-2.5 flex-col border-t border-t-transparent",
         className,

@@ -12,9 +12,18 @@ export const ordersService = {
     return data.data;
   },
 
-  createOrder: async (payload: { checkout_id?: number; items?: any[]; shipping?: any; total?: number }) => {
-    const { data } = await apiClient.post<{ data: Order }>('/orders', payload);
-    return data.data;
+  createOrder: async (payload: { checkout_id?: number; payment_method?: string; items?: any[]; shipping?: any; total?: number }) => {
+    const formData = new FormData();
+    if (payload.checkout_id) formData.append('checkout_id', String(payload.checkout_id));
+    if (payload.payment_method) formData.append('payment_method', String(payload.payment_method));
+    
+    // For backward compatibility if items are passed directly
+    if (payload.items) formData.append('items', JSON.stringify(payload.items));
+    if (payload.shipping) formData.append('shipping', JSON.stringify(payload.shipping));
+    if (payload.total) formData.append('total', String(payload.total));
+
+    const response = await apiClient.post<{ data: Order }>('/orders', formData);
+    return response.data?.data || response.data;
   },
 
   updateOrder: async (id: number | string, payload: Partial<Order>) => {
