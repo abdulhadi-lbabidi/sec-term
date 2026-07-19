@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ordersService } from './orders.service';
+import { ordersService } from '@/app/api/client/orders.service';
 import { PaginationParams } from '@/lib/types/api.types';
 
 export const orderKeys = {

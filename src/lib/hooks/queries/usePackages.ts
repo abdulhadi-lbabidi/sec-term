@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { packagesService } from './packages.service';
+import { packagesService } from '@/app/api/client/packages.service';
 import { PaginationParams } from '@/lib/types/api.types';
 
 export const packageKeys = {

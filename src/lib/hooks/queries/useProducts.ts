@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { productsService } from './products.service';
+import { productsService } from '@/app/api/client/products.service';
 import { ProductFilters } from '@/lib/types/api.types';
 
 export const productKeys = {

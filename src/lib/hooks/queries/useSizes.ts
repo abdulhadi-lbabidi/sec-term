@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { sizesService } from './sizes.service';
+import { sizesService } from '@/app/api/client/sizes.service';
 import { PaginationParams } from '@/lib/types/api.types';
 
 export const sizeKeys = {

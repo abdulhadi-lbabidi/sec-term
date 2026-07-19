@@ -19,26 +19,15 @@ export function ProductInfo({
 }: ProductInfoProps) {
   return (
     <div className="mb-8 border-b border-gray-100 pb-8">
-      {categoryName && (
-        <span className="text-sm font-bold text-[#C5A880] mb-2 block">{categoryName}</span>
-      )}
+      {categoryName && <span className="text-sm font-bold text-[#C5A880] mb-2 block">{categoryName}</span>}
       <h1 className="text-4xl font-black text-[#1C1A17] mb-4 leading-tight">{name}</h1>
       <div className="flex items-center gap-4 mb-6">
         <span className="text-3xl font-black text-[#C5A880]">
           {currentPrice} {currency}
         </span>
-        {originalPrice && originalPrice > currentPrice && (
-          <span className="text-xl text-gray-400 line-through">
-            {originalPrice} {currency}
-          </span>
-        )}
+        {originalPrice && originalPrice > currentPrice && <span className="text-xl text-gray-400 line-through">{originalPrice} {currency}</span>}
       </div>
-      {description && (
-        <div 
-          className="text-lg text-gray-600 leading-relaxed" 
-          dangerouslySetInnerHTML={{ __html: description }} 
-        />
-      )}
+      {description && <div className="text-lg text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: description }} />}
     </div>
   );
 }

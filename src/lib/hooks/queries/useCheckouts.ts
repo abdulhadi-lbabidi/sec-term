@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { checkoutsService } from './checkouts.service';
+import { checkoutsService } from '@/app/api/client/checkouts.service';
 import { PaginationParams } from '@/lib/types/api.types';
 
 export const checkoutKeys = {

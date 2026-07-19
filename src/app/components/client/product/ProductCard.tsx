@@ -84,30 +84,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast 
             {price.toFixed(2)} {t.currency}
           </span>
         </div>
-
-        <div className="flex items-center gap-1 mb-2">
-          <RatingStars rating={product.rating || 4.5} size={14} className="text-yellow-400" />
-          <span className="text-xs text-gray-400">({product.reviews_count || 12})</span>
-        </div>
-
         <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed flex-grow">{desc}</p>
 
         <div className="flex items-center w-full justify-between pt-4 border-t border-gray-100 mt-auto">
-          {/* <div className="text-xs text-gray-400 font-medium flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-green-500"></span> {t.inStock}
-          </div> */}
-
           <Button
             onClick={handleAddToCart}
             disabled={stock <= 0}
-            className={`rounded-full w-full h-10 p-0 transition-all shadow-md group-hover:shadow-lg disabled:opacity-50 disabled:hover:text-white ${
-              isInCart 
-                ? 'bg-green-600 hover:bg-green-700 text-white disabled:hover:bg-green-600'
-                : 'bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111111] disabled:hover:bg-[#111111]'
-            }`}
+            className={`rounded-full w-full h-10 p-0 transition-all shadow-md group-hover:shadow-lg disabled:opacity-50 disabled:hover:text-white ${isInCart
+              ? 'bg-green-600 hover:bg-green-700 text-white disabled:hover:bg-green-600'
+              : 'bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111111] disabled:hover:bg-[#111111]'
+              }`}
           >
             {isInCart ? <CheckCircle2 size={18} /> : <ShoppingBag size={18} />}
-            {isInCart 
+            {isInCart
               ? (language === 'ar' ? 'في السلة' : 'In Cart')
               : (language === 'ar' ? t.addToCart : 'Add to cart')
             }

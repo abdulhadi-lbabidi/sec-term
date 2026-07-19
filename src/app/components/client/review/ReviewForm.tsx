@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { RatingStars } from './RatingStars';
 import { Button } from '../../ui/button';
 import { Textarea } from '../../ui/textarea';
-import { useTranslation } from 'react-i18next';
 import { useAppStore } from '@/app/store/useAppStore';
 import { translations } from '@/app/i18n/translations';
 
@@ -14,7 +13,7 @@ interface ReviewFormProps {
 export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  
+
   const { language } = useAppStore();
   const t = translations[language];
 
@@ -30,7 +29,7 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
   return (
     <form onSubmit={handleSubmit} className="bg-[#FCFAF7] rounded-3xl p-6 md:p-8 border border-[#EAE5DF]">
       <h3 className="text-xl font-bold text-[#1C1A17] mb-6">{t.addReview || 'أضف تقييماً'}</h3>
-      
+
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           {t.rating || 'التقييم'} <span className="text-red-500">*</span>

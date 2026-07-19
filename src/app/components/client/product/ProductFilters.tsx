@@ -4,8 +4,9 @@ import { Button } from '@/app/components/ui/button';
 import { Slider } from '@/app/components/ui/slider';
 import { Input } from '@/app/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { useCategories } from '@/app/api/client/useCategories';
-import { useSizes } from '@/app/api/client/useSizes';
+import { useCategoriesQuery } from '@/app/api/client/useCategories';
+import { useSizesQuery } from '@/app/api/client/useSizes';
+import { useMaterialsQuery } from '@/app/api/client/useMaterials';
 import { useAppStore } from '@/app/store/useAppStore';
 import { translations } from '@/app/i18n/translations';
 
@@ -14,6 +15,7 @@ interface ProductFiltersProps {
     search: string;
     category_id: string;
     size_id: string;
+    material_id: string;
     min_price: number;
     max_price: number;
   };
@@ -25,8 +27,9 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
   const { language } = useAppStore();
   const t = translations[language];
 
-  const { data: categories = [], isLoading: loadingCategories } = useCategories();
-  const { data: sizes = [], isLoading: loadingSizes } = useSizes();
+  const { data: categories, isLoading: loadingCategories }: any = useCategoriesQuery();
+  const { data: sizes, isLoading: loadingSizes }: any = useSizesQuery();
+  const { data: materials, isLoading: loadingMaterials }: any = useMaterialsQuery();
 
   const handlePriceChange = (value: number[]) => {
     onFilterChange('min_price', value[0]);
@@ -73,7 +76,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{language === 'ar' ? 'الكل' : 'All'}</SelectItem>
-              {!loadingCategories && categories.map((cat: any) => (
+              {!loadingCategories && categories?.map((cat: any) => (
                 <SelectItem key={cat.id} value={cat.id.toString()}>
                   {cat?.image && <img src={cat.image} alt={cat.name} className="w-6 h-6 rounded-md ltr:mr-2" />}
                   {cat.name}
@@ -98,7 +101,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
             {loadingSizes ? (
               <div className="text-gray-500 text-sm">{t.loading}</div>
             ) : (
-              sizes.map((size: any) => (
+              sizes?.map((size: any) => (
                 <Button
                   key={size.id}
                   variant={filters.size_id === size.id.toString() ? 'default' : 'outline'}
@@ -107,6 +110,36 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
                   className={`rounded-lg ${filters.size_id === size.id.toString() ? 'bg-[#C5A880] text-white hover:bg-[#b09672]' : ''}`}
                 >
                   {size.name || size.size}
+                </Button>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Material Filter */}
+        <div>
+          <h4 className="font-semibold text-sm mb-3 text-gray-700">{language === 'ar' ? 'الالوان والخامات' : 'Colors & Materials'}</h4>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={filters.material_id === 'all' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onFilterChange('material_id', 'all')}
+              className={`rounded-lg ${filters.material_id === 'all' ? 'bg-[#C5A880] text-white hover:bg-[#b09672]' : ''}`}
+            >
+              {language === 'ar' ? 'الكل' : 'All'}
+            </Button>
+            {loadingMaterials ? (
+              <div className="text-gray-500 text-sm">{t.loading}</div>
+            ) : (
+              materials?.map((material: any) => (
+                <Button
+                  key={material.id}
+                  variant={filters.material_id === material.id.toString() ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => onFilterChange('material_id', material.id.toString())}
+                  className={`rounded-lg ${filters.material_id === material.id.toString() ? 'bg-[#C5A880] text-white hover:bg-[#b09672]' : ''}`}
+                >
+                  {material.name}
                 </Button>
               ))
             )}

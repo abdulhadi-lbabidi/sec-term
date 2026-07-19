@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cartService } from './cart.service';
+import { cartService } from '@/app/api/client/cart.service';
 
 export const cartKeys = {
   all: ['cart'] as const,
@@ -28,7 +28,7 @@ export const useUpdateCartItemMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, quantity }: { id: number | string; quantity: number }) => 
+    mutationFn: ({ id, quantity }: { id: number | string; quantity: number }) =>
       cartService.updateCartItem(id, { quantity }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
