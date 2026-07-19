@@ -26,14 +26,7 @@ export const Categories = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
-  const [activePreviewImages, setActivePreviewImages] = useState<string[] | null>(null);
-  const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
 
-  const handlePreviewImage = (images: string[] | string) => {
-    const urls = Array.isArray(images) ? images : [images];
-    setActivePreviewImages(urls);
-    setActiveImageIndex(0);
-  };
 
   const { data, isLoading, isError, error } = useCategoriesQuery(page, perPage);
   const createMutation = useCreateCategoryMutation();
@@ -61,20 +54,7 @@ export const Categories = () => {
     return () => setHeaderAction(null);
   }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!activePreviewImages || activePreviewImages.length <= 1) return;
-      if (e.key === 'ArrowRight') {
-        setActiveImageIndex((prev) => (prev < activePreviewImages.length - 1 ? prev + 1 : 0));
-      } else if (e.key === 'ArrowLeft') {
-        setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : activePreviewImages.length - 1));
-      } else if (e.key === 'Escape') {
-        setActivePreviewImages(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activePreviewImages]);
+
 
   const handleCloseAddModal = () => {
     setIsAddModalOpen(false);
@@ -149,17 +129,8 @@ export const Categories = () => {
                   className="group relative flex flex-col rounded-2xl border border-black/8 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
                 >
                   <div
-                    className="relative overflow-hidden bg-black/5 cursor-pointer"
+                    className="relative overflow-hidden bg-black/5"
                     style={{ aspectRatio: '4/3' }}
-                    onClick={() =>
-                      handlePreviewImage(
-                        category.all_images && category.all_images.length > 0
-                          ? category.all_images
-                          : imgUrl
-                          ? [imgUrl]
-                          : []
-                      )
-                    }
                   >
                     {imgUrl ? (
                       <>
@@ -256,50 +227,7 @@ export const Categories = () => {
         isPending={deleteMutation.isPending}
       />
 
-      {activePreviewImages && activePreviewImages.length > 0 && (
-        <Dialog open={true} onOpenChange={() => setActivePreviewImages(null)}>
-          <DialogContent className="max-w-[95vw] h-[95vh] bg-black/95 p-0 text-white border-0 flex flex-col items-center justify-center relative shadow-2xl">
-            <button
-              onClick={() => setActivePreviewImages(null)}
-              className="absolute top-4 right-4 text-white/75 hover:text-white hover:bg-white/10 p-2 rounded-full cursor-pointer z-50 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
 
-            <div className="relative flex items-center justify-center w-full h-full select-none p-10">
-              {activePreviewImages.length > 1 && (
-                <button
-                  onClick={() => setActiveImageIndex((prev) => (prev > 0 ? prev - 1 : activePreviewImages.length - 1))}
-                  className="absolute left-4 z-50 bg-black/40 hover:bg-black/60 p-3 rounded-full cursor-pointer transition-colors text-white"
-                >
-                  <ChevronLeft className="h-8 w-8" />
-                </button>
-              )}
-
-              <img
-                src={activePreviewImages[activeImageIndex]}
-                alt="category preview"
-                className="max-h-full max-w-full object-contain rounded-lg select-none"
-              />
-
-              {activePreviewImages.length > 1 && (
-                <button
-                  onClick={() => setActiveImageIndex((prev) => (prev < activePreviewImages.length - 1 ? prev + 1 : 0))}
-                  className="absolute right-4 z-50 bg-black/40 hover:bg-black/60 p-3 rounded-full cursor-pointer transition-colors text-white"
-                >
-                  <ChevronRight className="h-8 w-8" />
-                </button>
-              )}
-            </div>
-
-            {activePreviewImages.length > 1 && (
-              <div className="absolute bottom-4 text-sm text-white/60 font-semibold">
-                {activeImageIndex + 1} / {activePreviewImages.length}
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 };

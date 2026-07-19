@@ -49,14 +49,12 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
   const { data: categoryData } = useCategoryQuery(categoryId || null);
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [deletedMediaIds, setDeletedMediaIds] = useState<number[]>([]);
   const watchedImages = watch('image');
 
   useEffect(() => {
     if (!isOpen) {
       reset();
       setImagePreviews([]);
-      setDeletedMediaIds([]);
     }
   }, [isOpen, reset]);
 
@@ -96,9 +94,6 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
     const formData = new FormData();
     if (categoryId) {
       formData.append('_method', 'PUT');
-      deletedMediaIds.forEach((id, index) => {
-        formData.append(`deleted_media_ids[${index}]`, String(id));
-      });
     }
     formData.append('name[ar]', data.nameAr);
     formData.append('name[en]', data.nameEn);
@@ -117,7 +112,6 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
   const handleClose = () => {
     reset();
     setImagePreviews([]);
-    setDeletedMediaIds([]);
     onClose();
   };
 
@@ -249,10 +243,6 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                     <button
                       type="button"
                       onClick={() => {
-                        const urlToDelete = imagePreviews[index];
-                        if (urlToDelete.startsWith('http')) {
-                          setDeletedMediaIds((prev) => [...prev, index + 1]);
-                        }
                         setImagePreviews((prev) => prev.filter((_, i) => i !== index));
                       }}
                       className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"

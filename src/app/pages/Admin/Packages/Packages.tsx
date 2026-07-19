@@ -19,8 +19,8 @@ import {
   useCreatePackageMutation,
   useUpdatePackageMutation,
   useDeletePackageMutation,
-  PackageItem,
 } from '../../../api/Admin/packages';
+import { PackageItem } from '@/types/Admin/packages';
 
 export const Packages = () => {
   const { t, i18n } = useTranslation();
