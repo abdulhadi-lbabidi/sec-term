@@ -1,30 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from './axios';
+import type {
+  Size,
+  SizesResponse,
+  CreateSizePayload,
+  UpdateSizePayload,
+} from '../../../types/Admin/sizes';
 
-export interface Size {
-  id: number;
-  size: string;
-  created_at: string;
-}
-
-export interface SizesResponse {
-  data: Size[];
-  links: {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  };
-}
+export type {
+  Size,
+  SizesResponse,
+  CreateSizePayload,
+  UpdateSizePayload,
+};
 
 export const fetchSizes = async (page = 1, perPage = 5): Promise<SizesResponse> => {
   const response = await api.get<SizesResponse>('/sizes', {
@@ -66,7 +54,7 @@ export const useCreateSizeMutation = () => {
 export const useUpdateSizeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, size }: { id: number; size: string }) => {
+    mutationFn: async ({ id, size }: UpdateSizePayload) => {
       const response = await api.patch(`/sizes/${id}`, { size });
       return response.data;
     },

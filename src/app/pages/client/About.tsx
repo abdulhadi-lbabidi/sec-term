@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { ImageWithFallback } from '../../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 
 export const About = () => {
   const { t } = useTranslation();

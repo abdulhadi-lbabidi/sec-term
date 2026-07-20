@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useAppStore } from '../../store/useAppStore';
 import { translations } from '../../i18n/translations';
-import { usePlaceOrder } from '../../api/client/useOrders';
+import { useCreateOrderMutation } from '../../api/client/useOrders';
 import { Button } from '../../components/ui/button';
 
 export default function CheckoutPage() {
   const { language, cart, clearCart } = useAppStore();
   const t = translations[language];
   const navigate = useNavigate();
-  const placeOrderMutation = usePlaceOrder();
-  
+  const placeOrderMutation = useCreateOrderMutation();
+
   const [formData, setFormData] = useState({ name: '', phone: '', address: '', method: 'cod' });
   const [success, setSuccess] = useState(false);
 
@@ -64,25 +64,25 @@ export default function CheckoutPage() {
         <form onSubmit={handleSubmit} className="lg:w-2/3 bg-white p-8 rounded-3xl shadow-sm border border-[#EAE5DF] space-y-6">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">{t.fullName}</label>
-            <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 focus:outline-none focus:border-[#C5A880]" />
+            <input required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 focus:outline-none focus:border-[#C5A880]" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">{t.phone}</label>
-            <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 focus:outline-none focus:border-[#C5A880]" />
+            <input required type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} className="w-full bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 focus:outline-none focus:border-[#C5A880]" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">{t.address}</label>
-            <textarea required value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[100px] focus:outline-none focus:border-[#C5A880]" />
+            <textarea required value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 min-h-[100px] focus:outline-none focus:border-[#C5A880]" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">{t.paymentMethod}</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className={`border rounded-xl p-4 flex items-center gap-3 cursor-pointer transition-all ${formData.method === 'cod' ? 'border-[#C5A880] bg-[#FCFAF7]' : 'border-gray-200'}`}>
-                <input type="radio" name="payment" checked={formData.method === 'cod'} onChange={() => setFormData({...formData, method: 'cod'})} className="accent-[#C5A880]" />
+                <input type="radio" name="payment" checked={formData.method === 'cod'} onChange={() => setFormData({ ...formData, method: 'cod' })} className="accent-[#C5A880]" />
                 <span className="font-bold">{t.cashOnDelivery}</span>
               </label>
               <label className={`border rounded-xl p-4 flex items-center gap-3 cursor-pointer transition-all ${formData.method === 'card' ? 'border-[#C5A880] bg-[#FCFAF7]' : 'border-gray-200'}`}>
-                <input type="radio" name="payment" checked={formData.method === 'card'} onChange={() => setFormData({...formData, method: 'card'})} className="accent-[#C5A880]" />
+                <input type="radio" name="payment" checked={formData.method === 'card'} onChange={() => setFormData({ ...formData, method: 'card' })} className="accent-[#C5A880]" />
                 <span className="font-bold">{t.creditCard}</span>
               </label>
             </div>
@@ -114,8 +114,8 @@ export default function CheckoutPage() {
                 <span>{finalTotal} {t.currency}</span>
               </div>
             </div>
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={placeOrderMutation.isPending}
               className="w-full mt-8 bg-[#C5A880] hover:bg-[#B59870] text-[#111] h-14 rounded-xl font-bold text-lg"
             >

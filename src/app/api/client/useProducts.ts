@@ -1,73 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
-import { ApiClient } from '../api-client';
+import { productsService } from './products.service';
+import { ProductFilters } from '@/lib/types/api.types';
 
-export const useProducts = (params?: Record<string, any>) => {
+export const productKeys = {
+  all: ['products'] as const,
+  lists: () => [...productKeys.all, 'list'] as const,
+  list: (filters: ProductFilters) => [...productKeys.lists(), filters] as const,
+  details: () => [...productKeys.all, 'detail'] as const,
+  detail: (id: number | string) => [...productKeys.details(), id] as const,
+  featured: () => [...productKeys.all, 'featured'] as const,
+};
+
+export const useProductsQuery = (filters: ProductFilters = {}) => {
   return useQuery({
-    queryKey: ['products', params],
-    queryFn: async () => {
-      const response = await ApiClient.get<any>('/products', { params });
-      if (response.isError) throw new Error(response.message);
-      
-      const data = response.data;
-      
-      let products = [];
-      let sourceData: any = data;
-      
-      if (Array.isArray(data)) {
-        products = data;
-      } else if (data && Array.isArray(data.data)) {
-        products = data.data;
-        sourceData = data;
-      } else if (data && Array.isArray(data.products)) {
-        products = data.products;
-        sourceData = data.products;
-      } else {
-        const resAny = response as any;
-        if (resAny && Array.isArray(resAny.products)) {
-          products = resAny.products;
-          sourceData = resAny.products;
-        } else if (resAny && Array.isArray(resAny.data)) {
-          products = resAny.data;
-          sourceData = resAny;
-        }
-      }
-
-      let meta = response.meta || (data && data.meta) || null;
-      
-      // Try to find pagination meta directly if not in 'meta' key
-      if (!meta) {
-        const potentialSources = [response as any, data, sourceData];
-        for (const src of potentialSources) {
-          if (src && src.last_page !== undefined) {
-            meta = {
-              current_page: src.current_page || 1,
-              last_page: src.last_page || 1,
-              per_page: src.per_page || 15,
-              total: src.total || 0,
-            };
-            break;
-          }
-        }
-      }
-      
-      return { products, meta };
-    },
+    queryKey: productKeys.list(filters),
+    queryFn: () => productsService.getProducts(filters),
   });
 };
 
-export const useProduct = (id: string) => {
+export const useProductDetailsQuery = (id: number | string) => {
   return useQuery({
-    queryKey: ['products', id],
-    queryFn: async () => {
-      const response = await ApiClient.get<any>(`/products/${id}`);
-      if (response.isError) throw new Error(response.message);
-      
-      const data = response.data;
-      if (data && data.data) return data.data;
-      if (data && data.product) return data.product;
-      
-      return data;
-    },
+    queryKey: productKeys.detail(id),
+    queryFn: () => productsService.getProductById(id),
     enabled: !!id,
+  });
+};
+
+export const useFeaturedProductsQuery = () => {
+  return useQuery({
+    queryKey: productKeys.featured(),
+    queryFn: () => productsService.getFeaturedProducts(),
   });
 };

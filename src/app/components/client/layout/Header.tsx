@@ -5,7 +5,7 @@ import { useLocalization } from '@/app/hooks/useLocalization';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/app/store/useAppStore';
-import { useCategories } from '@/app/api/client/useCategories';
+import { useCategoriesQuery } from '@/app/api/client/useCategories';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
 import { Button } from '@/app/components/ui/button';
 
@@ -20,7 +20,7 @@ export const Header = ({ className }: HeaderProps) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<{ id: string, name: string, slug: string } | null>(null);
-  const { data: categories } = useCategories();
+  const { data: categories }: any = useCategoriesQuery();
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -70,7 +70,7 @@ export const Header = ({ className }: HeaderProps) => {
                 <DropdownMenuItem onClick={() => setSelectedCategory(null)}>
                   {t('header.all_categories', 'All Categories')}
                 </DropdownMenuItem>
-                {categories && categories?.map((cat: any) => (
+                {categories?.map((cat: any) => (
                   <DropdownMenuItem key={cat.id} onClick={() => setSelectedCategory(cat)}>
                     {cat?.image && <img src={cat?.image} alt={cat.name} className="w-6 h-6 rounded-full" />}
                     {cat.name}

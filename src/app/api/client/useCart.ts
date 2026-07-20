@@ -1,71 +1,59 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ApiClient } from '../api-client';
+import { cartService } from './cart.service';
 
-export const useCartItems = () => {
+export const cartKeys = {
+  all: ['cart'] as const,
+  detail: () => [...cartKeys.all, 'detail'] as const,
+};
+
+export const useCartQuery = () => {
   return useQuery({
-    queryKey: ['cart'],
-    queryFn: async () => {
-      const response = await ApiClient.get<any>('/cart');
-      if (response.isError) throw new Error(response.message);
-      return response.data?.cart_items || response.data || [];
-    },
-    // Only fetch if token exists
-    enabled: !!localStorage.getItem("token"),
+    queryKey: cartKeys.detail(),
+    queryFn: () => cartService.getCart(),
   });
 };
 
-export const useAddToCart = () => {
+export const useAddToCartMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (data: { variant_id: number; quantity: number; notes?: string }) => {
-      const response = await ApiClient.post<any>('/cart', data);
-      if (response.isError) throw new Error(response.message);
-      return response.data;
-    },
+    mutationFn: cartService.addToCart,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    }
+      queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
   });
 };
 
-export const useUpdateCartItem = () => {
+export const useUpdateCartItemMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (data: { id: number; quantity: number }) => {
-      const response = await ApiClient.put<any>(`/cart/${data.id}`, { quantity: data.quantity });
-      if (response.isError) throw new Error(response.message);
-      return response.data;
-    },
+    mutationFn: ({ id, quantity }: { id: number | string; quantity: number }) => 
+      cartService.updateCartItem(id, { quantity }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    }
+      queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
   });
 };
 
-export const useRemoveCartItem = () => {
+export const useRemoveCartItemMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (id: number) => {
-      const response = await ApiClient.delete<any>(`/cart/${id}`);
-      if (response.isError) throw new Error(response.message);
-      return response.data;
-    },
+    mutationFn: cartService.removeCartItem,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    }
+      queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
   });
 };
 
-export const useClearCart = () => {
+export const useClearCartMutation = () => {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async () => {
-      const response = await ApiClient.delete<any>('/cart-clear');
-      if (response.isError) throw new Error(response.message);
-      return response.data;
-    },
+    mutationFn: cartService.clearCart,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-    }
+      queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
   });
 };

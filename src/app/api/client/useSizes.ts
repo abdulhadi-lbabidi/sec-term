@@ -1,24 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
-import { ApiClient } from '../api-client';
+import { sizesService } from './sizes.service';
+import { PaginationParams } from '@/lib/types/api.types';
 
-export const useSizes = () => {
+export const sizeKeys = {
+  all: ['sizes'] as const,
+  lists: () => [...sizeKeys.all, 'list'] as const,
+  list: (filters: PaginationParams) => [...sizeKeys.lists(), filters] as const,
+  details: () => [...sizeKeys.all, 'detail'] as const,
+  detail: (id: number | string) => [...sizeKeys.details(), id] as const,
+};
+
+export const useSizesQuery = (params: PaginationParams = {}) => {
   return useQuery({
-    queryKey: ['sizes'],
-    queryFn: async () => {
-      try {
-        const response = await ApiClient.get<any>('/sizes');
-        if (response.isError) throw new Error(response.message);
-        
-        const data = response.data;
-        if (Array.isArray(data)) return data;
-        if (data && Array.isArray(data.data)) return data.data;
-        if (data && Array.isArray(data.sizes)) return data.sizes;
-        return [];
-      } catch (err) {
-        // Fallback or empty if not implemented
-        return [];
-      }
-    },
-    retry: 1,
+    queryKey: sizeKeys.list(params),
+    queryFn: () => sizesService.getSizes(params),
+  });
+};
+
+export const useSizeDetailsQuery = (id: number | string) => {
+  return useQuery({
+    queryKey: sizeKeys.detail(id),
+    queryFn: () => sizesService.getSizeById(id),
+    enabled: !!id,
   });
 };

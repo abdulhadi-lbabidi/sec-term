@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
-import { useAppStore } from '../../store/useAppStore';
-import { translations } from '../../i18n/translations';
-import { useProducts } from '../../api/client/useProducts';
-import { ProductCard } from '../../components/client/product/ProductCard';
-import { ProductSkeleton } from '../../components/client/product/ProductSkeleton';
-import { ProductFilters } from '../../components/client/product/ProductFilters';
+import { useAppStore } from '@/app/store/useAppStore';
+import { useProductsQuery } from '@/app/api/client/useProducts';
+import { ProductCard } from '@/app/components/client/product/ProductCard';
+import { ProductSkeleton } from '@/app/components/client/product/ProductSkeleton';
+import { ProductFilters } from '@/app/components/client/product/ProductFilters';
 import {
   Pagination,
   PaginationContent,
@@ -18,12 +16,12 @@ import {
 
 export default function ShopPage() {
   const { language } = useAppStore();
-  const t = translations[language];
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [filters, setFilters] = useState({
     category_id: searchParams.get('category_id') || 'all',
     size_id: searchParams.get('size_id') || 'all',
+    material_id: searchParams.get('material_id') || 'all',
     min_price: Number(searchParams.get('min_price')) || 0,
     max_price: Number(searchParams.get('max_price')) || 1000,
     search: searchParams.get('search') || '',
@@ -36,6 +34,7 @@ export default function ShopPage() {
     const params = new URLSearchParams();
     if (filters.category_id !== 'all') params.set('category_id', filters.category_id);
     if (filters.size_id !== 'all') params.set('size_id', filters.size_id);
+    if (filters.material_id !== 'all') params.set('material_id', filters.material_id);
     if (filters.min_price > 0) params.set('min_price', filters.min_price.toString());
     if (filters.max_price < 1000) params.set('max_price', filters.max_price.toString());
     if (filters.search) params.set('search', filters.search);
@@ -53,13 +52,14 @@ export default function ShopPage() {
   if (filters.search) queryPayload['filter[search]'] = filters.search;
   if (filters.category_id !== 'all') queryPayload['filter[category_id]'] = filters.category_id;
   if (filters.size_id !== 'all') queryPayload['filter[size_id]'] = filters.size_id;
+  if (filters.material_id !== 'all') queryPayload['filter[material_id]'] = filters.material_id;
   if (filters.min_price > 0) queryPayload['filter[min_price]'] = filters.min_price;
   if (filters.max_price < 1000) queryPayload['filter[max_price]'] = filters.max_price;
 
-  const { data, isLoading: loadingProducts, isFetching } = useProducts(queryPayload);
+  const { data: productsData, isLoading: loadingProducts, isFetching }: any = useProductsQuery(queryPayload);
 
-  const products = data?.products || [];
-  const meta = data?.meta;
+  const products = productsData?.data || [];
+  const meta = productsData?.meta;
   const totalPages = meta?.last_page || 1;
 
   const handleFilterChange = (key: string, value: string | number) => {
@@ -71,6 +71,7 @@ export default function ShopPage() {
     setFilters({
       category_id: 'all',
       size_id: 'all',
+      material_id: 'all',
       min_price: 0,
       max_price: 1000,
       search: '',

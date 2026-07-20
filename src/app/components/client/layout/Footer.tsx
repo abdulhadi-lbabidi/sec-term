@@ -12,9 +12,9 @@ export const Footer = ({ className }: FooterProps) => {
   const { t } = useTranslation();
 
   return (
-    <footer className={cn("bg-muted/50 pt-16 pb-8 border-t border-border", className)}>
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+    <footer className={cn("bg-muted/50 w-full pt-16 pb-8 border-t border-border", className)}>
+      <div className=" mx-auto px-4 md:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 max-w-7xl lg:grid-cols-5 gap-8 mb-12">
 
           {/* Column 1: Brand & Contact */}
           <div className="lg:col-span-1">

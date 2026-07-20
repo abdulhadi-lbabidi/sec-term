@@ -36,9 +36,9 @@ const ClientLayout = () => {
   }, [language]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-black antialiased font-sans">
+    <div className="flex min-h-screen justify-center items-center flex-col bg-background text-black antialiased font-sans">
       <Header />
-      <main className="flex-grow">
+      <main className="left-0 right-0 max-w-7xl w-full">
         <Outlet />
       </main>
       <Footer />

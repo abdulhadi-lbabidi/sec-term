@@ -14,6 +14,7 @@ import {
   FolderOpen,
   Gift,
   Star,
+  Shield,
 } from 'lucide-react';
 import { useLocalization } from '../../../hooks/useLocalization';
 import { useSidebar } from '../../../components/ui/sidebar';
@@ -54,7 +55,8 @@ export const AdminSidebar = () => {
       ]
     },
     { label: t('admin.orders'), to: '/admin/orders', icon: ShoppingCart },
-    { label: t('admin.customers'), to: '/admin/customers', icon: Users },
+    { label: t('admin.users'), to: '/admin/users', icon: Users },
+    { label: t('admin.roles'), to: '/admin/roles', icon: Shield },
     { label: t('admin.analytics'), to: '/admin/analytics', icon: BarChart3 },
     { label: t('admin.settings'), to: '/admin/settings', icon: Settings },
   ];
@@ -90,18 +92,16 @@ export const AdminSidebar = () => {
                   <button
                     type="button"
                     onClick={() => !collapsed && setIsProductsOpen(!isProductsOpen)}
-                    className={`w-full group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium transition-all cursor-pointer ${
-                      hasActiveSub
+                    className={`w-full group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium transition-all cursor-pointer ${hasActiveSub
                         ? 'bg-black/5 text-black'
                         : 'text-black/70 hover:bg-black/5 hover:text-black'
-                    }`}
+                      }`}
                     title={collapsed ? item.label : undefined}
                   >
                     <span className={`flex items-center ${collapsed ? 'gap-0' : 'gap-3'}`}>
                       <span
-                        className={`grid size-9 place-items-center rounded-xl transition-colors ${
-                          hasActiveSub ? 'bg-black/10' : 'bg-black/5 group-hover:bg-white'
-                        }`}
+                        className={`grid size-9 place-items-center rounded-xl transition-colors ${hasActiveSub ? 'bg-black/10' : 'bg-black/5 group-hover:bg-white'
+                          }`}
                       >
                         <item.icon size={16} />
                       </span>
@@ -110,9 +110,8 @@ export const AdminSidebar = () => {
                     {!collapsed && (
                       <ChevronRight
                         size={16}
-                        className={`transition-transform duration-200 ${
-                          isProductsOpen ? 'rotate-90' : 'rtl:rotate-180'
-                        }`}
+                        className={`transition-transform duration-200 ${isProductsOpen ? 'rotate-90' : 'rtl:rotate-180'
+                          }`}
                       />
                     )}
                   </button>
@@ -124,11 +123,10 @@ export const AdminSidebar = () => {
                           <li key={sub.to}>
                             <Link
                               to={sub.to}
-                              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
-                                subActive
+                              className={`flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all ${subActive
                                   ? 'bg-black text-white shadow-sm'
                                   : 'text-black/60 hover:bg-black/5 hover:text-black'
-                              }`}
+                                }`}
                             >
                               <span className={`h-1.5 w-1.5 rounded-full ${subActive ? 'bg-white' : 'bg-black/30'}`} />
                               <span>{sub.label}</span>
@@ -147,18 +145,16 @@ export const AdminSidebar = () => {
               <li key={item.to}>
                 <Link
                   to={item.to || ''}
-                  className={`group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium transition-all ${
-                    active
+                  className={`group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium transition-all ${active
                       ? 'bg-black text-white shadow-lg shadow-black/15'
                       : 'text-black/70 hover:bg-black/5 hover:text-black'
-                  }`}
+                    }`}
                   title={collapsed ? item.label : undefined}
                 >
                   <span className={`flex items-center ${collapsed ? 'gap-0' : 'gap-3'}`}>
                     <span
-                      className={`grid size-9 place-items-center rounded-xl transition-colors ${
-                        active ? 'bg-white/10' : 'bg-black/5 group-hover:bg-white'
-                      }`}
+                      className={`grid size-9 place-items-center rounded-xl transition-colors ${active ? 'bg-white/10' : 'bg-black/5 group-hover:bg-white'
+                        }`}
                     >
                       <item.icon size={16} />
                     </span>

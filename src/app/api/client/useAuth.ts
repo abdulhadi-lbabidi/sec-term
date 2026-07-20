@@ -40,7 +40,7 @@ export const useAuth = () => {
   });
 
   const forgotPasswordMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data: { email: string }) => {
       // Mock API call since endpoint is not ready
       await new Promise(resolve => setTimeout(resolve, 1000));
       return { success: true, message: "OTP sent" };
@@ -56,7 +56,7 @@ export const useAuth = () => {
   });
 
   const resetPasswordMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data: { email: string; password: string }) => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       return { success: true };
     }

@@ -1,15 +1,14 @@
-import React from 'react';
-import { Package, MapPin, CreditCard, Clock, ChevronRight, ChevronLeft } from 'lucide-react';
-import { useAppStore } from '../../store/useAppStore';
-import { translations } from '../../i18n/translations';
-import { useOrders } from '../../api/client/useOrders';
+import { Package, MapPin, CreditCard, Clock } from 'lucide-react';
+import { useAppStore } from '@/app/store/useAppStore';
+import { translations } from '@/app/i18n/translations';
+import { useOrdersQuery } from '@/app/api/client/useOrders';
 import { Link } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
+import { Button } from '@/app/components/ui/button';
 
 export default function OrdersPage() {
   const { language } = useAppStore();
   const t = translations[language];
-  const { data: orders = [], isLoading } = useOrders();
+  const { data: orders, isLoading }: any = useOrdersQuery();
 
   if (isLoading) {
     return <div className="container mx-auto px-4 py-24 text-center text-gray-500 font-bold">{t.loading}</div>;
@@ -51,14 +50,13 @@ export default function OrdersPage() {
               </div>
               <div>
                 <span className="text-gray-400 text-sm font-bold block mb-1">{t.orderStatus}</span>
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold ${
-                  order.status === 'pending' ? 'bg-orange-50 text-orange-600' :
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold ${order.status === 'pending' ? 'bg-orange-50 text-orange-600' :
                   order.status === 'shipped' ? 'bg-blue-50 text-blue-600' :
-                  'bg-green-50 text-green-600'
-                }`}>
+                    'bg-green-50 text-green-600'
+                  }`}>
                   <Clock size={14} />
-                  {order.status === 'pending' ? t.statusPending : 
-                   order.status === 'shipped' ? t.statusShipped : t.statusDelivered}
+                  {order.status === 'pending' ? t.statusPending :
+                    order.status === 'shipped' ? t.statusShipped : t.statusDelivered}
                 </span>
               </div>
               <div className="text-right">

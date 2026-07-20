@@ -5,11 +5,13 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import api from '../../api/Admin/axios';
+import { useAuth } from '../../context/AuthContext';
 
 export const Login = () => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -41,8 +43,8 @@ export const Login = () => {
         },
       });
       const data = response.data;
-      if (data.token) {
-        localStorage.setItem('nouh_carting_roken', data.token);
+      if (data.token && data.user?.id) {
+        await login(data.token, data.user.id);
         navigate('/admin/dashboard');
       } else {
         setError(t('admin.auth_error'));
@@ -55,7 +57,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fcfaf7] px-4 text-black">
+    <div className="flex min-h-screen items-center justify-center bg-[#fcfaf7] px-4 text-black font-cairo">
       <div className="w-full max-w-md rounded-2xl border border-black/10 bg-white p-8 shadow-sm">
         <div className="text-center">
           <h2 className="text-3xl font-black tracking-tight">

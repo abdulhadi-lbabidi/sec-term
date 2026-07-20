@@ -2,6 +2,8 @@ import { RatingStars } from './RatingStars';
 import { useAppStore } from '@/app/store/useAppStore';
 import { translations } from '@/app/i18n/translations';
 import { format } from 'date-fns';
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../ui/dialog';
+import { Button } from '../../ui/button';
 
 export interface Review {
   id: string | number;
@@ -20,6 +22,28 @@ interface ReviewListProps {
   totalReviews: number;
 }
 
+const ReviewItem = ({ review }: { review: Review }) => (
+  <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col gap-4">
+    <div className="flex justify-between items-start">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-[#FCFAF7] border border-[#EAE5DF] flex items-center justify-center text-[#C5A880] font-bold text-lg shrink-0">
+          {review.user.name.charAt(0).toUpperCase()}
+        </div>
+        <div>
+          <h4 className="font-bold text-[#1C1A17] text-sm line-clamp-1">{review.user.name}</h4>
+          <span className="text-xs text-gray-400">
+            {format(new Date(review.created_at), 'MMM dd, yyyy')}
+          </span>
+        </div>
+      </div>
+      <RatingStars rating={review.rating} size={14} />
+    </div>
+    {review.comment && (
+      <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">{review.comment}</p>
+    )}
+  </div>
+);
+
 export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListProps) {
   const { language } = useAppStore();
   const t = translations[language];
@@ -30,6 +54,9 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
     const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
     return { stars, count, percentage };
   });
+
+  const displayedReviews = reviews.slice(0, 3);
+  const hasMore = reviews.length > 3;
 
   return (
     <div className="space-y-10">
@@ -66,29 +93,36 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
             {t.noReviews || 'لا توجد تقييمات بعد. كن أول من يكتب تقييماً!'}
           </div>
         ) : (
-          <div className="grid gap-6">
-            {reviews.map(review => (
-              <div key={review.id} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#FCFAF7] border border-[#EAE5DF] flex items-center justify-center text-[#C5A880] font-bold text-lg">
-                      {review.user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-[#1C1A17] text-sm">{review.user.name}</h4>
-                      <span className="text-xs text-gray-400">
-                        {format(new Date(review.created_at), 'MMM dd, yyyy')}
-                      </span>
-                    </div>
-                  </div>
-                  <RatingStars rating={review.rating} size={14} />
-                </div>
-                {review.comment && (
-                  <p className="text-gray-600 text-sm leading-relaxed">{review.comment}</p>
-                )}
+          <Dialog>
+            <div className="grid gap-6">
+              {displayedReviews.map(review => (
+                <ReviewItem key={review.id} review={review} />
+              ))}
+            </div>
+            
+            {hasMore && (
+              <div className="mt-6 text-center">
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="rounded-full border-gray-200 text-gray-600 hover:text-[#111111] hover:border-gray-300">
+                    {language === 'ar' ? `عرض كل التقييمات (${totalReviews})` : `See all reviews (${totalReviews})`}
+                  </Button>
+                </DialogTrigger>
               </div>
-            ))}
-          </div>
+            )}
+            
+            <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-gray-50/50">
+              <div className="p-6 bg-white border-b border-gray-100 shrink-0">
+                <DialogTitle className="text-xl font-bold text-[#1C1A17]">
+                  {language === 'ar' ? 'جميع التقييمات' : 'All Reviews'}
+                </DialogTitle>
+              </div>
+              <div className="p-6 overflow-y-auto flex-1 grid gap-6">
+                {reviews.map(review => (
+                  <ReviewItem key={review.id} review={review} />
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </div>
