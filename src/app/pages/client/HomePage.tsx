@@ -16,10 +16,10 @@ export default function HomePage() {
   const rawProducts = (productsData as any)?.data ?? (productsData as any)?.products ?? productsData;
   const products: unknown[] = Array.isArray(rawProducts) ? rawProducts : [];
 
-  const categories: Category[] = Array.isArray((categoriesData as any)?.data) 
-    ? (categoriesData as any).data 
-    : Array.isArray(categoriesData) 
-      ? categoriesData 
+  const categories: Category[] = Array.isArray((categoriesData as any)?.data)
+    ? (categoriesData as any).data
+    : Array.isArray(categoriesData)
+      ? categoriesData
       : [];
 
   const topTwoCategories = categories.slice(0, 2);
@@ -28,17 +28,17 @@ export default function HomePage() {
     <div className="w-full bg-white text-gray-900 pb-20 max-w-7xl mx-auto">
       <HeroSection topCategories={topTwoCategories} />
       <CategorySection categories={categories} />
-      
-      <ProductSection 
-        title={t('products.featuredTitle', 'المنتجات المميزة')} 
-        products={(products as any[]).slice(0, 4)} 
-        isLoading={loadingProducts} 
+
+      <ProductSection
+        title={t('bestsellersTitle')}
+        products={(products as any[]).slice(0, 4)}
+        isLoading={loadingProducts}
       />
 
-      <ProductSection 
-        title={t('products.sectionTitle', 'المنتجات')} 
-        products={(products as any[]).slice(4, 12)} 
-        isLoading={loadingProducts} 
+      <ProductSection
+        title={t('freshToday')}
+        products={(products as any[]).slice(4, 12)}
+        isLoading={loadingProducts}
       />
     </div>
   );

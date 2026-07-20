@@ -80,9 +80,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
   return (
     <Link
       to={`/product/${product.id}`}
-      className={`group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex ${layout === 'list' ? 'flex-row h-48' : 'flex-col h-full'} relative`}
+      className={`group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex ${layout === 'list' ? 'flex-row h-32 md:h-48' : 'flex-col h-full'} relative`}
     >
-      <div className={`relative ${layout === 'list' ? 'w-1/3 min-w-[150px] shrink-0' : 'aspect-[4/3] w-full'} overflow-hidden bg-primary/5 flex items-center justify-center`}>
+      <div className={`relative ${layout === 'list' ? 'w-1/3 min-w-[120px] md:min-w-[150px] shrink-0' : 'aspect-[4/3] w-full'} overflow-hidden bg-primary/5 flex items-center justify-center`}>
         {imgSrc ? (
           <img
             src={imgSrc}
@@ -99,7 +99,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
             loading="lazy"
           />
         )}
-        <div className={`absolute top-3 ${layout === 'list' ? 'ltr:left-3 rtl:right-3' : 'ltr:right-3 rtl:left-3'} flex flex-col gap-2 z-10`}>
+        <div className={`absolute top-3 ${layout === 'list' ? 'start-3' : 'end-3'} flex flex-col gap-2 z-10`}>
           <Button
             type="button"
             variant={"ghost"}

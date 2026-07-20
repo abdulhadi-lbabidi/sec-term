@@ -1,9 +1,10 @@
 import { RatingStars } from './RatingStars';
 import { useAppStore } from '@/app/store/useAppStore';
-import { translations } from '@/app/i18n/translations';
 import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../ui/dialog';
 import { Button } from '../../ui/button';
+import { Skeleton } from '../../ui/skeleton';
+import { useTranslation } from 'react-i18next';
 
 export interface Review {
   id: string | number;
@@ -20,6 +21,7 @@ interface ReviewListProps {
   reviews: Review[];
   averageRating: number;
   totalReviews: number;
+  isLoading?: boolean;
 }
 
 const ReviewItem = ({ review }: { review: Review }) => (
@@ -44,9 +46,9 @@ const ReviewItem = ({ review }: { review: Review }) => (
   </div>
 );
 
-export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListProps) {
+export function ReviewList({ reviews, averageRating, totalReviews, isLoading }: ReviewListProps) {
   const { language } = useAppStore();
-  const t = translations[language];
+  const { t } = useTranslation();
 
   // Calculate rating distribution
   const distribution = [5, 4, 3, 2, 1].map(stars => {
@@ -58,15 +60,59 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
   const displayedReviews = reviews.slice(0, 3);
   const hasMore = reviews.length > 3;
 
+  if (isLoading) {
+    return (
+      <div className="space-y-10 w-full">
+        <div className="flex flex-col md:flex-row gap-8 items-start md:items-center bg-white p-6 rounded-3xl border border-gray-100 shadow-sm w-full">
+          <div className="flex flex-col items-center justify-center min-w-[150px] space-y-2">
+            <Skeleton className="h-12 w-20" />
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <div className="flex-1 w-full space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex items-center gap-4 text-sm w-full">
+                <Skeleton className="h-4 w-8" />
+                <Skeleton className="h-2 flex-1 rounded-full" />
+                <Skeleton className="h-4 w-6" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-40" />
+          <div className="grid gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col gap-4">
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="w-24 h-4" />
+                </div>
+                <Skeleton className="w-full h-16" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row gap-8 items-start md:items-center bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         <div className="flex flex-col items-center justify-center min-w-[150px] space-y-2">
           <span className="text-5xl font-black text-[#1C1A17]">{averageRating.toFixed(1)}</span>
           <RatingStars rating={averageRating} size={20} />
-          <span className="text-sm text-gray-500">{totalReviews} {language === 'ar' ? 'عاشق شاركنا رأيه' : 'Lovers shared opinions'}</span>
+          <span className="text-sm text-gray-500">{totalReviews} {t('reviews.loversShared')}</span>
         </div>
-        
+
         <div className="flex-1 w-full space-y-2">
           {distribution.map(({ stars, count, percentage }) => (
             <div key={stars} className="flex items-center gap-4 text-sm">
@@ -74,8 +120,8 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
                 {stars} <span className="text-yellow-400 text-lg leading-none">★</span>
               </div>
               <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-yellow-400 rounded-full" 
+                <div
+                  className="h-full bg-yellow-400 rounded-full"
                   style={{ width: `${percentage}%` }}
                 />
               </div>
@@ -86,14 +132,14 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-2xl font-black text-[#1C1A17]">{language === 'ar' ? 'آراء العشاق' : 'Lovers Opinions'}</h3>
-        
+        <h3 className="text-2xl font-black text-[#1C1A17]">{t('reviews.loversOpinions')}</h3>
+
         {reviews.length === 0 ? (
           <div className="text-center py-16 px-6 bg-[#FCFAF7] rounded-3xl border border-dashed border-[#EAE5DF]">
             <div className="text-4xl mb-4">✨</div>
-            <h4 className="text-lg font-bold text-[#1C1A17] mb-2">{language === 'ar' ? 'كن أول من يتذوق ويشاركنا سحر اللحظة!' : 'Be the first to taste and share the magic!'}</h4>
+            <h4 className="text-lg font-bold text-[#1C1A17] mb-2">{t('reviews.beFirst')}</h4>
             <p className="text-gray-500 text-sm leading-relaxed max-w-sm mx-auto">
-              {language === 'ar' ? 'لم يقم أحد بمشاركة تجربته مع هذه التحفة الفنية بعد. جربها الآن واكتب لنا رأيك ليلهم عشاق الطعم الأصيل.' : 'No one has shared their experience with this masterpiece yet. Try it now and write your review to inspire other lovers of authentic taste.'}
+              {t('reviews.noReviews')}
             </p>
           </div>
         ) : (
@@ -103,21 +149,21 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
                 <ReviewItem key={review.id} review={review} />
               ))}
             </div>
-            
+
             {hasMore && (
               <div className="mt-6 text-center">
                 <DialogTrigger asChild>
                   <Button variant="outline" className="rounded-full border-gray-200 text-gray-600 hover:text-[#111111] hover:border-gray-300">
-                    {language === 'ar' ? `اقرأ جميع رسائل العشاق (${totalReviews})` : `Read all lovers messages (${totalReviews})`}
+                    {t('reviews.readAll')} ({totalReviews})
                   </Button>
                 </DialogTrigger>
               </div>
             )}
-            
+
             <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-gray-50/50">
               <div className="p-6 bg-white border-b border-gray-100 shrink-0">
                 <DialogTitle className="text-xl font-bold text-[#1C1A17]">
-                  {language === 'ar' ? 'سجل إعجاب العشاق' : 'Lovers Admiration Log'}
+                  {t('reviews.loversLog')}
                 </DialogTitle>
               </div>
               <div className="p-6 overflow-y-auto flex-1 grid gap-6">

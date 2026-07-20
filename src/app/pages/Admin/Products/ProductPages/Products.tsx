@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import {
-  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight,
-  X, Star, Layers,
+  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, Star, Layers
 } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { Dialog, DialogContent } from '../../../../components/ui/dialog';
@@ -37,7 +36,6 @@ const ProductCard = ({
   onOpenGallery,
   isPending,
   t,
-  navigate,
 }: ProductCardProps) => {
   const defaultImg = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=300&auto=format&fit=crop';
   const images = product.all_images && product.all_images.length > 0

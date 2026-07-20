@@ -111,14 +111,14 @@ export function ProductGallery({
                   )}
 
                   <DialogTrigger asChild>
-                    <button className="absolute bottom-4 left-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-gray-700 hover:text-black hover:bg-white transition-all z-20 md:hidden">
+                    <button className="absolute bottom-4 start-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur shadow-sm flex items-center justify-center text-gray-700 hover:text-black hover:bg-white transition-all z-20 md:hidden">
                       <Maximize2 size={18} />
                     </button>
                   </DialogTrigger>
 
                   <button
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(); }}
-                    className={`absolute top-4 right-4 w-11 h-11 rounded-full bg-white/90 backdrop-blur shadow-md flex items-center justify-center transition-all z-20 ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-white'}`}
+                    className={`absolute top-4 end-4 w-11 h-11 rounded-full bg-white/90 backdrop-blur shadow-md flex items-center justify-center transition-all z-20 ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-white'}`}
                   >
                     <Heart size={22} fill={isFav ? "currentColor" : "none"} />
                   </button>

@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/app/store/useAppStore';
-import { translations } from '@/app/i18n/translations';
-import { useProductDetailsQuery } from '@/app/api/client/useProducts';
+import { useProductDetailsQuery, useAddReviewMutation } from '@/app/api/client/useProducts';
 import { toast } from 'sonner';
 import { useAddToCartMutation } from '@/app/api/client/useCart';
 
@@ -16,14 +15,17 @@ import { PackageGrid, PackageGridSkeleton } from '@/app/components/client/packag
 import { ProductActions, ProductActionsSkeleton } from '@/app/components/client/product/ProductActions';
 import { ReviewList, Review } from '@/app/components/client/review/ReviewList';
 import { ReviewForm } from '@/app/components/client/review/ReviewForm';
+import { useTranslation } from 'react-i18next';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
-  const { language, wishlist, toggleWishlist, user, cart } = useAppStore();
-  const t = translations[language];
+  const { wishlist, toggleWishlist, user, cart } = useAppStore();
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
   const [qty, setQty] = useState(1);
   const [reviews, setReviews] = useState<Review[]>([]);
   const { mutate: addToCartApi, isPending: isAdding } = useAddToCartMutation();
+  const { mutate: addReviewApi, isPending: isAddingReview } = useAddReviewMutation();
 
   const { data: product, isLoading }: any = useProductDetailsQuery(id!);
 
@@ -56,7 +58,7 @@ export default function ProductPage() {
     }
   }, [selectedMaterialId, selectedSizeId, product]);
 
-  if (!isLoading && !product) return <div className="py-32 text-center text-red-500">Product not found.</div>;
+  if (!isLoading && !product) return <div className="py-32 text-center text-red-500">{t('productNotFound')}</div>;
 
   const isFav = product ? wishlist.some(p => p.id === product.id) : false;
 
@@ -74,9 +76,9 @@ export default function ProductPage() {
     if (!product) return;
     toggleWishlist(product);
     if (isFav) {
-      toast.success(language === 'ar' ? 'تم الحذف من المفضلة' : 'Removed from wishlist');
+      toast.success(t('removedFromWishlist'));
     } else {
-      toast.success(language === 'ar' ? 'تمت الإضافة للمفضلة' : 'Added to wishlist');
+      toast.success(t('addedToWishlist'));
     }
   };
 
@@ -89,16 +91,16 @@ export default function ProductPage() {
     }
 
     if (!variantId) {
-      toast.error(language === 'ar' ? 'عذراً، المنتج غير متوفر' : 'Product not available');
+      toast.error(t('productNotAvailable'));
       return;
     }
 
     addToCartApi({ product_variant_id: variantId, quantity: qty }, {
       onSuccess: () => {
-        toast.success(language === 'ar' ? 'تمت الإضافة للسلة' : 'Added to cart');
+        toast.success(t('success'));
       },
-      onError: (err: any) => {
-        toast.error(err?.message || (language === 'ar' ? 'فشل إضافة المنتج للسلة' : 'Failed to add to cart'));
+      onError: () => {
+        toast.error(t('error'));
       }
     });
   };
@@ -108,20 +110,20 @@ export default function ProductPage() {
 
     let variantId = selectedSize?.variant_id || product?.variants?.[0]?.id;
     if (!variantId && product.available_options?.length > 0) {
-        variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
+      variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
     }
-    
+
     if (!variantId) {
-        toast.error(language === 'ar' ? 'عذراً، الخيار غير متوفر' : 'Variant not available');
-        return;
+      toast.error(t('variantNotAvailable'));
+      return;
     }
-    
+
     addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: pkg.quantity || 1 }, {
       onSuccess: () => {
-        toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+        toast.success(t('itemAdded'));
       },
-      onError: (err: any) => {
-        toast.error(err?.message || (language === 'ar' ? 'فشل إضافة الباقة للسلة' : 'Failed to add package to cart'));
+      onError: () => {
+        toast.error(t('error'));
       }
     });
   };
@@ -140,20 +142,39 @@ export default function ProductPage() {
 
   const handleAddReview = (rating: number, comment: string) => {
     if (!user) {
-      toast.error(language === 'ar' ? 'يرجى تسجيل الدخول لإضافة تقييم' : 'Please log in to add a review');
+      toast.error(t('loginToAddReview'));
       return;
     }
 
-    const newReview: Review = {
-      id: Date.now(),
-      user: { name: user.name },
-      rating,
-      comment,
-      created_at: new Date().toISOString(),
-    };
+    let variantId = selectedSize?.variant_id || product?.variants?.[0]?.id;
+    if (!variantId && product?.available_options?.length > 0) {
+      variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
+    }
 
-    setReviews(prev => [newReview, ...prev]);
-    toast.success(language === 'ar' ? 'شكراً لمشاركتك تجربتك اللذيذة معنا!' : 'Thank you for your delicious review!');
+    if (!variantId) {
+      toast.error(t('productNotAvailableForReview'));
+      return;
+    }
+
+    if (!id) return;
+
+    addReviewApi({ rating, comment, product_variant_id: variantId, product_id: id }, {
+      onSuccess: (newReviewData) => {
+        const newReview: Review = {
+          id: newReviewData?.id || Date.now(),
+          user: { name: user.name },
+          rating,
+          comment,
+          created_at: new Date().toISOString(),
+        };
+
+        setReviews(prev => [newReview, ...prev]);
+        toast.success(t('reviewSuccess'));
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || t('error'));
+      }
+    });
   };
 
   const totalReviews = reviews.length;
@@ -162,7 +183,7 @@ export default function ProductPage() {
   return (
     <div className="container mx-auto px-4 max-w-7xl py-12">
       <Link to="/shop" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#C5A880] mb-8 transition-colors">
-        {language === 'ar' ? <ArrowRight size={20} /> : <ArrowLeft size={20} />} {language === 'ar' ? 'العودة للمتجر' : 'Back to shop'}
+        {isRTL ? <ArrowRight size={20} /> : <ArrowLeft size={20} />} {t('backToShop')}
       </Link>
 
       <div className="bg-white rounded-3xl p-6 md:p-12 shadow-sm border border-[#EAE5DF] flex flex-col lg:flex-row gap-12">
@@ -186,7 +207,7 @@ export default function ProductPage() {
               categoryName={product.category?.name}
               currentPrice={currentPrice}
               originalPrice={selectedSize?.price || product.price}
-              currency={t.currency || 'SAR'}
+              currency={t('products.currency') || 'SAR'}
               description={product.body}
             />
           }
@@ -204,7 +225,7 @@ export default function ProductPage() {
                       options={product.available_options}
                       selectedId={selectedMaterialId}
                       onSelect={handleMaterialSelect}
-                      title={language === 'ar' ? 'المادة / المكون' : 'Material'}
+                      title={t('products.ingredients')}
                     />
 
                     {selectedMaterial && selectedMaterial.available_sizes && selectedMaterial.available_sizes.length > 0 && (
@@ -212,7 +233,7 @@ export default function ProductPage() {
                         sizes={selectedMaterial.available_sizes}
                         selectedId={selectedSizeId}
                         onSelect={setSelectedSizeId}
-                        title={language === 'ar' ? 'الحجم' : 'Size'}
+                        title={t('products.size')}
                       />
                     )}
                   </div>
@@ -223,10 +244,10 @@ export default function ProductPage() {
             {isLoading || !product ? <PackageGridSkeleton />
               : <PackageGrid
                 packages={availablePackages}
-                title={language === 'ar' ? 'عروض وباقات الحجم المحدد' : 'Offers & Packages for Selected Size'}
-                quantityLabel={language === 'ar' ? 'الكمية' : 'Quantity'}
-                addButtonLabel={language === 'ar' ? 'إضافة للسلة' : 'Add to cart'}
-                currency={t.currency || 'SAR'}
+                title={t('products.packagesTitle')}
+                quantityLabel={t('products.pieces')}
+                addButtonLabel={t('products.buyPackage')}
+                currency={t('products.currency')}
                 onAdd={handleAddPackageToCart}
               />
             }
@@ -240,40 +261,41 @@ export default function ProductPage() {
               onDecreaseQty={() => setQty(Math.max(1, qty - 1))}
               onIncreaseQty={() => setQty(qty + 1)}
               onAddToCart={handleAddToCart}
-              addToCartLabel={isAdding ? (language === 'ar' ? 'جاري الإضافة...' : 'Adding...') : (t.addToCart || 'Add to Cart')}
-              outOfStockLabel={t.outOfStock || 'Out of Stock'}
+              addToCartLabel={isAdding ? t('products.loading') : t('products.addToCart')}
+              outOfStockLabel={t('products.outOfStock')}
               isInCart={isInCart}
-              inCartLabel={language === 'ar' ? 'في السلة' : 'In Cart'}
+              inCartLabel={t('products.inCart')}
             />
           }
         </div>
       </div>
 
       {/* Reviews Section */}
-      {!isLoading && product && (
+      {product && (
         <div className="mt-16 flex flex-col lg:flex-row gap-12">
           {/* Reviews List */}
           <div className="lg:w-2/3">
             <ReviewList
               reviews={reviews}
               averageRating={averageRating}
-              totalReviews={totalReviews}
+              totalReviews={reviews.length}
+              isLoading={isLoading}
             />
           </div>
 
           {/* Review Form */}
           <div className="lg:w-1/3">
             <div className="sticky top-24">
-              {user ? <ReviewForm onSubmit={handleAddReview} />
+              {user ? <ReviewForm onSubmit={handleAddReview} isSubmitting={isAddingReview} />
                 : <div className="bg-[#FCFAF7] rounded-3xl p-8 border border-[#EAE5DF] text-center">
                   <h3 className="text-xl font-bold text-[#1C1A17] mb-4">
-                    {language === 'ar' ? 'شاركنا رأيك' : 'Share your thought'}
+                    {t('products.shareThought')}
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    {language === 'ar' ? 'سجل دخولك لتتمكن من إضافة تقييم ومشاركة تجربتك مع الآخرين.' : 'Log in to add a review and share your experience with others.'}
+                    {t('products.loginToReviewDesc')}
                   </p>
                   <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-[#111111] hover:bg-[#C5A880] text-white px-8 h-12 transition-all shadow-md w-full">
-                    {language === 'ar' ? 'تسجيل الدخول' : 'Log In'}
+                    {t('products.logIn')}
                   </Link>
                 </div>
               }

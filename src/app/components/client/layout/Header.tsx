@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Menu, ChevronDown, Heart, LucideLayoutGrid, User, ShieldCheck } from 'lucide-react';
+import { Search, ShoppingCart, Menu, ChevronDown, Heart, LucideLayoutGrid, User, ShieldCheck, LogOut, Package } from 'lucide-react';
 import logoImg from '@/imports/noughs-signe.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLocalization } from '@/app/hooks/useLocalization';
@@ -16,7 +16,7 @@ export interface HeaderProps {
 }
 
 export const Header = ({ className }: HeaderProps) => {
-  const { user, cart } = useAppStore();
+  const { user, cart, logoutUser } = useAppStore();
   const navigate = useNavigate();
   const { t, i18n, toggleLanguage } = useLocalization();
 
@@ -64,13 +64,13 @@ export const Header = ({ className }: HeaderProps) => {
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2 border-e border-border/60 pe-3 ms-2 me-3 cursor-pointer text-foreground/60 hover:text-primary transition-colors select-none">
                   <LucideLayoutGrid size={15} />
-                  <span className="text-xs font-semibold whitespace-nowrap max-w-[80px] truncate">
+                  <span className="text-xs font-semibold whitespace-nowrap max-w-[60px] sm:max-w-[80px] truncate">
                     {selectedCategory ? selectedCategory.name : t('header.all_categories', 'All')}
                   </span>
                   <ChevronDown size={13} />
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-[200px] rounded-2xl shadow-lg border-border/40 p-2">
+              <DropdownMenuContent align="start" className="w-48 sm:w-[200px] rounded-2xl shadow-lg border-border/40 p-2">
                 <DropdownMenuItem onClick={() => setSelectedCategory(null)} className="rounded-xl cursor-pointer text-sm font-medium">
                   {t('header.all_categories', 'All Categories')}
                 </DropdownMenuItem>
@@ -133,12 +133,38 @@ export const Header = ({ className }: HeaderProps) => {
           </Link>
 
           {user ? (
-            <Link to="/profile">
-              <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all">
-                <User size={16} className="me-2" />
-                {t('header.profile', 'Profile')}
-              </Button>
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-5 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all cursor-pointer">
+                  <User size={16} className="me-2" />
+                  {t('header.profile', 'Profile')}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 sm:w-[200px] rounded-2xl shadow-lg border-border/40 p-2">
+                <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
+                  <Link to="/profile" className="flex items-center gap-2 w-full">
+                    <User size={15} />
+                    {t('profile.my_profile', 'My Profile')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
+                  <Link to="/wishlist" className="flex items-center gap-2 w-full">
+                    <Heart size={15} />
+                    {t('nav.wishlist', 'Wishlist')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
+                  <Link to="/orders" className="flex items-center gap-2 w-full">
+                    <Package size={15} />
+                    {t('profile.my_orders', 'My Orders')}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { logoutUser(); navigate('/'); }} className="rounded-xl cursor-pointer text-sm font-medium text-destructive focus:text-destructive flex items-center gap-2 mt-1 border-t border-border/50 pt-2">
+                  <LogOut size={15} />
+                  {t('auth.logout', 'Logout')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Link to="/login">
               <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all">

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { productsService } from './products.service';
 import { ProductFilters } from '@/lib/types/api.types';
 
@@ -30,5 +30,15 @@ export const useFeaturedProductsQuery = () => {
   return useQuery({
     queryKey: productKeys.featured(),
     queryFn: () => productsService.getFeaturedProducts(),
+  });
+};
+
+export const useAddReviewMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (review: { rating: number, comment?: string, product_variant_id: string | number, product_id: string | number }) => productsService.addReview(review),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: productKeys.detail(variables.product_id) });
+    }
   });
 };

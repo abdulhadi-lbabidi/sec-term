@@ -22,7 +22,14 @@ export const ordersService = {
     if (payload.shipping) formData.append('shipping', JSON.stringify(payload.shipping));
     if (payload.total) formData.append('total', String(payload.total));
 
-    const response = await apiClient.post<{ data: Order }>('/orders', formData);
+    const response = await apiClient.post<any>('/orders', formData);
+    if (response.isError) {
+      let errorMessage = response.message;
+      if (response.errors) {
+        errorMessage = Object.values(response.errors)[0]?.[0] || response.message;
+      }
+      throw new Error(errorMessage || 'Failed to create order');
+    }
     return response.data?.data || response.data;
   },
 

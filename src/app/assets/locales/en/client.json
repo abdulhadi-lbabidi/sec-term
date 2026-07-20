@@ -201,7 +201,20 @@
   },
   "products": {
     "sectionTitle": "All Products",
-    "viewAllText": "View All"
+    "viewAllText": "View All",
+    "currency": "SAR",
+    "ingredients": "Ingredients",
+    "size": "Size",
+    "packagesTitle": "Packages",
+    "pieces": "Pieces",
+    "buyPackage": "Buy Package",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "inCart": "In Cart",
+    "loading": "Loading...",
+    "shareThought": "Share your thought",
+    "loginToReviewDesc": "Login to review the product",
+    "logIn": "Login"
   },
   "cookies": {
     "title": "We use cookies",
@@ -263,5 +276,38 @@
       "sec4_title": "Intellectual Property",
       "sec4_body": "All content and images on the site are owned by us and may not be used for commercial purposes."
     }
+  },
+  "reviews": {
+    "loversShared": "lovers shared opinions",
+    "loversOpinions": "Lovers Opinions",
+    "beFirst": "Be the first to taste and share the magic!",
+    "noReviews": "No one has shared their experience with this masterpiece yet. Try it now and write your review to inspire other lovers of authentic taste.",
+    "readAll": "Read all lovers messages",
+    "loversLog": "Lovers Admiration Log",
+    "formTitle": "Share your opinion",
+    "ratingLabel": "Rating",
+    "commentLabel": "Comment",
+    "commentPlaceholder": "Write your experience here...",
+    "submit": "Submit Review",
+    "submitting": "Submitting...",
+    "emptyRatingError": "Please select a rating first"
+  },
+  "checkout": {
+    "shipping_details": "Shipping Details",
+    "first_name": "First Name",
+    "first_name_placeholder": "John",
+    "last_name": "Last Name",
+    "last_name_placeholder": "Doe",
+    "email": "Email",
+    "phone": "Phone",
+    "country": "Country",
+    "city": "City",
+    "street": "Street / Address",
+    "street_placeholder": "Main St 123",
+    "floor": "Floor/Apt (Optional)",
+    "floor_placeholder": "Apt 4B",
+    "postal_code": "Postal Code (Optional)",
+    "order_notes": "Order Notes",
+    "order_notes_placeholder": "Special instructions..."
   }
 }

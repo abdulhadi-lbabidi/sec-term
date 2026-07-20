@@ -1,11 +1,9 @@
 import React from 'react';
-import { Filter, X, Search, Check, ChevronsUpDown } from 'lucide-react';
+import { Filter, X, Search } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Slider } from '@/app/components/ui/slider';
 import { Input } from '@/app/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/app/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/app/components/ui/command';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/app/components/ui/accordion';
 import { useCategoriesQuery } from '@/app/api/client/useCategories';
 import { useSizesQuery } from '@/app/api/client/useSizes';
@@ -28,7 +26,6 @@ interface ProductFiltersProps {
 
 export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilterChange, onClearFilters }) => {
   const { t, i18n } = useTranslation();
-  const [openMaterial, setOpenMaterial] = React.useState(false);
   const isRtl = i18n.language === 'ar';
 
   const { data: categories, isLoading: loadingCategories }: any = useCategoriesQuery();

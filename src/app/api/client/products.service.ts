@@ -20,4 +20,9 @@ export const productsService = {
     const { data } = await apiClient.get<Product[]>('/products/featured');
     return data || [];
   },
+
+  addReview: async (reviewData: { rating: number; comment?: string; product_id: number | string; product_variant_id: number | string }) => {
+    const { data } = await apiClient.post<any>(`/reviews`, reviewData);
+    return data;
+  },
 };

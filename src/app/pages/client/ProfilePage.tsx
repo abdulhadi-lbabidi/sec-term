@@ -30,14 +30,6 @@ const passwordSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const addressSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-  phone: z.string().min(8, "Valid phone is required"),
-  city: z.string().min(2, "City is required"),
-  street: z.string().min(5, "Street address is required"),
-  zip: z.string().optional(),
-});
-
 export default function ProfilePage() {
   const { t } = useTranslation();
   const { user, logoutUser } = useAppStore();

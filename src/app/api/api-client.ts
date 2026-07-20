@@ -480,16 +480,25 @@ class ApiCore implements ApiInstance {
   }
 
   private getErrorMessage(error: unknown, options?: ApiOptions): string {
-    const err = error as { name?: string; message?: string };
+    const err = error as { name?: string; message?: string; errors?: Record<string, string[]> };
 
     if (err.name === "AbortError") {
       return this.userFacingMessage("Request timeout", options);
     }
 
-    const detailed =
+    let detailed =
       err.message ||
       (typeof error === "string" ? error : "") ||
       UNEXPECTED_ERROR_MESSAGE;
+
+    if (err.errors && typeof err.errors === "object") {
+      const firstError = Object.values(err.errors)[0];
+      if (Array.isArray(firstError) && firstError.length > 0) {
+        detailed = firstError[0];
+      } else if (typeof firstError === "string") {
+        detailed = firstError as string;
+      }
+    }
 
     return this.userFacingMessage(detailed, options);
   }
@@ -607,7 +616,7 @@ function linkAbortSignal(
 
 export const ApiClient = createApi({
   baseUrl: (import.meta.env.VITE_API_BASE_URL as string) || "",
-  getToken: () => localStorage.getItem("nouh_carting_roken"),
+  getToken: () => localStorage.getItem("nouh_client_token"),
   getCsrfToken: () =>
     document.querySelector('meta[name="csrf-token"]')?.getAttribute("content"),
   getLang: () => i18n.language,

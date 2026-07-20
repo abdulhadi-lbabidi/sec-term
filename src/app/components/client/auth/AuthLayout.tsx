@@ -36,7 +36,7 @@ export const AuthLayout = ({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10 z-0"></div>
           
-          <div className="absolute bottom-12 ltr:left-12 rtl:right-12 ltr:right-12 rtl:left-12 z-10 text-white">
+          <div className="absolute bottom-12 start-12 end-12 z-10 text-white">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4 drop-shadow-md leading-tight">{title}</h2>
             <p className="text-lg text-white/90 font-light drop-shadow leading-relaxed">{subtitle}</p>
           </div>

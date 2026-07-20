@@ -10,13 +10,20 @@ export const useAuth = () => {
     mutationFn: async (credentials: { email: string; password?: string }) => {
       const response = await ApiClient.post<any>('/login', credentials);
       if (response.isError) throw new Error(response.message);
+
+      const data = response.data || response;
+      const role = data?.role || data?.data?.role || (credentials.email.includes('admin') ? 'admin' : 'customer');
+
+      if (role !== 'customer') {
+        throw new Error("لا تملك الصلاحية للدخول كعميل. يرجى استخدام لوحة التحكم.");
+      }
+
       return response;
     },
     onSuccess: (data: any, variables) => {
       const token = data?.token || data?.data?.token;
-      console.log("token", token, data);
 
-      if (token) localStorage.setItem('nouh_carting_roken', token);
+      if (token) localStorage.setItem('nouh_client_token', token);
 
       const role = data?.role || data?.data?.role || (variables.email.includes('admin') ? 'admin' : 'customer');
       loginUser(variables.email, role);

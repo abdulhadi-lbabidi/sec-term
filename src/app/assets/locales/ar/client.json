@@ -59,7 +59,7 @@
     "removedFromWishlist": "تم الحذف من المفضلة",
     "addedToWishlist": "تمت الإضافة للمفضلة",
     "outOfStock": "نفذت الكمية",
-    "currency": "ر.س",
+    "currency": "ل.س",
     "inCart": "في السلة",
     "addToCart": "أضف للسلة"
   },
@@ -201,7 +201,20 @@
   },
   "products": {
     "sectionTitle": "جميع منتجاتنا",
-    "viewAllText": "عرض الكل"
+    "viewAllText": "عرض الكل",
+    "currency": "ل.س",
+    "ingredients": "المكونات",
+    "size": "الحجم",
+    "packagesTitle": "الباقات",
+    "pieces": "للقطعة",
+    "buyPackage": "شراء باقة",
+    "addToCart": "أضف إلى السلة",
+    "outOfStock": "نفذ المخزون",
+    "inCart": "في السلة",
+    "loading": "جاري التحميل",
+    "shareThought": "شاركنا رأيك",
+    "loginToReviewDesc": "سجل دخولك لتقييم المنتج",
+    "logIn": "سجل دخول"
   },
   "cookies": {
     "title": "نحن نستخدم ملفات تعريف الارتباط",
@@ -263,5 +276,38 @@
       "sec4_title": "حقوق الملكية",
       "sec4_body": "جميع المحتويات والصور الموجودة في الموقع مملوكة لنا ولا يُسمح باستخدامها لأغراض تجارية."
     }
+  },
+  "reviews": {
+    "loversShared": "عاشق شاركنا رأيه",
+    "loversOpinions": "آراء العشاق",
+    "beFirst": "كن أول من يتذوق ويشاركنا سحر اللحظة!",
+    "noReviews": "لم يقم أحد بمشاركة تجربته مع هذه التحفة الفنية بعد. جربها الآن واكتب لنا رأيك ليلهم عشاق الطعم الأصيل.",
+    "readAll": "اقرأ جميع رسائل العشاق",
+    "loversLog": "سجل إعجاب العشاق",
+    "formTitle": "أضف تقييمك",
+    "ratingLabel": "التقييم",
+    "commentLabel": "التعليق",
+    "commentPlaceholder": "اكتب تجربتك هنا...",
+    "submit": "إرسال التقييم",
+    "submitting": "جاري الإرسال...",
+    "emptyRatingError": "يرجى اختيار التقييم أولاً"
+  },
+  "checkout": {
+    "shipping_details": "تفاصيل الشحن",
+    "first_name": "الاسم الأول",
+    "first_name_placeholder": "أحمد",
+    "last_name": "العائلة",
+    "last_name_placeholder": "محمد",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الجوال",
+    "country": "الدولة",
+    "city": "المدينة",
+    "street": "الشارع / العنوان",
+    "street_placeholder": "شارع مكة",
+    "floor": "الطابق/الشقة (اختياري)",
+    "floor_placeholder": "الطابق الثاني",
+    "postal_code": "الرمز البريدي (اختياري)",
+    "order_notes": "ملاحظات الطلب",
+    "order_notes_placeholder": "ملاحظات خاصة بالتوصيل..."
   }
 }

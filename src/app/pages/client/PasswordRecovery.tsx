@@ -66,7 +66,7 @@ export const ForgotPassword = () => {
   };
 
   return (
-    <AuthLayout 
+    <AuthLayout
       title={isRTL ? 'استعادة الوصول لحسابك' : 'Recover your account'}
       subtitle={isRTL ? 'سنقوم بمساعدتك في استعادة كلمة المرور لتتمكن من العودة لتسوق ألذ المخبوزات.' : 'We will help you recover your password so you can return to shopping the most delicious baked goods.'}
       image="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&q=80&w=1200"
@@ -135,7 +135,7 @@ export const VerifyOTP = () => {
   };
 
   return (
-    <AuthLayout 
+    <AuthLayout
       title={isRTL ? 'التحقق من الرمز' : 'Verify the Code'}
       subtitle={isRTL ? 'خطوة واحدة تفصلك عن استعادة حسابك والمزيد من الخبز الطازج.' : 'One step away from recovering your account and more fresh bread.'}
       image="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=1200"
@@ -220,7 +220,7 @@ export const ResetPassword = () => {
   };
 
   return (
-    <AuthLayout 
+    <AuthLayout
       title={isRTL ? 'تأمين حسابك' : 'Secure your account'}
       subtitle={isRTL ? 'قم بإنشاء كلمة مرور جديدة وقوية للحفاظ على أمان حسابك.' : 'Create a new and strong password to keep your account safe.'}
       image="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&q=80&w=1200"
