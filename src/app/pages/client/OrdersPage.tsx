@@ -1,5 +1,4 @@
 import { Package, MapPin, CreditCard, Clock } from 'lucide-react';
-import { useAppStore } from '@/app/store/useAppStore';
 import { useOrdersQuery } from '@/app/api/client/useOrders';
 import { Link } from 'react-router-dom';
 import { Button } from '@/app/components/ui/button';
@@ -7,7 +6,6 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
 
 export default function OrdersPage() {
-  const { language } = useAppStore();
   const { t } = useTranslation();
   const { data: orders, isLoading }: any = useOrdersQuery();
 
@@ -107,7 +105,7 @@ export default function OrdersPage() {
                   </h4>
                   <p className="text-sm text-gray-600 font-medium mb-1">{order.shipping_details?.first_name} {order.shipping_details?.last_name}</p>
                   <p className="text-sm text-gray-500 mb-1" dir="ltr">{order.shipping_details?.phone}</p>
-                  <p className="text-sm text-gray-500 leading-relaxed">{order.shipping_details?.city}, {order.shipping_details?.country}<br/>{order.shipping_details?.street}</p>
+                  <p className="text-sm text-gray-500 leading-relaxed">{order.shipping_details?.city}, {order.shipping_details?.country}<br />{order.shipping_details?.street}</p>
                 </div>
                 <div>
                   <h4 className="font-bold text-[#1C1A17] mb-3 flex items-center gap-2 text-sm">

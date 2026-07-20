@@ -4,6 +4,7 @@ import { translations } from '../../../i18n/translations';
 import { Button } from '../../ui/button';
 import { useAddToCartMutation } from '@/app/api/client/useCart';
 import { toast } from 'sonner';
+import { showAddToCartSuccessToast } from '@/app/components/ui/custom-toast';
 import { Loader2 } from 'lucide-react';
 import { Skeleton } from '../../ui/skeleton';
 
@@ -31,7 +32,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) =
     addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: 1 }, {
       onSuccess: () => {
         if (triggerToast) triggerToast(t.itemAdded || 'Added to cart');
-        else toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+        else showAddToCartSuccessToast((key: string) => t[key]);
       },
       onError: (err: any) => {
         toast.error(err?.message || (language === 'ar' ? 'فشل إضافة الباقة للسلة' : 'Failed to add package to cart'));

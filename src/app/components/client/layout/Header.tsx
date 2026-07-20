@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/app/store/useAppStore';
 import { useCategoriesQuery } from '@/app/api/client/useCategories';
+import { useCartQuery } from '@/app/api/client/useCart';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
 import { Button } from '@/app/components/ui/button';
 import ArFlag from '@/imports/AR.svg'
@@ -16,15 +17,17 @@ export interface HeaderProps {
 }
 
 export const Header = ({ className }: HeaderProps) => {
-  const { user, cart, logoutUser } = useAppStore();
+  const { user, logoutUser } = useAppStore();
   const navigate = useNavigate();
   const { t, i18n, toggleLanguage } = useLocalization();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<{ id: string, name: string, slug: string } | null>(null);
-  const { data: categories }: any = useCategoriesQuery();
+  const { data: categories, isLoading: isLoadingCategories }: any = useCategoriesQuery();
 
-  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const { data: cartData } = useCartQuery();
+  const cartItems = Array.isArray(cartData) ? cartData : (cartData?.items || []);
+  const cartCount = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,12 +77,21 @@ export const Header = ({ className }: HeaderProps) => {
                 <DropdownMenuItem onClick={() => setSelectedCategory(null)} className="rounded-xl cursor-pointer text-sm font-medium">
                   {t('header.all_categories', 'All Categories')}
                 </DropdownMenuItem>
-                {categories?.map((cat: any) => (
-                  <DropdownMenuItem key={cat.id} onClick={() => setSelectedCategory(cat)} className="rounded-xl cursor-pointer text-sm font-medium flex items-center gap-3 mt-1">
-                    {cat?.image && <img src={cat?.image} alt={cat.name} className="w-6 h-6 rounded-full shadow-sm object-cover" />}
-                    {cat.name}
-                  </DropdownMenuItem>
-                ))}
+                {isLoadingCategories ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <DropdownMenuItem key={i} disabled className="rounded-xl flex items-center gap-3 mt-1">
+                      <div className="w-6 h-6 rounded-full bg-border/40 animate-pulse shrink-0"></div>
+                      <div className="h-4 w-16 bg-border/40 animate-pulse rounded"></div>
+                    </DropdownMenuItem>
+                  ))
+                ) : (
+                  categories?.map((cat: any) => (
+                    <DropdownMenuItem key={cat.id} onClick={() => setSelectedCategory(cat)} className="rounded-xl cursor-pointer text-sm font-medium flex items-center gap-3 mt-1">
+                      {cat?.image && <img src={cat?.image} alt={cat.name} className="w-6 h-6 rounded-full shadow-sm object-cover" />}
+                      {cat.name}
+                    </DropdownMenuItem>
+                  ))
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -106,12 +118,6 @@ export const Header = ({ className }: HeaderProps) => {
               : <img src={EnFlag} alt="EN" className="w-8 h-6 rounded-[4px] object-cover shadow-sm" />
             }
           </Button>
-
-          <Link to="/wishlist">
-            <Button variant="ghost" size="icon" className="relative text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full w-9 h-9 transition-colors">
-              <Heart size={20} />
-            </Button>
-          </Link>
 
           <Link to="/cart">
             <Button variant="ghost" size="icon" className="relative text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full w-9 h-9 transition-colors">
@@ -144,31 +150,31 @@ export const Header = ({ className }: HeaderProps) => {
                 <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
                   <Link to="/profile" className="flex items-center gap-2 w-full">
                     <User size={15} />
-                    {t('profile.my_profile', 'My Profile')}
+                    {t('nav.my_profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
                   <Link to="/wishlist" className="flex items-center gap-2 w-full">
                     <Heart size={15} />
-                    {t('nav.wishlist', 'Wishlist')}
+                    {t('nav.wishlist')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl cursor-pointer text-sm font-medium">
                   <Link to="/orders" className="flex items-center gap-2 w-full">
                     <Package size={15} />
-                    {t('profile.my_orders', 'My Orders')}
+                    {t('nav.my_orders')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => { logoutUser(); navigate('/'); }} className="rounded-xl cursor-pointer text-sm font-medium text-destructive focus:text-destructive flex items-center gap-2 mt-1 border-t border-border/50 pt-2">
                   <LogOut size={15} />
-                  {t('auth.logout', 'Logout')}
+                  {t('nav.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Link to="/login">
               <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all">
-                {t('header.signup', 'Sign Up')}
+                {t('login_title', 'تسجيل الدخول')}
               </Button>
             </Link>
           )}

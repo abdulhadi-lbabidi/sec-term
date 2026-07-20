@@ -18,6 +18,14 @@ export const useProductsQuery = (filters: ProductFilters = {}) => {
   });
 };
 
+export const useReviewsQuery = (params: any) => {
+  return useQuery({
+    queryKey: ['reviews', params],
+    queryFn: () => productsService.getReviews(params),
+    enabled: !!params['filter[product_variant_id]'],
+  });
+};
+
 export const useProductDetailsQuery = (id: number | string) => {
   return useQuery({
     queryKey: productKeys.detail(id),
@@ -39,6 +47,7 @@ export const useAddReviewMutation = () => {
     mutationFn: (review: { rating: number, comment?: string, product_variant_id: string | number, product_id: string | number }) => productsService.addReview(review),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: productKeys.detail(variables.product_id) });
+      queryClient.invalidateQueries({ queryKey: ['reviews'] });
     }
   });
 };

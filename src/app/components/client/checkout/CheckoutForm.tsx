@@ -78,7 +78,7 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ cart, onSuccess }) =
   const isProcessing = isCreatingCheckout || isCreatingOrder;
   const items = Array.isArray(cart) ? cart : (cart?.items || []);
   const total = items.reduce((sum: number, item: any) => sum + ((item.variant?.final_price || item.variant?.price || 0) * item.quantity), 0);
-  const deliveryFee = 15; // Standard delivery fee
+  const deliveryFee = 0; // Standard delivery fee
 
   const onSubmit = async (data: CheckoutFormValues) => {
     setOrderError(null);
@@ -120,19 +120,25 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ cart, onSuccess }) =
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      <div className="lg:w-2/3 bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-[#EAE5DF]">
-        {orderError && (
-          <div className="mb-8 p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl font-medium flex items-center gap-3">
-            <span className="text-xl">⚠️</span> {orderError}
-          </div>
-        )}
+      <div className="lg:w-2/3 bg-[#111111] p-6 md:p-10 rounded-3xl shadow-lg border border-[#C5A880]/30 text-white relative overflow-hidden">
+        {/* Decorative Background */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C5A880] opacity-5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#C5A880] opacity-5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
 
-        <Form {...form}>
-          <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); }}>
-            <ShippingDetails form={form} />
-            <PaymentMethodSelector form={form} />
-          </form>
-        </Form>
+        <div className="relative z-10">
+          {orderError && (
+            <div className="mb-8 p-4 bg-red-950/50 text-red-400 border border-red-900/50 rounded-xl font-medium flex items-center gap-3">
+              <span className="text-xl">⚠️</span> {orderError}
+            </div>
+          )}
+
+          <Form {...form}>
+            <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); }}>
+              <ShippingDetails form={form} />
+              <PaymentMethodSelector form={form} />
+            </form>
+          </Form>
+        </div>
       </div>
 
       <div className="lg:w-1/3">

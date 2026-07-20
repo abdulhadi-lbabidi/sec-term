@@ -14,14 +14,14 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({ fo
 
   return (
     <div className="space-y-6 mt-8">
-      <h3 className="text-xl font-bold text-[#1C1A17] mb-4 pb-2 border-b border-gray-100">
+      <h3 className="text-xl font-black text-[#C5A880] mb-4 pb-2 border-b border-gray-800">
         {t('paymentMethod') || 'Payment Method'}
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <label
-          className={`relative border-2 rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer transition-all duration-300 hover:shadow-md
-            ${currentMethod === 'cod' ? 'border-[#C5A880] bg-[#FCFAF7] shadow-sm' : 'border-gray-100 hover:border-gray-200'}`}
+          className={`relative border-2 rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer transition-all duration-300 hover:shadow-lg
+            ${currentMethod === 'cod' ? 'border-[#C5A880] bg-[#1a1a1a] shadow-[0_0_15px_rgba(197,168,128,0.15)]' : 'border-[#333] bg-[#111111] hover:border-[#444]'}`}
         >
           <input
             type="radio"
@@ -29,10 +29,10 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({ fo
             {...form.register('method')}
             className="absolute top-4 end-4 accent-[#C5A880] w-5 h-5"
           />
-          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors duration-300 ${currentMethod === 'cod' ? 'bg-[#C5A880] text-white' : 'bg-gray-100 text-gray-500'}`}>
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-colors duration-300 ${currentMethod === 'cod' ? 'bg-[#C5A880] text-[#111111]' : 'bg-[#222] text-gray-500'}`}>
             <Banknote size={24} />
           </div>
-          <span className={`font-bold text-lg ${currentMethod === 'cod' ? 'text-[#C5A880]' : 'text-gray-700'}`}>
+          <span className={`font-bold text-lg ${currentMethod === 'cod' ? 'text-[#C5A880]' : 'text-gray-400'}`}>
             {t('cashOnDelivery')}
           </span>
           <span className="text-sm text-gray-400 text-center">
@@ -42,9 +42,9 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({ fo
 
         {/* Placeholder for future payment methods like Credit Card */}
         <label
-          className="relative border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center gap-3 cursor-not-allowed opacity-60"
+          className="relative border-2 border-dashed border-[#333] bg-[#111111] rounded-2xl p-6 flex flex-col items-center gap-3 cursor-not-allowed opacity-60"
         >
-          <div className="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mb-2">
+          <div className="w-12 h-12 rounded-full bg-[#222] text-gray-500 flex items-center justify-center mb-2">
             <CreditCard size={24} />
           </div>
           <span className="font-bold text-lg text-gray-500">

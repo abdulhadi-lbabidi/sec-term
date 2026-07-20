@@ -15,6 +15,7 @@ export interface Review {
   rating: number;
   comment?: string;
   created_at: string;
+  variantName?: string;
 }
 
 interface ReviewListProps {
@@ -32,7 +33,14 @@ const ReviewItem = ({ review }: { review: Review }) => (
           {review.user.name.charAt(0).toUpperCase()}
         </div>
         <div>
-          <h4 className="font-bold text-[#1C1A17] text-sm line-clamp-1">{review.user.name}</h4>
+          <div className="flex items-center gap-2">
+            <h4 className="font-bold text-[#1C1A17] text-sm line-clamp-1">{review.user.name}</h4>
+            {review.variantName && (
+              <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full whitespace-nowrap">
+                {review.variantName}
+              </span>
+            )}
+          </div>
           <span className="text-xs text-gray-400">
             {format(new Date(review.created_at), 'MMM dd, yyyy')}
           </span>

@@ -8,17 +8,19 @@ interface ProductSectionProps {
   products: any[];
   isLoading?: boolean;
   title?: string;
+  subtitle?: string;
 }
 
-export const ProductSection = ({ products, isLoading, title }: ProductSectionProps) => {
+export const ProductSection = ({ products, isLoading, title, subtitle }: ProductSectionProps) => {
   const { t } = useTranslation();
-
-
 
   return (
     <section className="container mx-auto px-4 md:px-8 py-12">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <h2 className="text-2xl font-bold text-[var(--color-primary)] mb-6">{title || t('sectionTitle')}</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-[var(--color-primary)] mb-2">{title || t('sectionTitle')}</h2>
+          {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
+        </div>
         <Link to="/shop" className="text-sm font-medium text-gray-500 hover:text-[var(--color-primary)] transition-colors duration-300">
           {t('viewAllText')}
         </Link>

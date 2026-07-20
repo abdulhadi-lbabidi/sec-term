@@ -2,17 +2,21 @@ import { useState } from 'react';
 import { RatingStars } from './RatingStars';
 import { Button } from '../../ui/button';
 import { Textarea } from '../../ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 interface ReviewFormProps {
-  onSubmit: (rating: number, comment: string) => void;
+  onSubmit: (rating: number, comment: string, variantId?: number) => void;
   isSubmitting?: boolean;
+  variants?: { id: number; name: string }[];
+  variantName?: string;
 }
 
-export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) {
+export function ReviewForm({ onSubmit, isSubmitting = false, variants = [], variantName }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+  const [selectedVariantId, setSelectedVariantId] = useState<number | ''>('');
 
   const { t } = useTranslation();
 
@@ -22,15 +26,25 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
       toast.error(t('reviews.emptyRatingError'));
       return;
     }
-    onSubmit(rating, comment);
+    if (variants.length > 0 && selectedVariantId === '') {
+      toast.error(t('reviews.emptyVariantError', 'Please select a variant to review'));
+      return;
+    }
+    onSubmit(rating, comment, selectedVariantId !== '' ? Number(selectedVariantId) : undefined);
     // Reset form after submission
     setRating(0);
     setComment('');
+    setSelectedVariantId('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-[#FCFAF7] rounded-3xl p-6 md:p-8 border border-[#EAE5DF]">
-      <h3 className="text-2xl font-black text-[#1C1A17] mb-6">{t('reviews.formTitle')}</h3>
+      <h3 className="text-2xl font-black text-[#1C1A17] mb-2">{t('reviews.formTitle')}</h3>
+      {variantName && (
+        <div className="mb-6 inline-block bg-[#111111]/5 px-3 py-1.5 rounded-lg text-sm text-[#111111]/70 font-semibold border border-[#111111]/10">
+          {variantName}
+        </div>
+      )}
 
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -43,6 +57,27 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
           size={28}
         />
       </div>
+
+      {variants && variants.length > 0 && (
+        <div className="mb-6">
+          <label htmlFor="variant" className="block text-sm font-medium text-gray-700 mb-2">
+            {t('reviews.variantLabel', 'Product Variant')} <span className="text-red-500">*</span>
+          </label>
+          <Select
+            value={selectedVariantId ? String(selectedVariantId) : undefined}
+            onValueChange={(val) => setSelectedVariantId(Number(val))}
+          >
+            <SelectTrigger id="variant" className="w-full h-12 px-4 rounded-2xl bg-white border border-gray-200 focus-visible:ring-1 focus-visible:ring-[#C5A880] focus-visible:outline-none transition-all">
+              <SelectValue placeholder={t('reviews.selectVariantPlaceholder', 'Select a variant to review')} />
+            </SelectTrigger>
+            <SelectContent>
+              {variants.map(v => (
+                <SelectItem key={v.id} value={String(v.id)}>{v.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       <div className="mb-6">
         <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">

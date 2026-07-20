@@ -23,25 +23,33 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   const finalTotal = total + deliveryFee;
 
   return (
-    <div className="bg-[#1C1A17] text-white p-8 rounded-3xl sticky top-24 shadow-2xl">
-      <h3 className="text-xl font-bold mb-6 text-[#C5A880]">{t('cart.summary')}</h3>
+    <div className="bg-gradient-to-br from-[#111111] to-[#2a2a2a] border border-[#C5A880]/30 text-white p-8 rounded-3xl sticky top-24 shadow-2xl relative overflow-hidden">
+      {/* Decorative blurs */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#C5A880] opacity-10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#C5A880] opacity-5 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none"></div>
+      
+      <div className="relative z-10">
+        <h3 className="text-xl font-bold mb-6 text-[#C5A880]">{t('cart.summary')}</h3>
 
-      <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pe-2 custom-scrollbar">
-        {items.map((item) => {
-          const productName = item.product?.name || '';
-          const variantLabel = [item.variant?.size?.size, item.variant?.material?.material].filter(Boolean).join(' - ');
-          const price = item.variant?.final_price || item.variant?.price || 0;
+        <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pe-2 custom-scrollbar">
+          {items.map((item) => {
+            const productName = item.product?.name || '';
+            const variantLabel = [item.variant?.size?.size, item.variant?.material?.material].filter(Boolean).join(' - ');
+            const price = item.variant?.final_price || item.variant?.price || 0;
 
-          return (
-            <div key={item.id} className="flex gap-4 items-start text-sm border-b border-gray-800 pb-4">
-              <div className="flex-1">
-                <div className="font-medium mb-1 text-white"><Package2 />{productName}</div>
-                <div className="text-gray-400 text-xs flex items-center gap-2">
-                  {variantLabel && <span>{variantLabel}</span>}
-                  {variantLabel && <span>|</span>}
-                  <span className="text-[#C5A880] font-medium">x{item.quantity}</span>
+            return (
+              <div key={item.id} className="flex gap-4 items-start text-sm border-b border-gray-800 pb-4">
+                <div className="flex-1">
+                  <div className="font-medium mb-1 text-white flex items-center gap-2">
+                    <Package2 size={16} className="text-[#C5A880] shrink-0" />
+                    <span>{productName}</span>
+                  </div>
+                  <div className="text-gray-400 text-xs flex items-center gap-2">
+                    {variantLabel && <span>{variantLabel}</span>}
+                    {variantLabel && <span>|</span>}
+                    <span className="text-[#C5A880] font-medium">x{item.quantity}</span>
+                  </div>
                 </div>
-              </div>
               <div className="font-bold whitespace-nowrap text-[#C5A880]">
                 {(price * item.quantity).toFixed(2)} {t('products.currency', 'SAR')}
               </div>
@@ -73,6 +81,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
         {isProcessing ? <Loader2 className="w-6 h-6 animate-spin me-2" /> : null}
         {isProcessing ? t('processingOrder') : t('placeOrder')}
       </Button>
+      </div>
     </div>
   );
 };

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/app/store/useAppStore';
-import { useProductDetailsQuery, useAddReviewMutation } from '@/app/api/client/useProducts';
+import { useProductDetailsQuery, useAddReviewMutation, useReviewsQuery } from '@/app/api/client/useProducts';
 import { toast } from 'sonner';
+import { showAddToCartSuccessToast } from '@/app/components/ui/custom-toast';
 import { useAddToCartMutation } from '@/app/api/client/useCart';
 
 import { Package } from '@/types/Client/product';
@@ -13,7 +14,7 @@ import { MaterialSelector, MaterialSelectorSkeleton } from '@/app/components/cli
 import { SizeSelector, SizeSelectorSkeleton } from '@/app/components/client/product/SizeSelector';
 import { PackageGrid, PackageGridSkeleton } from '@/app/components/client/package/PackageGrid';
 import { ProductActions, ProductActionsSkeleton } from '@/app/components/client/product/ProductActions';
-import { ReviewList, Review } from '@/app/components/client/review/ReviewList';
+import { ReviewList } from '@/app/components/client/review/ReviewList';
 import { ReviewForm } from '@/app/components/client/review/ReviewForm';
 import { useTranslation } from 'react-i18next';
 
@@ -23,11 +24,39 @@ export default function ProductPage() {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
   const [qty, setQty] = useState(1);
-  const [reviews, setReviews] = useState<Review[]>([]);
   const { mutate: addToCartApi, isPending: isAdding } = useAddToCartMutation();
   const { mutate: addReviewApi, isPending: isAddingReview } = useAddReviewMutation();
 
   const { data: product, isLoading }: any = useProductDetailsQuery(id!);
+
+  const variants = product?.available_options?.flatMap((m: any) =>
+    m.available_sizes.map((s: any) => ({
+      id: s.variant_id,
+      name: `${m.material_name} - ${s.size_name}`
+    }))
+  ) || [];
+
+  const variantIds = variants.map((v: any) => v.id).join(',');
+
+  const { data: reviewsData, isLoading: isLoadingReviews } = useReviewsQuery({
+    paginate: 1,
+    per_page: 5,
+    page: 1,
+    'filter[product_variant_id]': variantIds,
+  });
+
+  const fetchedReviews = reviewsData?.data || [];
+  const reviews = fetchedReviews.map((r: any) => {
+    const variant = variants.find((v: any) => v.id == r.product_variant_id);
+    return {
+      id: r.id,
+      user: { name: r.user?.name || r.name || 'Anonymous' },
+      rating: r.rating,
+      comment: r.comment,
+      created_at: r.created_at || new Date().toISOString(),
+      variantName: variant?.name || r.product_variant?.name,
+    };
+  });
 
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
   const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
@@ -36,13 +65,6 @@ export default function ProductPage() {
   useEffect(() => {
     if (product) {
       setActiveImage(product.image);
-      if (product.available_options && product.available_options.length > 0) {
-        const firstMaterial = product.available_options[0];
-        setSelectedMaterialId(firstMaterial.material_id);
-        if (firstMaterial.available_sizes && firstMaterial.available_sizes.length > 0) {
-          setSelectedSizeId(firstMaterial.available_sizes[0].size_id);
-        }
-      }
     }
   }, [product]);
 
@@ -65,8 +87,11 @@ export default function ProductPage() {
   const selectedMaterial = product?.available_options?.find((m: any) => m.material_id === selectedMaterialId);
   const selectedSize = selectedMaterial?.available_sizes?.find((s: any) => s.size_id === selectedSizeId);
 
-  const currentPrice = selectedSize ? selectedSize.final_price : (product?.final_price || 0);
-  const currentStock = selectedSize ? selectedSize.stock_quantity : (product?.stock || 0);
+  const defaultPrice = product?.available_options?.[0]?.available_sizes?.[0]?.final_price ?? (product?.final_price || 0);
+  const defaultStock = product?.available_options?.[0]?.available_sizes?.[0]?.stock_quantity ?? (product?.stock || 0);
+
+  const currentPrice = selectedSize ? selectedSize.final_price : defaultPrice;
+  const currentStock = selectedSize ? selectedSize.stock_quantity : defaultStock;
   const availablePackages = selectedSize?.packages || [];
 
   const currentProductId = product ? (selectedSize ? `${product.id}-${selectedSize.variant_id}` : product.id) : undefined;
@@ -97,7 +122,7 @@ export default function ProductPage() {
 
     addToCartApi({ product_variant_id: variantId, quantity: qty }, {
       onSuccess: () => {
-        toast.success(t('success'));
+        showAddToCartSuccessToast(t);
       },
       onError: () => {
         toast.error(t('error'));
@@ -120,7 +145,7 @@ export default function ProductPage() {
 
     addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: pkg.quantity || 1 }, {
       onSuccess: () => {
-        toast.success(t('itemAdded'));
+        showAddToCartSuccessToast(t);
       },
       onError: () => {
         toast.error(t('error'));
@@ -140,35 +165,26 @@ export default function ProductPage() {
     }
   };
 
-  const handleAddReview = (rating: number, comment: string) => {
+  const handleAddReview = (rating: number, comment: string, variantId?: number) => {
     if (!user) {
       toast.error(t('loginToAddReview'));
       return;
     }
 
-    let variantId = selectedSize?.variant_id || product?.variants?.[0]?.id;
-    if (!variantId && product?.available_options?.length > 0) {
-      variantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
+    let finalVariantId = variantId || selectedSize?.variant_id || product?.variants?.[0]?.id;
+    if (!finalVariantId && product?.available_options?.length > 0) {
+      finalVariantId = product.available_options[0]?.available_sizes?.[0]?.variant_id;
     }
 
-    if (!variantId) {
+    if (!finalVariantId) {
       toast.error(t('productNotAvailableForReview'));
       return;
     }
 
     if (!id) return;
 
-    addReviewApi({ rating, comment, product_variant_id: variantId, product_id: id }, {
-      onSuccess: (newReviewData) => {
-        const newReview: Review = {
-          id: newReviewData?.id || Date.now(),
-          user: { name: user.name },
-          rating,
-          comment,
-          created_at: new Date().toISOString(),
-        };
-
-        setReviews(prev => [newReview, ...prev]);
+    addReviewApi({ rating, comment, product_variant_id: finalVariantId, product_id: id }, {
+      onSuccess: () => {
         toast.success(t('reviewSuccess'));
       },
       onError: (err: any) => {
@@ -178,7 +194,15 @@ export default function ProductPage() {
   };
 
   const totalReviews = reviews.length;
-  const averageRating = totalReviews > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / totalReviews : 0;
+  const averageRating = totalReviews > 0 ? reviews.reduce((acc: any, r: any) => acc + r.rating, 0) / totalReviews : 0;
+
+  const hasUserSelectedVariant = selectedMaterialId !== null;
+
+  const currentVariantImages = hasUserSelectedVariant
+    ? (selectedSize?.images && selectedSize.images.length > 0
+      ? selectedSize.images
+      : (product?.image ? [product.image] : []))
+    : (product?.all_images || []);
 
   return (
     <div className="container mx-auto px-4 max-w-7xl py-12">
@@ -193,7 +217,7 @@ export default function ProductPage() {
             activeImage={activeImage}
             name={product.name}
             isFav={isFav}
-            allImages={product.all_images}
+            allImages={currentVariantImages}
             onToggleWishlist={handleToggleWishlist}
             onImageSelect={setActiveImage}
           />
@@ -206,7 +230,7 @@ export default function ProductPage() {
               name={product.name}
               categoryName={product.category?.name}
               currentPrice={currentPrice}
-              originalPrice={selectedSize?.price || product.price}
+              originalPrice={selectedSize?.price || (product?.available_options?.[0]?.available_sizes?.[0]?.price ?? product.price)}
               currency={t('products.currency') || 'SAR'}
               description={product.body}
             />
@@ -278,16 +302,22 @@ export default function ProductPage() {
             <ReviewList
               reviews={reviews}
               averageRating={averageRating}
-              totalReviews={reviews.length}
-              isLoading={isLoading}
+              totalReviews={reviewsData?.meta?.total || reviews.length}
+              isLoading={isLoading || isLoadingReviews}
             />
           </div>
 
           {/* Review Form */}
           <div className="lg:w-1/3">
             <div className="sticky top-24">
-              {user ? <ReviewForm onSubmit={handleAddReview} isSubmitting={isAddingReview} />
-                : <div className="bg-[#FCFAF7] rounded-3xl p-8 border border-[#EAE5DF] text-center">
+              {user ? (
+                <ReviewForm
+                  onSubmit={handleAddReview}
+                  isSubmitting={isAddingReview}
+                  variants={variants}
+                />
+              ) : (
+                <div className="bg-[#FCFAF7] rounded-3xl p-8 border border-[#EAE5DF] text-center">
                   <h3 className="text-xl font-bold text-[#1C1A17] mb-4">
                     {t('products.shareThought')}
                   </h3>
@@ -298,7 +328,7 @@ export default function ProductPage() {
                     {t('products.logIn')}
                   </Link>
                 </div>
-              }
+              )}
             </div>
           </div>
         </div>

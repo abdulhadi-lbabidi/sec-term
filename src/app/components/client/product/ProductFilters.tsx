@@ -5,6 +5,7 @@ import { Slider } from '@/app/components/ui/slider';
 import { Input } from '@/app/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/app/components/ui/accordion';
+import { Skeleton } from '@/app/components/ui/skeleton';
 import { useCategoriesQuery } from '@/app/api/client/useCategories';
 import { useSizesQuery } from '@/app/api/client/useSizes';
 import { useMaterialsQuery } from '@/app/api/client/useMaterials';
@@ -118,7 +119,11 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
                 {t('filters.all', 'All')}
               </Button>
               {loadingCategories ? (
-                <div className="text-muted-foreground text-sm flex items-center h-8 px-2">{t('common.loading', 'Loading...')}</div>
+                <>
+                  <Skeleton className="h-8 w-16 rounded-xl" />
+                  <Skeleton className="h-8 w-24 rounded-xl" />
+                  <Skeleton className="h-8 w-20 rounded-xl" />
+                </>
               ) : (
                 categories?.map((cat: any) => (
                   <Button
@@ -152,7 +157,11 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
                 {t('filters.all', 'All')}
               </Button>
               {loadingSizes ? (
-                <div className="text-muted-foreground text-sm flex items-center h-8 px-2">{t('common.loading', 'Loading...')}</div>
+                <>
+                  <Skeleton className="h-8 w-12 rounded-xl" />
+                  <Skeleton className="h-8 w-16 rounded-xl" />
+                  <Skeleton className="h-8 w-14 rounded-xl" />
+                </>
               ) : (
                 sizes?.map((size: any) => (
                   <Button

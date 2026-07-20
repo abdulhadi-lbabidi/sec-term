@@ -25,4 +25,12 @@ export const productsService = {
     const { data } = await apiClient.post<any>(`/reviews`, reviewData);
     return data;
   },
+
+  getReviews: async (params: any) => {
+    const response = await apiClient.get<any>('/reviews', { params });
+    return {
+      data: response.data || [],
+      meta: response.meta
+    };
+  }
 };

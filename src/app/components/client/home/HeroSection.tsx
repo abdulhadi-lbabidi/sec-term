@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils';
 export interface HeroSectionProps {
   className?: string;
   topCategories?: Category[];
+  topProducts?: any[];
 }
 
-export const HeroSection = ({ className, topCategories }: HeroSectionProps) => {
+export const HeroSection = ({ className, topCategories, topProducts }: HeroSectionProps) => {
   const { language } = useAppStore();
   const { t } = useTranslation();
 
@@ -57,8 +58,8 @@ export const HeroSection = ({ className, topCategories }: HeroSectionProps) => {
           <div className="relative z-10 text-white flex items-center justify-between">
             <div>
               <Croissant className="w-8 h-8 mb-3 text-primary" />
-              <h3 className="text-2xl font-bold">{cat1?.name || t('hotPastries')}</h3>
-              <p className="text-sm text-white/80 font-light">{cat1?.description || t('freshFromOven')}</p>
+              <h3 className="text-2xl font-bold">{(language === 'ar' ? ((cat1 as any)?.nameAr || cat1?.name) : ((cat1 as any)?.nameEn || cat1?.name)) || t('hotPastries')}</h3>
+              <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat1 as any)?.descAr || cat1?.description) : ((cat1 as any)?.descEn || cat1?.description)) || t('freshFromOven')}</p>
             </div>
             <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
               {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
@@ -77,8 +78,8 @@ export const HeroSection = ({ className, topCategories }: HeroSectionProps) => {
           <div className="relative z-10 text-white flex items-center justify-between">
             <div>
               <Cake className="w-8 h-8 mb-3 text-primary" />
-              <h3 className="text-2xl font-bold">{cat2?.name || t('cakesSweets')}</h3>
-              <p className="text-sm text-white/80 font-light">{cat2?.description || t('happyMoments')}</p>
+              <h3 className="text-2xl font-bold">{(language === 'ar' ? ((cat2 as any)?.nameAr || cat2?.name) : ((cat2 as any)?.nameEn || cat2?.name)) || t('cakesSweets')}</h3>
+              <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat2 as any)?.descAr || cat2?.description) : ((cat2 as any)?.descEn || cat2?.description)) || t('happyMoments')}</p>
             </div>
             <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
               {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
@@ -104,9 +105,15 @@ export const HeroSection = ({ className, topCategories }: HeroSectionProps) => {
             </div>
 
             <div className="flex -space-x-4 rtl:space-x-reverse relative z-20">
-              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=200" alt="Coffee" />
-              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1495147466023-2ce6c9b4b32b?auto=format&fit=crop&q=80&w=200" alt="Latte" />
-              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1600056781444-55f3b64235e3?auto=format&fit=crop&q=80&w=200" alt="Croissant" />
+              <Link to={topProducts?.[0]?.id ? `/product/${topProducts[0].id}` : '/shop'} className="hover:-translate-y-2 transition-transform cursor-pointer">
+                <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover" src={topProducts?.[0]?.image || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=200"} alt={topProducts?.[0]?.name || "Product 1"} />
+              </Link>
+              <Link to={topProducts?.[1]?.id ? `/product/${topProducts[1].id}` : '/shop'} className="hover:-translate-y-2 transition-transform cursor-pointer">
+                <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover" src={topProducts?.[1]?.image || "https://images.unsplash.com/photo-1495147466023-2ce6c9b4b32b?auto=format&fit=crop&q=80&w=200"} alt={topProducts?.[1]?.name || "Product 2"} />
+              </Link>
+              <Link to={topProducts?.[2]?.id ? `/product/${topProducts[2].id}` : '/shop'} className="hover:-translate-y-2 transition-transform cursor-pointer">
+                <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover" src={topProducts?.[2]?.image || "https://images.unsplash.com/photo-1600056781444-55f3b64235e3?auto=format&fit=crop&q=80&w=200"} alt={topProducts?.[2]?.name || "Product 3"} />
+              </Link>
             </div>
           </div>
         </div>

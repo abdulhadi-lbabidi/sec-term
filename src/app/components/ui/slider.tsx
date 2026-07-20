@@ -4,6 +4,7 @@ import * as React from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
 
 import { cn } from "./utils";
+import i18n from "@/app/i18n/config";
 
 function Slider({
   className,
@@ -34,6 +35,7 @@ function Slider({
         "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
         className,
       )}
+      dir={i18n.language == "ar" ? "rtl" : "ltr"}
       {...props}
     >
       <SliderPrimitive.Track

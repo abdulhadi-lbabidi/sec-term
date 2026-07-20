@@ -17,13 +17,13 @@ export const ProductSkeleton: React.FC<ProductSkeletonProps> = ({ layout = 'grid
           <Skeleton className="h-6 w-2/3" />
           <Skeleton className="h-8 w-20 rounded-lg" />
         </div>
-        
+
         <div className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
-        
-        <div className={`flex items-center justify-between pt-4 border-t border-gray-100 mt-auto ${layout === 'list' ? 'md:w-1/2' : ''}`}>
+
+        <div className={`flex items-center justify-between pt-4 border-t border-gray-100 mt-auto justify-end ${layout === 'list' ? 'md:w-1/2' : ''}`}>
           <Skeleton className="h-10 w-full rounded-full" />
         </div>
       </div>
