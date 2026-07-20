@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { Trash2, Loader2, Users as UsersIcon, Plus, Pencil } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import { Button } from '../../../components/ui/button';
 import {
   Table,
@@ -33,6 +34,11 @@ export const Users = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_user');
+  const canEdit = hasPermission('update_user');
+  const canDelete = hasPermission('delete_user');
+
   const { data, isLoading, isError, error } = useUsersQuery(page, perPage);
   const deleteMutation = useDeleteUserMutation();
   const createMutation = useCreateUserMutation();
@@ -43,21 +49,25 @@ export const Users = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button
-        onClick={() => {
-          setSelectedUser(null);
-          setIsAddModalOpen(true);
-        }}
-        className="flex items-center gap-2"
-        disabled={createMutation.isPending || updateMutation.isPending}
-      >
-        <Plus className="h-4 w-4" />
-        {t('admin.add_user')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button
+          onClick={() => {
+            setSelectedUser(null);
+            setIsAddModalOpen(true);
+          }}
+          className="flex items-center gap-2"
+          disabled={createMutation.isPending || updateMutation.isPending}
+        >
+          <Plus className="h-4 w-4" />
+          {t('admin.add_user')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [setHeaderAction, createMutation.isPending, updateMutation.isPending, t]);
+  }, [setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate]);
 
   const handleAddOrUpdateUser = (payload: any) => {
     if (selectedUser) {
@@ -163,27 +173,31 @@ export const Users = () => {
                       </TableCell>
                       <TableCell className={isRtl ? 'text-left' : 'text-right'}>
                         <div className="flex items-center gap-1 justify-end">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsAddModalOpen(true);
-                            }}
-                            className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteUser(user.id)}
-                            className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {canEdit && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setIsAddModalOpen(true);
+                              }}
+                              className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canDelete && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteUser(user.id)}
+                              className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -224,29 +238,33 @@ export const Users = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-end gap-2 border-t pt-2 mt-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsAddModalOpen(true);
-                      }}
-                      className="h-8 gap-1 text-black/75 hover:bg-black/5 hover:text-black cursor-pointer text-xs"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                      {t('admin.edit_user')}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteUser(user.id)}
-                      className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {isRtl ? 'حذف' : 'Delete'}
-                    </Button>
+                    {canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsAddModalOpen(true);
+                        }}
+                        className="h-8 gap-1 text-black/75 hover:bg-black/5 hover:text-black cursor-pointer text-xs"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        {t('admin.edit_user')}
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {t('admin.delete')}
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

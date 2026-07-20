@@ -7,9 +7,9 @@ export const cartService = {
     return data.data;
   },
 
-  addToCart: async (payload: { product_variant_id: number; quantity: number }) => {
+  addToCart: async (payload: { product_variant_id?: number; product_variant_package_id?: number; quantity: number }) => {
     const { data } = await apiClient.post<{ data: Cart }>('/cart', payload);
-    return data.data;
+    return data;
   },
 
   updateCartItem: async (id: number | string, payload: { quantity: number }) => {

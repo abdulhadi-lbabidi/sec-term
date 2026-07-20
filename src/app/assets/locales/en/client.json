@@ -37,6 +37,13 @@
   },
   "shop": {
     "title": "Our Bakery",
+    "products": "Products",
+    "filters": "Filters",
+    "hide_filters": "Hide Filters",
+    "show_filters": "Show Filters",
+    "no_products_found": "No products found",
+    "no_products_desc": "Maybe it's out of the oven, or the selected filters don't match any product.",
+    "clear_all_filters": "Clear All Filters",
     "filter_category": "Category",
     "filter_price": "Price",
     "filter_size": "Size",
@@ -47,18 +54,34 @@
       "size": "Size"
     }
   },
+  "productCard": {
+    "itemAdded": "Added to cart",
+    "removedFromWishlist": "Removed from wishlist",
+    "addedToWishlist": "Added to wishlist",
+    "outOfStock": "Out of Stock",
+    "currency": "SAR",
+    "inCart": "In Cart",
+    "addToCart": "Add to cart"
+  },
   "footer": {
     "copyright": "© 2024 Bakery. All rights reserved.",
     "brand": "Bakery",
     "address": "4517 Washington Ave. Manchester, Kentucky 39495",
+    "description": "Baked with love, for your happy moments. A taste that combines authenticity and high quality.",
     "about_title": "About",
-    "about_us": "About Us",
+    "our_story": "Our Story",
     "careers": "Careers",
     "contact_us": "Contact Us",
-    "categories": "Categories",
+    "popular_categories": "Categories",
+    "cat_fresh": "Fresh Bakery",
+    "cat_cakes": "Cakes & Tarts",
+    "cat_sandwiches": "Sandwiches & Light Meals",
+    "cat_cookies": "Cookies & Biscuits",
     "company_title": "Company",
     "my_account": "My Account",
+    "legal_title": "Legal",
     "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
     "faq": "FAQ",
     "support_title": "Support",
     "contact": "Contact",
@@ -83,7 +106,9 @@
     "all_categories": "All Categories",
     "search": "Search...",
     "profile": "Profile",
-    "signup": "Sign Up"
+    "signup": "Sign Up",
+    "about": "About Us",
+    "contact": "Contact"
   },
   "cart": {
     "title": "Shopping Cart",
@@ -126,7 +151,10 @@
     "login_link": "Login",
     "login_success": "Logged in successfully!",
     "register_success": "Account created successfully!",
-    "confirm_password": "Confirm Password"
+    "confirm_password": "Confirm Password",
+    "forgot_password": "Forgot Password?",
+    "login_subtitle": "Sign in to continue",
+    "register_subtitle": "Fill in your details to create an account"
   },
   "recovery": {
     "forgot_title": "Forgot Password?",
@@ -174,5 +202,66 @@
   "products": {
     "sectionTitle": "All Products",
     "viewAllText": "View All"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "description": "This website uses cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking \"Accept All\", you consent to our use of cookies.",
+    "accept": "Accept All",
+    "decline": "Decline",
+    "close": "Close"
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear",
+    "search": "Search",
+    "search_placeholder": "Search products...",
+    "categories": "Categories",
+    "select_category": "Select category...",
+    "search_category": "Search category...",
+    "no_category": "No category found.",
+    "all": "All",
+    "sizes": "Sizes",
+    "materials": "Materials",
+    "price": "Price"
+  },
+  "faq": {
+    "title": "How can we help you?",
+    "subtitle": "Here are answers to the most frequently asked questions",
+    "questions": {
+      "q1_title": "How can I modify or cancel my order?",
+      "q1_ans": "You can modify or cancel your order within 15 mins of confirmation via the Orders page.",
+      "q2_title": "When will my order arrive?",
+      "q2_ans": "We bake fresh! Delivery usually takes 30 to 60 minutes.",
+      "q3_title": "What payment methods are accepted?",
+      "q3_ans": "We accept Credit Cards, Mada, Apple Pay, and Cash on Delivery."
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "Your data security is our top priority",
+    "sections": {
+      "sec1_title": "Information We Collect",
+      "sec1_body": "We collect information you provide when registering or purchasing, such as name, phone number, and address.",
+      "sec2_title": "How We Use Your Info",
+      "sec2_body": "This data is used to successfully deliver your orders and improve our services and your browsing experience.",
+      "sec3_title": "Data Sharing",
+      "sec3_body": "We do not sell or share your data with any third parties except delivery partners to fulfill your order.",
+      "sec4_title": "Data Security",
+      "sec4_body": "We follow the highest security and encryption standards to protect your personal information from unauthorized access."
+    }
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "subtitle": "Please read these terms carefully to ensure a great experience",
+    "sections": {
+      "sec1_title": "Introduction",
+      "sec1_body": "By using our site, you agree to be bound by the following terms outlined here.",
+      "sec2_title": "Purchasing & Pricing",
+      "sec2_body": "We reserve the right to modify product prices. Fulfilling orders depends on the availability of fresh ingredients.",
+      "sec3_title": "Accounts",
+      "sec3_body": "You are responsible for maintaining the confidentiality of your account details and password.",
+      "sec4_title": "Intellectual Property",
+      "sec4_body": "All content and images on the site are owned by us and may not be used for commercial purposes."
+    }
   }
 }

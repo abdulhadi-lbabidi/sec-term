@@ -1,80 +1,118 @@
-import { Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/app/store/useAppStore';
+import { ArrowRight, ArrowLeft, Croissant, Coffee, Cake, ShoppingBag } from 'lucide-react';
+import { Category } from '@/lib/types/api.types';
 
 export interface HeroSectionProps {
   className?: string;
+  topCategories?: Category[];
 }
 
-export const HeroSection = ({ className }: HeroSectionProps) => {
+export const HeroSection = ({ className, topCategories }: HeroSectionProps) => {
   const { t } = useTranslation();
   const { language } = useAppStore();
 
-  return (
-    <section className={cn("container mx-auto px-4 md:px-8 py-8", className)}>
-      <div className="bg-[#111111] rounded-[32px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-2xl">
-        {/* Decorative background shape */}
-        <div className="absolute right-0 top-0 w-1/2 h-full opacity-[0.03] pointer-events-none">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#C5A880" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,81.3,-46.3C90.8,-33.5,96.8,-18.1,96.5,-3.1C96.2,11.9,89.5,26.5,79.9,38.8C70.3,51.1,57.7,61.1,43.7,68.1C29.7,75.1,14.8,79.1,-0.6,80.1C-16,81.1,-32,79.1,-46.3,72.2C-60.6,65.3,-73.2,53.5,-81.4,40C-89.6,26.5,-93.4,11.3,-92.3,-3.5C-91.2,-18.3,-85.2,-32.7,-76,-44.6C-66.8,-56.5,-54.4,-65.9,-40.8,-73.5C-27.2,-81.1,-13.6,-86.9,0.9,-88.4C15.4,-89.9,30.6,-83.6,44.7,-76.4Z" transform="translate(100 100)" />
-          </svg>
-        </div>
+  const cat1 = topCategories?.[0];
+  const cat2 = topCategories?.[1];
 
-        <div className="md:w-1/2 space-y-6 relative z-10">
-          <span className="inline-flex items-center gap-2 bg-[#C5A880]/10 text-[#C5A880] px-4 py-1.5 rounded-full text-sm font-semibold border border-[#C5A880]/20">
-            <span className="text-lg">✨</span> {t('valueOrganic', language === 'ar' ? 'مكونات طبيعية 100%' : '100% Natural Ingredients')}
-          </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.2] text-white">
-            {t('heroTitle', language === 'ar' ? 'جرعتك اليومية من الطزاجة' : 'Your Daily Dose of Freshness')}
-          </h1>
-          <p className="text-gray-400 text-lg md:text-xl max-w-md leading-relaxed">
-            {t('heroSubtitle', language === 'ar' ? 'خبز وبسكويت فاخر طازج، يُصنع يدوياً من الصفر وبمكونات طبيعية.' : 'Premium bread and cookies, made fresh daily from scratch.')}
-          </p>
-          <div className="pt-2">
-            <Link to="/shop" className="inline-block bg-[#C5A880] hover:bg-[#b09672] text-white px-8 py-3.5 rounded-full font-semibold transition-all shadow-[0_4px_14px_0_rgba(197,168,128,0.39)] hover:shadow-[0_6px_20px_rgba(197,168,128,0.23)] hover:-translate-y-0.5">
-              {t('shopNow', language === 'ar' ? 'تسوق الآن' : 'Shop Now')}
+  return (
+    <section className={cn("w-full min-h-[85vh] py-6 px-4 md:px-6 flex flex-col justify-center", className)}>
+      <div className="w-full h-full grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 md:gap-6 max-w-[2400px] mx-auto min-h-[80vh]">
+        
+        {/* Main Hero Block (Spans 2 columns, 2 rows) */}
+        <div className="md:col-span-2 md:row-span-2 relative rounded-[2.5rem] overflow-hidden group shadow-lg flex flex-col justify-end p-8 md:p-12 min-h-[450px]">
+          <div 
+            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[15s] group-hover:scale-110"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&q=80&w=1920')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-0"></div>
+          
+          <div className="relative z-10 text-white w-full max-w-xl">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-4 md:mb-6 drop-shadow-md">
+              {t('heroTitle', language === 'ar' ? 'جرعتك اليومية من الطزاجة' : 'Your Daily Dose of Freshness')}
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed font-light mb-8 drop-shadow">
+              {t('heroSubtitle', language === 'ar' ? 'منتجات فاخرة طازجة، تُصنع يدوياً كل يوم بشغف لترضي ذائقتك.' : 'Premium fresh products, handmade daily with passion to satisfy your taste.')}
+            </p>
+            <Link 
+              to="/shop" 
+              className="inline-flex items-center justify-center gap-3 bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105 active:scale-95 shadow-xl w-fit backdrop-blur-md border border-primary/50"
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {t('shopNow', language === 'ar' ? 'تصفح منتجاتنا' : 'Explore Products')}
             </Link>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4 pt-8 border-t border-white/10 mt-8">
-            <div className="flex -space-x-3">
-              <img src="https://i.pravatar.cc/100?img=33" alt="Customer 1" className="w-10 h-10 rounded-full border-2 border-[#111111]" />
-              <img src="https://i.pravatar.cc/100?img=44" alt="Customer 2" className="w-10 h-10 rounded-full border-2 border-[#111111]" />
-              <img src="https://i.pravatar.cc/100?img=12" alt="Customer 3" className="w-10 h-10 rounded-full border-2 border-[#111111]" />
-            </div>
+        {/* Top Right Block 1: First Category */}
+        <Link to={`/shop?category_id=${cat1?.id || ''}`} className="md:col-span-1 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md min-h-[250px] flex flex-col justify-end p-6 cursor-pointer">
+          <div 
+            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] group-hover:scale-110"
+            style={{ backgroundImage: `url('${cat1?.image || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800'}')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10 z-0"></div>
+          
+          <div className="relative z-10 text-white flex items-center justify-between">
             <div>
-              <p className="text-white text-sm font-semibold">{t('reviews', language === 'ar' ? 'آراء عشاقنا' : 'Reviews from Lovers')}</p>
-              <div className="flex items-center gap-1 text-xs text-white/70 mt-0.5">
-                <Star className="w-3.5 h-3.5 fill-[#C5A880] text-[#C5A880]" />
-                <Star className="w-3.5 h-3.5 fill-[#C5A880] text-[#C5A880]" />
-                <Star className="w-3.5 h-3.5 fill-[#C5A880] text-[#C5A880]" />
-                <Star className="w-3.5 h-3.5 fill-[#C5A880] text-[#C5A880]" />
-                <Star className="w-3.5 h-3.5 fill-[#C5A880] text-[#C5A880]" />
-                <span className="text-white ml-1">4.9</span> <span className="opacity-50 mx-1">•</span> <span className="opacity-70">+2,000</span>
-              </div>
+              <Croissant className="w-8 h-8 mb-3 text-primary" />
+              <h3 className="text-2xl font-bold">{cat1?.name || (language === 'ar' ? 'مخبوزات ساخنة' : 'Hot Pastries')}</h3>
+              <p className="text-sm text-white/80 font-light">{cat1?.description || (language === 'ar' ? 'طازجة من الفرن' : 'Fresh from oven')}</p>
+            </div>
+            <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+            </div>
+          </div>
+        </Link>
+
+        {/* Top Right Block 2: Second Category */}
+        <Link to={`/shop?category_id=${cat2?.id || ''}`} className="md:col-span-1 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md min-h-[250px] flex flex-col justify-end p-6 cursor-pointer">
+          <div 
+            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] group-hover:scale-110"
+            style={{ backgroundImage: `url('${cat2?.image || 'https://images.unsplash.com/photo-1550617931-e17a7b70dce2?auto=format&fit=crop&q=80&w=800'}')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10 z-0"></div>
+          
+          <div className="relative z-10 text-white flex items-center justify-between">
+            <div>
+              <Cake className="w-8 h-8 mb-3 text-primary" />
+              <h3 className="text-2xl font-bold">{cat2?.name || (language === 'ar' ? 'كيك وحلويات' : 'Cakes & Sweets')}</h3>
+              <p className="text-sm text-white/80 font-light">{cat2?.description || (language === 'ar' ? 'للحظاتك السعيدة' : 'For happy moments')}</p>
+            </div>
+            <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+              {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+            </div>
+          </div>
+        </Link>
+
+        {/* Bottom Wide Block */}
+        <div className="md:col-span-2 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md bg-primary/10 flex items-center p-6 md:p-10 min-h-[250px]">
+          {/* Decorative blur */}
+          <div className="absolute top-0 ltr:right-0 rtl:left-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2"></div>
+          <div className="absolute bottom-0 ltr:left-0 rtl:right-0 w-64 h-64 bg-secondary/20 rounded-full blur-[80px] translate-y-1/2"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-6">
+            <div className="max-w-sm">
+              <Coffee className="w-10 h-10 mb-4 text-primary" />
+              <h3 className="text-3xl font-bold text-foreground mb-2">
+                {language === 'ar' ? 'ابدأ صباحك صح' : 'Start Your Morning Right'}
+              </h3>
+              <p className="text-muted-foreground font-light">
+                {language === 'ar' 
+                  ? 'نوفر لك أفضل تشكيلة من القهوة والمخبوزات لتكون بداية يومك مثالية.' 
+                  : 'We offer the best selection of coffee and pastries to make your morning perfect.'}
+              </p>
+            </div>
+            
+            <div className="flex -space-x-4 rtl:space-x-reverse relative z-20">
+              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=200" alt="Coffee" />
+              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1495147466023-2ce6c9b4b32b?auto=format&fit=crop&q=80&w=200" alt="Latte" />
+              <img className="w-16 h-16 rounded-full border-4 border-background shadow-sm object-cover hover:-translate-y-2 transition-transform cursor-pointer" src="https://images.unsplash.com/photo-1600056781444-55f3b64235e3?auto=format&fit=crop&q=80&w=200" alt="Croissant" />
             </div>
           </div>
         </div>
 
-        <div className="md:w-1/2 mt-12 md:mt-0 relative z-10 flex justify-end">
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#C5A880] rounded-full blur-[100px] opacity-20 transform translate-x-10 translate-y-10"></div>
-            <img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&q=80&w=800" alt="Fresh Bakery Croissants" className="w-full max-w-md object-cover aspect-square drop-shadow-2xl rounded-[40px] border border-white/10" />
-            
-            {/* Floating Badge */}
-            <div className={`absolute ${language === 'ar' ? '-bottom-6 -left-6' : '-bottom-6 -right-6'} bg-white text-[#111111] p-4 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3 animate-bounce-slow`}>
-              <div className="w-12 h-12 bg-[#C5A880]/10 rounded-full flex items-center justify-center text-2xl">
-                🥐
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 font-medium">{t('freshToday', language === 'ar' ? 'خبز اليوم طازج' : 'Freshly Baked Today')}</p>
-                <p className="text-sm font-bold">{t('valueFresh', language === 'ar' ? 'الطزاجة أولاً ودائماً' : 'Freshness First & Always')}</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );

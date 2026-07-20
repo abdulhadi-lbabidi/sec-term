@@ -6,6 +6,7 @@ import { Header } from '../components/client/layout/Header';
 import { Footer } from '../components/client/layout/Footer';
 import { CartDrawer } from '../components/client/cart/CartDrawer';
 import { AuthGuard } from '../components/client/security/AuthGuard';
+import { CookieConsent } from '../components/client/layout/CookieConsent';
 
 // Lazy loading our new components
 const Home = lazy(() => import('../pages/client/HomePage'));
@@ -16,14 +17,17 @@ const Orders = lazy(() => import('../pages/client/OrdersPage'));
 
 const Login = lazy(() => import('../pages/client/Auth').then(m => ({ default: m.Login })).catch(() => ({ default: () => <div>Login</div> })));
 const Register = lazy(() => import('../pages/client/Auth').then(m => ({ default: m.Register })).catch(() => ({ default: () => <div>Register</div> })));
-const PasswordRecovery = lazy(() => import('../pages/client/PasswordRecovery')); // Force TS re-check
-
+const ForgotPassword = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.ForgotPassword })));
+const VerifyOTP = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.VerifyOTP })));
+const ResetPassword = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.ResetPassword })));
 const Cart = lazy(() => import('../pages/client/CartPage'));
 const About = lazy(() => import('../pages/client/About').then(m => ({ default: m.About })));
 const Contact = lazy(() => import('../pages/client/Contact').then(m => ({ default: m.Contact })));
-const Blog = lazy(() => import('../pages/client/BlogPage'));
 const Profile = lazy(() => import('../pages/client/ProfilePage'));
 const Wishlist = lazy(() => import('../pages/client/WishlistPage'));
+const FAQPage = lazy(() => import('../pages/client/FAQPage'));
+const TermsPage = lazy(() => import('../pages/client/TermsPage'));
+const PrivacyPage = lazy(() => import('../pages/client/PrivacyPage'));
 
 const ClientLayout = () => {
   const { language } = useAppStore();
@@ -43,6 +47,7 @@ const ClientLayout = () => {
       </main>
       <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CookieConsent />
       {/* Exposing globally for easy access, in real app this could be triggered via store or context */}
       <div id="cart-trigger" style={{ display: 'none' }} onClick={() => setIsCartOpen(true)}></div>
     </div>
@@ -57,13 +62,17 @@ export const ClientRoutes = (
 
     <Route path="login" element={<Login />} />
     <Route path="register" element={<Register />} />
-    <Route path="forgot-password" element={<PasswordRecovery />} />
+    <Route path="forgot-password" element={<ForgotPassword />} />
+    <Route path="verify-otp" element={<VerifyOTP />} />
+    <Route path="reset-password" element={<ResetPassword />} />
 
     <Route path="cart" element={<Cart />} />
     <Route path="wishlist" element={<Wishlist />} />
     <Route path="about" element={<About />} />
     <Route path="contact" element={<Contact />} />
-    <Route path="blog" element={<Blog />} />
+    <Route path="faq" element={<FAQPage />} />
+    <Route path="terms" element={<TermsPage />} />
+    <Route path="privacy" element={<PrivacyPage />} />
 
     {/* Protected Routes */}
     <Route path="orders" element={

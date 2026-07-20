@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Trash2, Loader2, Shield, Plus, Pencil } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import { Button } from '../../../components/ui/button';
 import {
   Table,
@@ -25,6 +26,11 @@ export const Roles = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_role');
+  const canEdit = hasPermission('update_role');
+  const canDelete = hasPermission('delete_role');
+
   const { data, isLoading, isError, error } = useRolesQuery(page, perPage);
   const deleteMutation = useDeleteRoleMutation();
 
@@ -33,14 +39,18 @@ export const Roles = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button onClick={() => navigate('/admin/roles/add')} className="flex items-center gap-2">
-        <Plus className="h-4 w-4" />
-        {t('admin.add_role')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button onClick={() => navigate('/admin/roles/add')} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          {t('admin.add_role')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [setHeaderAction, navigate, t]);
+  }, [setHeaderAction, navigate, t, canCreate]);
 
   const handleDeleteRole = (id: number) => {
     setRoleIdToDelete(id);
@@ -101,24 +111,28 @@ export const Roles = () => {
                       </TableCell>
                       <TableCell className={isRtl ? 'text-left' : 'text-right'}>
                         <div className="flex items-center gap-1 justify-end">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => navigate(`/admin/roles/edit/${role.id}`)}
-                            className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeleteRole(role.id)}
-                            className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {canEdit && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => navigate(`/admin/roles/edit/${role.id}`)}
+                              className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {canDelete && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteRole(role.id)}
+                              className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive"
+                              disabled={deleteMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -143,26 +157,30 @@ export const Roles = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-end gap-2 border-t pt-2 mt-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate(`/admin/roles/edit/${role.id}`)}
-                      className="h-8 gap-1 text-black/75 hover:bg-black/5 hover:text-black cursor-pointer text-xs"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                      {t('admin.edit_role')}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteRole(role.id)}
-                      className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {t('admin.delete')}
-                    </Button>
+                    {canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/admin/roles/edit/${role.id}`)}
+                        className="h-8 gap-1 text-black/75 hover:bg-black/5 hover:text-black cursor-pointer text-xs"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                        {t('admin.edit_role')}
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteRole(role.id)}
+                        className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {t('admin.delete')}
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))}

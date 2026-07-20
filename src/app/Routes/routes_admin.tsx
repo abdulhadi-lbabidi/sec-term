@@ -14,6 +14,8 @@ import { Login } from '../pages/Admin/Login';
 import { Roles } from '../pages/Admin/Roles/Roles';
 import { AddRoles } from '../pages/Admin/Roles/AddRoles';
 import { Users } from '../pages/Admin/Users/Users';
+import { Checkouts } from '../pages/Admin/Checkouts/Checkouts';
+import { Orders } from '../pages/Admin/Orders/Orders';
 
 export const AdminRoutes = (
   <>
@@ -23,6 +25,7 @@ export const AdminRoutes = (
       <Route path="dashboard" element={<AdminDashboard />} />
       <Route path="categories" element={<Categories />} />
       <Route path="reviews" element={<Reviews />} />
+      <Route path="checkouts" element={<Checkouts />} />
       <Route path="products" element={<Products />} />
       <Route path="products/add" element={<AddProduct />} />
       <Route path="products/edit/:id" element={<AddProduct />} />
@@ -35,6 +38,7 @@ export const AdminRoutes = (
       <Route path="roles/add" element={<AddRoles />} />
       <Route path="roles/edit/:roleId" element={<AddRoles />} />
       <Route path="users" element={<Users />} />
+      <Route path="orders" element={<Orders />} />
       <Route path="client" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Route>

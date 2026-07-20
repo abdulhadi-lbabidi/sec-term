@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 import { Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, X, ImageOff } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent } from '../../../components/ui/dialog';
@@ -23,11 +24,13 @@ interface CategoryCardProps {
   onOpenGallery: (category: Category, index: number) => void;
   isPending: boolean;
   t: (key: string) => string;
+  canEdit: boolean;
+  canDelete: boolean;
 }
 
-const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPending, t }: CategoryCardProps) => {
+const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPending, t, canEdit, canDelete }: CategoryCardProps) => {
   const images = category.all_images && category.all_images.length > 0
-    ? category.all_images
+    ? category.all_images.map((img: any) => typeof img === 'object' ? img.url : img)
     : category.image
     ? [category.image]
     : [];
@@ -113,24 +116,28 @@ const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPend
           <p className="text-xs text-black/35">{category.created_at}</p>
         )}
         <div className="flex items-center gap-1 ms-auto">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit(category.id)}
-            className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
-            disabled={isPending}
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete(category.id)}
-            className="h-8 w-8 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
-            disabled={isPending}
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
+          {canEdit && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onEdit(category.id)}
+              className="h-8 w-8 text-black/50 hover:bg-black/5 hover:text-black"
+              disabled={isPending}
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          {canDelete && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onDelete(category.id)}
+              className="h-8 w-8 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
+              disabled={isPending}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -140,6 +147,11 @@ const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPend
 export const Categories = () => {
   const { t, i18n } = useTranslation();
   const isRtl = i18n.language === 'ar';
+
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_category');
+  const canEdit = hasPermission('update_category');
+  const canDelete = hasPermission('delete_category');
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -160,21 +172,25 @@ export const Categories = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button
-        onClick={() => {
-          setSelectedCategoryId(null);
-          setIsAddModalOpen(true);
-        }}
-        className="flex items-center gap-2"
-        disabled={createMutation.isPending || updateMutation.isPending}
-      >
-        <Plus className="h-4 w-4" />
-        {t('admin.add_category')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button
+          onClick={() => {
+            setSelectedCategoryId(null);
+            setIsAddModalOpen(true);
+          }}
+          className="flex items-center gap-2"
+          disabled={createMutation.isPending || updateMutation.isPending}
+        >
+          <Plus className="h-4 w-4" />
+          {t('admin.add_category')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t]);
+  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate]);
 
 
 
@@ -254,6 +270,8 @@ export const Categories = () => {
                 }}
                 isPending={deleteMutation.isPending}
                 t={t}
+                canEdit={canEdit}
+                canDelete={canDelete}
               />
             ))}
           </div>
@@ -295,7 +313,7 @@ export const Categories = () => {
           {galleryCategory && (
             (() => {
               const images = galleryCategory.all_images && galleryCategory.all_images.length > 0
-                ? galleryCategory.all_images
+                ? galleryCategory.all_images.map((img: any) => typeof img === 'object' ? img.url : img)
                 : galleryCategory.image
                 ? [galleryCategory.image]
                 : [];

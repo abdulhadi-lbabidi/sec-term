@@ -13,10 +13,10 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category, image }) =
 
   return (
     <Link to={`/shop?category=${category.id}`} className="group relative overflow-hidden rounded-2xl aspect-[4/5] bg-gray-100 flex items-end">
-      <img 
-        src={image || "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800"} 
-        alt={name} 
-        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+      <img
+        src={image || "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800"}
+        alt={name}
+        className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
       <div className="relative p-6 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">

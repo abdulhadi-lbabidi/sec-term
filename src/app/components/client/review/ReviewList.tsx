@@ -64,7 +64,7 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
         <div className="flex flex-col items-center justify-center min-w-[150px] space-y-2">
           <span className="text-5xl font-black text-[#1C1A17]">{averageRating.toFixed(1)}</span>
           <RatingStars rating={averageRating} size={20} />
-          <span className="text-sm text-gray-500">{totalReviews} {t.reviews || 'تقييم'}</span>
+          <span className="text-sm text-gray-500">{totalReviews} {language === 'ar' ? 'عاشق شاركنا رأيه' : 'Lovers shared opinions'}</span>
         </div>
         
         <div className="flex-1 w-full space-y-2">
@@ -86,11 +86,15 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-xl font-bold text-[#1C1A17]">{t.reviews || 'التقييمات'}</h3>
+        <h3 className="text-2xl font-black text-[#1C1A17]">{language === 'ar' ? 'آراء العشاق' : 'Lovers Opinions'}</h3>
         
         {reviews.length === 0 ? (
-          <div className="text-center py-10 text-gray-500 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
-            {t.noReviews || 'لا توجد تقييمات بعد. كن أول من يكتب تقييماً!'}
+          <div className="text-center py-16 px-6 bg-[#FCFAF7] rounded-3xl border border-dashed border-[#EAE5DF]">
+            <div className="text-4xl mb-4">✨</div>
+            <h4 className="text-lg font-bold text-[#1C1A17] mb-2">{language === 'ar' ? 'كن أول من يتذوق ويشاركنا سحر اللحظة!' : 'Be the first to taste and share the magic!'}</h4>
+            <p className="text-gray-500 text-sm leading-relaxed max-w-sm mx-auto">
+              {language === 'ar' ? 'لم يقم أحد بمشاركة تجربته مع هذه التحفة الفنية بعد. جربها الآن واكتب لنا رأيك ليلهم عشاق الطعم الأصيل.' : 'No one has shared their experience with this masterpiece yet. Try it now and write your review to inspire other lovers of authentic taste.'}
+            </p>
           </div>
         ) : (
           <Dialog>
@@ -104,7 +108,7 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
               <div className="mt-6 text-center">
                 <DialogTrigger asChild>
                   <Button variant="outline" className="rounded-full border-gray-200 text-gray-600 hover:text-[#111111] hover:border-gray-300">
-                    {language === 'ar' ? `عرض كل التقييمات (${totalReviews})` : `See all reviews (${totalReviews})`}
+                    {language === 'ar' ? `اقرأ جميع رسائل العشاق (${totalReviews})` : `Read all lovers messages (${totalReviews})`}
                   </Button>
                 </DialogTrigger>
               </div>
@@ -113,7 +117,7 @@ export function ReviewList({ reviews, averageRating, totalReviews }: ReviewListP
             <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-gray-50/50">
               <div className="p-6 bg-white border-b border-gray-100 shrink-0">
                 <DialogTitle className="text-xl font-bold text-[#1C1A17]">
-                  {language === 'ar' ? 'جميع التقييمات' : 'All Reviews'}
+                  {language === 'ar' ? 'سجل إعجاب العشاق' : 'Lovers Admiration Log'}
                 </DialogTitle>
               </div>
               <div className="p-6 overflow-y-auto flex-1 grid gap-6">

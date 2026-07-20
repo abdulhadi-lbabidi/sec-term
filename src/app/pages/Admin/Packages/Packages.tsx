@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { Plus, Trash2, Loader2, Pencil } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import { Button } from '../../../components/ui/button';
 import {
   Table,
@@ -33,6 +34,11 @@ export const Packages = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_package');
+  const canEdit = hasPermission('update_package');
+  const canDelete = hasPermission('delete_package');
+
   const { data, isLoading, isError, error } = usePackagesQuery(page, perPage);
   const createMutation = useCreatePackageMutation();
   const updateMutation = useUpdatePackageMutation();
@@ -43,21 +49,25 @@ export const Packages = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button
-        onClick={() => {
-          setSelectedPackage(null);
-          setIsAddModalOpen(true);
-        }}
-        className="flex items-center gap-2"
-        disabled={createMutation.isPending || updateMutation.isPending}
-      >
-        <Plus className="h-4 w-4" />
-        {t('admin.add_package')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button
+          onClick={() => {
+            setSelectedPackage(null);
+            setIsAddModalOpen(true);
+          }}
+          className="flex items-center gap-2"
+          disabled={createMutation.isPending || updateMutation.isPending}
+        >
+          <Plus className="h-4 w-4" />
+          {t('admin.add_package')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [setHeaderAction, createMutation.isPending, updateMutation.isPending, t]);
+  }, [setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate]);
 
   const handleCloseAddModal = () => {
     setIsAddModalOpen(false);
@@ -163,27 +173,31 @@ export const Packages = () => {
                             {pkg.created_at}
                           </TableCell>
                           <TableCell className="text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleEditPackage(pkg)}
-                                className="text-black/60 hover:bg-black/5 hover:text-black"
-                                disabled={deleteMutation.isPending}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDeletePackage(pkg.id)}
-                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                                disabled={deleteMutation.isPending}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
+                             <div className="flex items-center justify-center gap-1">
+                               {canEdit && (
+                                 <Button
+                                   variant="ghost"
+                                   size="icon"
+                                   onClick={() => handleEditPackage(pkg)}
+                                   className="text-black/60 hover:bg-black/5 hover:text-black"
+                                   disabled={deleteMutation.isPending}
+                                 >
+                                   <Pencil className="h-4 w-4" />
+                                 </Button>
+                               )}
+                               {canDelete && (
+                                 <Button
+                                   variant="ghost"
+                                   size="icon"
+                                   onClick={() => handleDeletePackage(pkg.id)}
+                                   className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                   disabled={deleteMutation.isPending}
+                                 >
+                                   <Trash2 className="h-4 w-4" />
+                                 </Button>
+                               )}
+                             </div>
+                           </TableCell>
                         </TableRow>
                       ))
                     )}

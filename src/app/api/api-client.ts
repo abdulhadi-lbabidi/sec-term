@@ -251,20 +251,26 @@ class ApiCore implements ApiInstance {
 
       if (response.status === 401) {
         this.config.onUnauthorized?.();
-        return {
+        const errResponse = {
           ...apiResponse,
           isError: true,
           message:
             apiResponse.message ||
             this.userFacingMessage("تم تسجيل الخروج - انتهت صلاحية الجلسة", requestOptions),
         } as ApiResponse<T>;
+        throw errResponse;
+      }
+
+      if (apiResponse.isError) {
+        throw apiResponse;
       }
 
       this.handleSuccess(apiResponse, requestOptions);
 
       return apiResponse as ApiResponse<T>;
     } catch (error) {
-      return this.handleError(error, requestOptions) as ApiResponse<T>;
+      const handledError = this.handleError(error, requestOptions) as ApiResponse<T>;
+      throw handledError;
     } finally {
       this.config.onRequestEnd?.();
     }
@@ -370,10 +376,17 @@ class ApiCore implements ApiInstance {
         };
       }
 
-      const payload =
-        typeof raw === "object" && raw !== null && !Array.isArray(raw)
-          ? (raw as Record<string, unknown>)
-          : { data: raw };
+      let payload: Record<string, unknown> = {};
+      if (typeof raw === "object" && raw !== null && !Array.isArray(raw)) {
+        const rawObj = raw as Record<string, unknown>;
+        if ('data' in rawObj) {
+          payload = rawObj;
+        } else {
+          payload = { data: rawObj };
+        }
+      } else {
+        payload = { data: raw };
+      }
 
       const message =
         typeof payload.message === "string"

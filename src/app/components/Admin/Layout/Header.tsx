@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalization } from '../../../hooks/useLocalization';
-import { FolderOpen, Scale, Layers, Package, Gift, Star, ArrowLeft, Shield, Users as UsersIcon, Menu } from 'lucide-react';
+import { FolderOpen, Scale, Layers, Package, Gift, Star, ArrowLeft, Shield, Users as UsersIcon, Menu, ShoppingCart } from 'lucide-react';
 import { useSidebar } from '../../ui/sidebar';
 
 interface HeaderProps {
@@ -25,13 +25,15 @@ export const Header = ({ headerAction }: HeaderProps) => {
   const isAddRolePage = location.pathname === '/admin/roles/add';
   const isEditRolePage = location.pathname.startsWith('/admin/roles/edit/');
   const isUsersPage = location.pathname === '/admin/users';
+  const isOrdersPage = location.pathname === '/admin/orders';
+  const isCheckoutsPage = location.pathname === '/admin/checkouts';
   const isAddVariantPage = location.pathname.startsWith('/admin/products/add-variant/') || location.pathname.startsWith('/admin/products/edit-variant/');
   const isAddProductPage = location.pathname === '/admin/products/add' || location.pathname.startsWith('/admin/products/edit/');
 
   return (
     <header className="border-b border-black/5 bg-[#fefcfa]/90 px-4 py-3 backdrop-blur md:px-8 md:py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        {isCategoriesPage || isSizesPage || isMaterialsPage || isProductsPage || isPackagesPage || isReviewsPage || isRolesPage || isAddRolePage || isEditRolePage || isUsersPage || isAddVariantPage || isAddProductPage ? (
+        {isCategoriesPage || isSizesPage || isMaterialsPage || isProductsPage || isPackagesPage || isReviewsPage || isRolesPage || isAddRolePage || isEditRolePage || isUsersPage || isAddVariantPage || isAddProductPage || isOrdersPage || isCheckoutsPage ? (
           <>
             <div className="flex items-start gap-2.5 min-w-0">
               {isMobile && (
@@ -60,6 +62,7 @@ export const Header = ({ headerAction }: HeaderProps) => {
                 {isReviewsPage && <Star className="h-5 w-5" />}
                 {(isRolesPage || isAddRolePage || isEditRolePage) && <Shield className="h-5 w-5" />}
                 {isUsersPage && <UsersIcon className="h-5 w-5" />}
+                {(isOrdersPage || isCheckoutsPage) && <ShoppingCart className="h-5 w-5" />}
               </div>
               <div className="min-w-0">
                 <h1 className="text-sm font-black tracking-tight text-black sm:text-base md:text-lg leading-tight">
@@ -75,6 +78,8 @@ export const Header = ({ headerAction }: HeaderProps) => {
                   {isAddRolePage && t('admin.add_new_role')}
                   {isEditRolePage && t('admin.edit_role')}
                   {isUsersPage && t('admin.users')}
+                  {isOrdersPage && (isRtl ? 'إدارة الطلبات' : 'Orders Management')}
+                  {isCheckoutsPage && (isRtl ? 'طلبات الشراء' : 'Checkouts Management')}
                 </h1>
                 <p className="text-[10px] text-black/50 sm:text-xs mt-0.5 leading-normal max-w-[200px] sm:max-w-xs md:max-w-md">
                   {isCategoriesPage && t('admin.categories_description')}
@@ -89,6 +94,8 @@ export const Header = ({ headerAction }: HeaderProps) => {
                   {isAddRolePage && (isRtl ? 'إعداد الأدوار الجديدة وتحديد الصلاحيات الخاصة بها' : 'Create new system roles and select their specific permissions')}
                   {isEditRolePage && (isRtl ? 'تعديل تفاصيل الدور والتحكم في صلاحياته النشطة' : 'Edit role details and control its active permissions')}
                   {isUsersPage && (isRtl ? 'إدارة حسابات المستخدمين النشطين وصلاحياتهم' : 'Manage active user accounts and their permissions')}
+                  {isOrdersPage && (isRtl ? 'عرض وإدارة طلبات فواتير العملاء وحالاتها المختلفة' : 'View and manage customer billing orders and their different statuses')}
+                  {isCheckoutsPage && (isRtl ? 'متابعة طلبات الدفع والشحن الواردة من السلة وتأكيدها' : 'Track payment and shipping requests received from the cart and verify them')}
                 </p>
               </div>
             </div>

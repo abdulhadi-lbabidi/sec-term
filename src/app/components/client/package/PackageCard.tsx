@@ -2,6 +2,9 @@ import { Package, Plus } from 'lucide-react';
 import { useAppStore } from '../../../store/useAppStore';
 import { translations } from '../../../i18n/translations';
 import { Button } from '../../ui/button';
+import { useAddToCartMutation } from '@/app/api/client/useCart';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 interface PackageCardProps {
   pkg: any;
@@ -9,16 +12,30 @@ interface PackageCardProps {
 }
 
 export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) => {
-  const { language, addToCart } = useAppStore();
+  const { language } = useAppStore();
   const t = translations[language];
+  const { mutate: addToCartApi, isPending: isAdding } = useAddToCartMutation();
 
   const name = language === 'ar' ? pkg.nameAr : pkg.nameEn;
   const desc = language === 'ar' ? pkg.descAr : pkg.descEn;
   const itemsStr = language === 'ar' ? pkg.itemsAr : pkg.itemsEn;
 
   const handleBuy = () => {
-    addToCart(pkg, 1, true);
-    if (triggerToast) triggerToast(t.itemAdded);
+    const variantId = pkg.product_variant_id || pkg.productVariantId || pkg.variant_id;
+    if (!variantId) {
+      toast.error(language === 'ar' ? 'عذراً، لا يمكن تحديد خيار الباقة' : 'Variant ID missing from package');
+      return;
+    }
+
+    addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: 1 }, {
+      onSuccess: () => {
+        if (triggerToast) triggerToast(t.itemAdded || 'Added to cart');
+        else toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+      },
+      onError: (err: any) => {
+        toast.error(err?.message || (language === 'ar' ? 'فشل إضافة الباقة للسلة' : 'Failed to add package to cart'));
+      }
+    });
   };
 
   return (
@@ -43,8 +60,8 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) =
             <span className="block text-sm text-gray-500 font-medium mb-1">السعر الخاص</span>
             <span className="text-3xl font-black text-[#1C1A17]">{pkg.price} <span className="text-lg text-[#C5A880]">{t.currency}</span></span>
           </div>
-          <Button onClick={handleBuy} className="bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111] rounded-xl px-6 h-12 flex items-center gap-2 font-bold transition-colors">
-            <Plus size={18} /> {t.buyPackage}
+          <Button onClick={handleBuy} disabled={isAdding} className="bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111] rounded-xl px-6 h-12 flex items-center gap-2 font-bold transition-colors disabled:opacity-50">
+            {isAdding ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />} {isAdding ? (language === 'ar' ? 'جاري...' : 'Adding...') : t.buyPackage}
           </Button>
         </div>
       </div>

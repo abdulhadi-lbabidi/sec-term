@@ -1,4 +1,9 @@
 import { Suspense, useEffect } from 'react';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+
+NProgress.configure({ showSpinner: false });
+
 import {
   BrowserRouter as Router,
   Navigate,
@@ -30,11 +35,20 @@ const ScrollToTop = () => {
   return null;
 };
 
-const PageFallback = () => (
-  <div className="flex min-h-[60vh] items-center justify-center px-4">
-    <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/15 border-t-black" />
-  </div>
-);
+const PageFallback = () => {
+  useEffect(() => {
+    NProgress.start();
+    return () => {
+      NProgress.done();
+    };
+  }, []);
+
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center px-4">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-black/15 border-t-black" />
+    </div>
+  );
+};
 
 function RouteFallbacks() {
   return (

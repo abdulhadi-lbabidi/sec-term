@@ -5,6 +5,7 @@ import {
   Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight,
   X, Star, Layers,
 } from 'lucide-react';
+import { useAuth } from '../../../../context/AuthContext';
 import { Button } from '../../../../components/ui/button';
 import { Dialog, DialogContent } from '../../../../components/ui/dialog';
 import { DeleteConfirmationModal } from '../../../../components/Admin/DeleteConfirmationModal';
@@ -26,6 +27,9 @@ interface ProductCardProps {
   isPending: boolean;
   t: (key: string) => string;
   navigate: (path: string) => void;
+  canEdit: boolean;
+  canDelete: boolean;
+  canViewVariants: boolean;
 }
 
 const ProductCard = ({
@@ -38,6 +42,9 @@ const ProductCard = ({
   isPending,
   t,
   navigate,
+  canEdit,
+  canDelete,
+  canViewVariants,
 }: ProductCardProps) => {
   const defaultImg = 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=300&auto=format&fit=crop';
   const images = product.all_images && product.all_images.length > 0
@@ -117,7 +124,7 @@ const ProductCard = ({
             </div>
           )}
 
-          {hasOptions && (
+          {hasOptions && canViewVariants && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -140,30 +147,34 @@ const ProductCard = ({
               {product.category?.name}
             </span>
             <div className="flex items-center gap-1 shrink-0">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(product.id);
-                }}
-                className="h-8 w-8 text-black/60 hover:bg-black/5 hover:text-black rounded-full"
-                disabled={isPending}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(product.id);
-                }}
-                className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive rounded-full"
-                disabled={isPending}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {canEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(product.id);
+                  }}
+                  className="h-8 w-8 text-black/60 hover:bg-black/5 hover:text-black rounded-full"
+                  disabled={isPending}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              )}
+              {canDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(product.id);
+                  }}
+                  className="h-8 w-8 text-destructive/70 hover:bg-destructive/10 hover:text-destructive rounded-full"
+                  disabled={isPending}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
 
@@ -195,6 +206,12 @@ export const Products = () => {
   const isRtl = i18n.language === 'ar';
   const navigate = useNavigate();
 
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_product');
+  const canEdit = hasPermission('update_product');
+  const canDelete = hasPermission('delete_product');
+  const canViewVariants = hasPermission('view_product_variant');
+
   const [productIdToDelete, setProductIdToDelete] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [variantIdToDelete, setVariantIdToDelete] = useState<number | null>(null);
@@ -215,14 +232,18 @@ export const Products = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button onClick={() => navigate('/admin/products/add')} className="flex items-center gap-2">
-        <Plus className="h-4 w-4" />
-        {t('admin.addNewProduct')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button onClick={() => navigate('/admin/products/add')} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          {t('admin.addNewProduct')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [navigate, setHeaderAction, t]);
+  }, [navigate, setHeaderAction, t, canCreate]);
 
   const handleDeleteProduct = (id: number) => {
     setProductIdToDelete(id);
@@ -296,6 +317,9 @@ export const Products = () => {
                 isPending={deleteMutation.isPending}
                 t={t}
                 navigate={navigate}
+                canEdit={canEdit}
+                canDelete={canDelete}
+                canViewVariants={canViewVariants}
               />
             ))}
           </div>

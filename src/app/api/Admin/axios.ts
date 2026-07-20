@@ -30,7 +30,6 @@ api.interceptors.response.use(
       const status = error.response.status;
       if (status === 401 || status === 403) {
         localStorage.removeItem('nouh_carting_roken');
-        localStorage.removeItem('nouh_carting_user_id');
         window.location.href = '/admin/login';
       } else if (status === 422) {
         const validationErrors = error.response.data?.errors;

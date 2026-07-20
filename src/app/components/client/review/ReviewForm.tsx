@@ -19,7 +19,10 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (rating === 0) return; // Must provide a rating
+    if (rating === 0) {
+      toast.error(language === 'ar' ? 'يرجى إعطاء تقييم بالنجوم أولاً' : 'Please select a star rating first');
+      return;
+    }
     onSubmit(rating, comment);
     // Reset form after submission
     setRating(0);
@@ -28,7 +31,7 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
 
   return (
     <form onSubmit={handleSubmit} className="bg-[#FCFAF7] rounded-3xl p-6 md:p-8 border border-[#EAE5DF]">
-      <h3 className="text-xl font-bold text-[#1C1A17] mb-6">{t.addReview || 'أضف تقييماً'}</h3>
+      <h3 className="text-2xl font-black text-[#1C1A17] mb-6">{language === 'ar' ? 'شاركنا حبك لهذه التحفة' : 'Share your love for this masterpiece'}</h3>
 
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -44,7 +47,7 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
 
       <div className="mb-6">
         <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
-          {t.comment || 'التعليق'}
+          {language === 'ar' ? 'كلمات من القلب (اختياري)' : 'Words from the heart (Optional)'}
         </label>
         <Textarea
           id="comment"
@@ -59,10 +62,10 @@ export function ReviewForm({ onSubmit, isSubmitting = false }: ReviewFormProps) 
       <div className="flex justify-end">
         <Button
           type="submit"
-          disabled={rating === 0 || isSubmitting}
+          disabled={isSubmitting}
           className="rounded-full bg-[#111111] hover:bg-[#C5A880] text-white px-8 h-12 transition-all shadow-md disabled:opacity-50"
         >
-          {isSubmitting ? (language === 'ar' ? 'جاري الإرسال...' : 'Submitting...') : (t.submitReview || 'إرسال التقييم')}
+          {isSubmitting ? (language === 'ar' ? 'جاري إرسال مشاعرك...' : 'Sending your feelings...') : (language === 'ar' ? 'إرسال رأيك بحب' : 'Send your review with love')}
         </Button>
       </div>
     </form>

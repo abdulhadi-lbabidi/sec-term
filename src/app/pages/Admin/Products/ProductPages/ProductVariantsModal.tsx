@@ -6,6 +6,7 @@ import {
   X, Star, Layers, Package, Tag, Barcode,
 } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
+import { useAuth } from '../../../../context/AuthContext';
 import { Dialog, DialogContent } from '../../../../components/ui/dialog';
 import ReactBarcode from 'react-barcode';
 
@@ -59,6 +60,11 @@ export const ProductVariantsModal = ({
 }: ProductVariantsModalProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_product_variant');
+  const canEdit = hasPermission('update_product_variant');
+  const canDelete = hasPermission('delete_product_variant');
+
   const [activeVariantIndex, setActiveVariantIndex] = useState(0);
   const [variantImageIndex, setVariantImageIndex] = useState(0);
 
@@ -96,37 +102,38 @@ export const ProductVariantsModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="sm:max-w-[90vw]! md:max-w-[85vw]! lg:max-w-[1150px]! w-full bg-white p-0 border-0 shadow-2xl overflow-hidden rounded-3xl">
+      <DialogContent className="w-full max-w-[95vw] md:max-w-[85vw] lg:max-w-[1150px] bg-white p-0 border-0 shadow-2xl overflow-hidden rounded-3xl">
         <div className="flex flex-col h-full max-h-[92vh]">
-          <div className="flex items-center justify-between gap-4 px-8 py-6 border-b border-black/5 bg-gray-50/50 shrink-0">
-            <div className="flex items-center gap-4 min-w-0">
+          {/* Responsive Header Container */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 md:px-8 md:py-6 border-b border-black/5 bg-gray-50/50 shrink-0">
+            <div className="flex items-center gap-3 md:gap-4 min-w-0">
               {(product.image || product.all_images?.[0]) && (
                 <img
                   src={product.image || product.all_images?.[0]}
                   alt={productName}
-                  className="h-16 w-16 rounded-2xl object-cover border border-black/10 shadow-sm shrink-0"
+                  className="h-12 w-12 md:h-16 md:w-16 rounded-xl md:rounded-2xl object-cover border border-black/10 shadow-sm shrink-0"
                 />
               )}
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-xl font-extrabold text-black tracking-tight">{productName}</h2>
+                  <h2 className="text-lg md:text-xl font-extrabold text-black tracking-tight">{productName}</h2>
                   {product.is_featured && (
-                    <span className="flex items-center gap-1 rounded-full bg-amber-500 px-3 py-0.5 text-[10px] font-bold text-white shadow-sm shrink-0">
+                    <span className="flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[9px] md:text-[10px] font-bold text-white shadow-sm shrink-0">
                       <Star className="h-2.5 w-2.5 fill-white" />
                       {t('admin.featured')}
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-xs text-black/50 mt-1.5 flex-wrap font-medium">
-                  <span className="bg-black/5 px-2.5 py-0.5 rounded-lg text-black/70 font-semibold">{productCategory}</span>
-                  {product.body && <span className="truncate max-w-md">· {typeof product.body === 'object' ? (isRtl ? product.body?.ar : product.body?.en) : product.body}</span>}
+                <div className="flex items-center gap-2 text-[11px] md:text-xs text-black/50 mt-1.5 flex-wrap font-medium">
+                  <span className="bg-black/5 px-2 py-0.5 rounded-md text-black/70 font-semibold">{productCategory}</span>
+                  {product.body && <span className="truncate max-w-[150px] sm:max-w-xs md:max-w-md">· {typeof product.body === 'object' ? (isRtl ? product.body?.ar : product.body?.en) : product.body}</span>}
                   {currentVariant && (
                     <>
-                      <span className="flex items-center gap-1 text-[11px] font-semibold text-black/60 bg-black/5 px-2.5 py-0.5 rounded-lg border border-black/5 shrink-0">
+                      <span className="flex items-center gap-1 text-[10px] md:text-[11px] font-semibold text-black/60 bg-black/5 px-2 py-0.5 rounded-md border border-black/5 shrink-0">
                         <Tag className="h-3 w-3 text-black/50" />
                         <span>{t('admin.sku') || 'SKU'}: {currentVariant.sku || 'N/A'}</span>
                       </span>
-                      <span className="flex items-center gap-1.5 text-[11px] font-bold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200/50 shrink-0">
+                      <span className="flex items-center gap-1.5 text-[10px] md:text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/50 shrink-0">
                         {t('admin.variant') || 'Variant'} {activeVariantIndex + 1} / {flatVariants.length}
                       </span>
                     </>
@@ -135,44 +142,50 @@ export const ProductVariantsModal = ({
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 shrink-0">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => navigate(`/admin/products/add-variant/${product.id}`)}
-                className="flex items-center gap-1.5 h-10 text-xs font-semibold hover:bg-black/5 rounded-2xl border-black/10 px-4"
-              >
-                <Plus className="h-4 w-4" />
-                <span>{t('admin.add_variant')}</span>
-              </Button>
+            <div className="flex items-center gap-2 shrink-0 md:self-center">
+              {canCreate && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => navigate(`/admin/products/add-variant/${product.id}`)}
+                  className="flex items-center gap-1.5 h-9 md:h-10 text-xs font-semibold hover:bg-black/5 rounded-xl md:rounded-2xl border-black/10 px-3 md:px-4"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>{t('admin.add_variant')}</span>
+                </Button>
+              )}
               {currentVariant && (
                 <>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => navigate(`/admin/products/edit-variant/${currentVariant.variant_id}`)}
-                    className="h-10 w-10 text-black/60 hover:text-black hover:bg-black/5 rounded-2xl border-black/10"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => onDeleteVariant(currentVariant.variant_id)}
-                    className="h-10 w-10 text-destructive hover:bg-destructive/10 hover:border-destructive/20 hover:text-destructive rounded-2xl border-black/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {canEdit && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => navigate(`/admin/products/edit-variant/${currentVariant.variant_id}`)}
+                      className="h-9 w-9 md:h-10 md:w-10 text-black/60 hover:text-black hover:bg-black/5 rounded-xl md:rounded-2xl border-black/10"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {canDelete && (
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() => onDeleteVariant(currentVariant.variant_id)}
+                      className="h-9 w-9 md:h-10 md:w-10 text-destructive hover:bg-destructive/10 hover:border-destructive/20 hover:text-destructive rounded-xl md:rounded-2xl border-black/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </>
               )}
-            
             </div>
           </div>
 
           {currentVariant && (
             <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
               <div className="grid grid-cols-1 lg:grid-cols-12 h-full">
-                <div className="lg:col-span-6 bg-black/[0.02] border-r border-black/5 flex flex-col relative min-h-[450px]">
+                {/* Responsive Image Gallery Wrapper */}
+                <div className="lg:col-span-6 bg-black/[0.02] border-b lg:border-b-0 lg:border-r border-black/5 flex flex-col relative h-[280px] sm:h-[350px] lg:h-auto min-h-[250px] lg:min-h-[450px]">
                   <div className="relative flex-1 w-full bg-white flex items-center justify-center overflow-hidden">
                     {currentVariant.images && currentVariant.images.length > 0 ? (
                       (() => {
@@ -225,7 +238,7 @@ export const ProductVariantsModal = ({
                           key={idx}
                           type="button"
                           onClick={() => setVariantImageIndex(idx)}
-                          className={`w-14 h-14 rounded-2xl overflow-hidden border-2 transition-all shrink-0 ${
+                          className={`w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all shrink-0 ${
                             variantImageIndex === idx ? 'border-amber-500 scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
                           }`}
                         >
@@ -236,41 +249,41 @@ export const ProductVariantsModal = ({
                   )}
                 </div>
 
-                <div className="lg:col-span-6 p-8 space-y-8 flex flex-col justify-between">
-                  <div className="space-y-8">
-
-                    <div className="grid grid-cols-2 gap-5">
-                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-5 transition-all hover:bg-black/[0.03]">
+                <div className="lg:col-span-6 p-4 md:p-8 space-y-6 md:space-y-8 flex flex-col justify-between">
+                  <div className="space-y-6 md:space-y-8">
+                    {/* Responsive details grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 transition-all hover:bg-black/[0.03]">
                         <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-2">{t('admin.material')}</p>
-                        <p className="text-base font-extrabold text-black leading-snug">{currentVariant.material_name}</p>
+                        <p className="text-sm md:text-base font-extrabold text-black leading-snug">{currentVariant.material_name}</p>
                       </div>
 
-                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-5 transition-all hover:bg-black/[0.03]">
+                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 transition-all hover:bg-black/[0.03]">
                         <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-2">{t('admin.size')}</p>
-                        <p className="text-base font-extrabold text-black">{currentVariant.size_name}</p>
+                        <p className="text-sm md:text-base font-extrabold text-black">{currentVariant.size_name}</p>
                       </div>
 
-                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-5 transition-all hover:bg-black/[0.03]">
+                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 transition-all hover:bg-black/[0.03]">
                         <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-2">{t('admin.price')}</p>
-                        <p className="text-base font-extrabold text-black">
+                        <p className="text-sm md:text-base font-extrabold text-black">
                           {currentVariant.discount > 0 ? (
                             <span className="flex items-baseline gap-2.5">
-                              <span className="text-red-600 text-xl font-black">{currentVariant.final_price}</span>
-                              <span className="text-sm text-black/35 line-through font-normal">{currentVariant.price}</span>
-                              <span className="text-xs text-black/45 font-medium">{isRtl ? 'ر.س' : 'SAR'}</span>
+                              <span className="text-red-600 text-lg md:text-xl font-black">{currentVariant.final_price}</span>
+                              <span className="text-xs md:text-sm text-black/35 line-through font-normal">{currentVariant.price}</span>
+                              <span className="text-[10px] md:text-xs text-black/45 font-medium">{isRtl ? 'ر.س' : 'SAR'}</span>
                             </span>
                           ) : (
                             <span className="flex items-baseline gap-1">
-                              <span className="text-lg font-black">{currentVariant.price}</span>
-                              <span className="text-xs text-black/45 font-semibold">{isRtl ? 'ر.س' : 'SAR'}</span>
+                              <span className="text-md md:text-lg font-black">{currentVariant.price}</span>
+                              <span className="text-[10px] md:text-xs text-black/45 font-semibold">{isRtl ? 'ر.س' : 'SAR'}</span>
                             </span>
                           )}
                         </p>
                       </div>
 
-                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-5 transition-all hover:bg-black/[0.03]">
+                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 transition-all hover:bg-black/[0.03]">
                         <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-2">{t('admin.stock')}</p>
-                        <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold ${
+                        <span className={`inline-flex items-center px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs font-bold ${
                           currentVariant.stock_quantity > 0
                             ? 'bg-green-50 text-green-700 border border-green-200/50'
                             : 'bg-red-50 text-red-700 border border-red-200/50'
@@ -282,7 +295,7 @@ export const ProductVariantsModal = ({
                     </div>
 
                     {currentVariant.barcode && (
-                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-5 flex flex-col items-center justify-center">
+                      <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 flex flex-col items-center justify-center">
                         <div className="flex items-center gap-1.5 text-[10px] font-bold text-black/40 uppercase tracking-wider self-start mb-4">
                           <Barcode className="h-4 w-4 text-black/50" />
                           <span>{t('admin.barcode')}</span>
@@ -301,7 +314,7 @@ export const ProductVariantsModal = ({
                         </p>
                         <div className="grid grid-cols-1 gap-3">
                           {currentVariant.packages.map((pkg) => (
-                            <div key={pkg.id} className="flex items-center justify-between rounded-xl border border-black/5 bg-black/[0.01] px-5 py-3.5 text-xs transition-all hover:bg-black/[0.03] shadow-xs">
+                            <div key={pkg.id} className="flex items-center justify-between rounded-xl border border-black/5 bg-black/[0.01] px-4 md:px-5 py-3.5 text-xs transition-all hover:bg-black/[0.03] shadow-xs">
                               <span className="font-bold text-black/80">{typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}</span>
                               <div className="flex items-center gap-4">
                                 <span className="bg-black/5 px-2.5 py-1 rounded-lg font-bold text-black/60">×{pkg.quantity}</span>
@@ -319,30 +332,30 @@ export const ProductVariantsModal = ({
           )}
 
           {flatVariants.length > 1 && (
-            <div className="flex items-center justify-between px-8 py-5 border-t border-black/5 bg-gray-50/50 shrink-0">
+            <div className="flex items-center justify-between p-4 md:px-8 md:py-5 border-t border-black/5 bg-gray-50/50 shrink-0">
               <button
                 onClick={() => setActiveVariantIndex((prev) => Math.max(0, prev - 1))}
                 disabled={activeVariantIndex === 0}
-                className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl text-xs font-semibold text-black/60 border border-black/10 hover:bg-black/5 hover:text-black disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer bg-white"
+                className="flex items-center gap-1.5 px-3 md:px-4.5 py-2 md:py-2.5 rounded-xl text-xs font-semibold text-black/60 border border-black/10 hover:bg-black/5 hover:text-black disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer bg-white"
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span>{t('admin.previous')}</span>
+                <span className="hidden sm:inline">{t('admin.previous')}</span>
               </button>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2">
                 {flatVariants.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveVariantIndex(i)}
-                    className={`h-2.5 rounded-full transition-all cursor-pointer ${i === activeVariantIndex ? 'w-8 bg-amber-500' : 'w-2.5 bg-black/15 hover:bg-black/35'}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${i === activeVariantIndex ? 'w-6 md:w-8 bg-amber-500' : 'w-2 bg-black/15 hover:bg-black/35'}`}
                   />
                 ))}
               </div>
               <button
                 onClick={() => setActiveVariantIndex((prev) => Math.min(flatVariants.length - 1, prev + 1))}
                 disabled={activeVariantIndex === flatVariants.length - 1}
-                className="flex items-center gap-1.5 px-4.5 py-2.5 rounded-xl text-xs font-semibold text-black/60 border border-black/10 hover:bg-black/5 hover:text-black disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer bg-white"
+                className="flex items-center gap-1.5 px-3 md:px-4.5 py-2 md:py-2.5 rounded-xl text-xs font-semibold text-black/60 border border-black/10 hover:bg-black/5 hover:text-black disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer bg-white"
               >
-                <span>{t('admin.next')}</span>
+                <span className="hidden sm:inline">{t('admin.next')}</span>
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>

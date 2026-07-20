@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { Plus, Trash2, Loader2, Pencil, Calendar } from 'lucide-react';
+import { useAuth } from '../../../../context/AuthContext';
 import { Button } from '../../../../components/ui/button';
 import { AddSize } from './AddSize';
 import { DeleteConfirmationModal } from '../../../../components/Admin/DeleteConfirmationModal';
@@ -25,6 +26,11 @@ export const Sizes = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const { hasPermission } = useAuth();
+  const canCreate = hasPermission('create_size');
+  const canEdit = hasPermission('update_size');
+  const canDelete = hasPermission('delete_size');
+
   const { data, isLoading, isError, error } = useSizesQuery(page, perPage);
   const createMutation = useCreateSizeMutation();
   const updateMutation = useUpdateSizeMutation();
@@ -35,21 +41,25 @@ export const Sizes = () => {
   }>();
 
   useEffect(() => {
-    setHeaderAction(
-      <Button
-        onClick={() => {
-          setSelectedSize(null);
-          setIsAddModalOpen(true);
-        }}
-        className="flex items-center gap-2"
-        disabled={createMutation.isPending || updateMutation.isPending}
-      >
-        <Plus className="h-4 w-4" />
-        {t('admin.add_size')}
-      </Button>
-    );
+    if (canCreate) {
+      setHeaderAction(
+        <Button
+          onClick={() => {
+            setSelectedSize(null);
+            setIsAddModalOpen(true);
+          }}
+          className="flex items-center gap-2"
+          disabled={createMutation.isPending || updateMutation.isPending}
+        >
+          <Plus className="h-4 w-4" />
+          {t('admin.add_size')}
+        </Button>
+      );
+    } else {
+      setHeaderAction(null);
+    }
     return () => setHeaderAction(null);
-  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending]);
+  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate]);
 
   const handleCloseAddModal = () => {
     setIsAddModalOpen(false);
@@ -130,24 +140,28 @@ export const Sizes = () => {
                     <span>{item.created_at}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditClick(item)}
-                      className="h-8 w-8 text-black/70 hover:bg-black/5 hover:text-black cursor-pointer"
-                      disabled={updateMutation.isPending}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteClick(item.id)}
-                      className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                      disabled={deleteMutation.isPending}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
+                    {canEdit && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditClick(item)}
+                        className="h-8 w-8 text-black/70 hover:bg-black/5 hover:text-black cursor-pointer"
+                        disabled={updateMutation.isPending}
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(item.id)}
+                        className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

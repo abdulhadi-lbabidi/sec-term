@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trash2, Loader2, Star } from 'lucide-react';
+import { useAuth } from '../../../context/AuthContext';
 import { Button } from '../../../components/ui/button';
 import {
   Table,
@@ -22,6 +23,9 @@ export const Reviews = () => {
   const [reviewIdToDelete, setReviewIdToDelete] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+
+  const { hasPermission } = useAuth();
+  const canDelete = hasPermission('delete_review');
 
   const { data, isLoading, isError, error } = useReviewsQuery(page, perPage);
   const deleteMutation = useDeleteReviewMutation();
@@ -104,15 +108,17 @@ export const Reviews = () => {
                             {review.created_at}
                           </TableCell>
                           <TableCell className="text-center">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDeleteReview(review.id)}
-                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                              disabled={deleteMutation.isPending}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {canDelete && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeleteReview(review.id)}
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                disabled={deleteMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))
@@ -157,16 +163,18 @@ export const Reviews = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-end gap-2 border-t pt-2 mt-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteReview(review.id)}
-                          className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
-                          disabled={deleteMutation.isPending}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                          {t('admin.delete')}
-                        </Button>
+                        {canDelete && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteReview(review.id)}
+                            className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
+                            disabled={deleteMutation.isPending}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {t('admin.delete')}
+                          </Button>
+                        )}
                       </div>
                     </div>
                   ))

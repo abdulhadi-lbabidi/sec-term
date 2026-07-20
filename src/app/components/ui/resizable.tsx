@@ -3,6 +3,7 @@
 import * as React from "react";
 import { GripVerticalIcon } from "lucide-react";
 import * as ResizablePrimitive from "react-resizable-panels";
+import i18n from "@/app/i18n/config";
 
 import { cn } from "./utils";
 
@@ -12,6 +13,7 @@ function ResizablePanelGroup({
 }: React.ComponentProps<typeof ResizablePrimitive.PanelGroup>) {
   return (
     <ResizablePrimitive.PanelGroup
+      dir={i18n.language === 'ar' ? "rtl" : "ltr"}
       data-slot="resizable-panel-group"
       className={cn(
         "flex h-full w-full data-[panel-group-direction=vertical]:flex-col",
