@@ -200,7 +200,7 @@ export const AddProduct = () => {
                   <SelectTrigger
                     className={errors.categoryId ? 'border-destructive focus-visible:ring-destructive/20' : ''}
                   >
-                    <SelectValue placeholder={t('title.select_category')} />
+                    <SelectValue placeholder={t('admin.select_category')} />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat) => (
@@ -225,7 +225,7 @@ export const AddProduct = () => {
               className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black"
             />
             <Label htmlFor="isFeatured" className="text-sm font-semibold cursor-pointer">
-              {t('title.featured_product')}
+              {t('admin.featured_product')}
             </Label>
           </div>
         </div>
@@ -245,9 +245,9 @@ export const AddProduct = () => {
             {isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : productId ? (
-              t('title.save_changes')
+              t('admin.save_changes')
             ) : (
-              t('title.add')
+              t('admin.add')
             )}
           </Button>
         </div>

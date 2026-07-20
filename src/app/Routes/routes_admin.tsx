@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import { AdminDashboard, Layout as AdminLayout } from '../pages/Admin/Layout';
+import { AdminDashboard } from '../pages/Admin/Layout/Home';
+import { Layout as AdminLayout } from '../pages/Admin/Layout/Layout';
 import { Categories } from '../pages/Admin/Categories/Categories';
 import { Sizes } from '../pages/Admin/Products/Sizes/Sizes';
 import { Materials } from '../pages/Admin/Products/Materials/Materials';
@@ -10,6 +11,9 @@ import { AddProductVariant } from '../pages/Admin/Products/ProductPages/AddProdu
 import { Reviews } from '../pages/Admin/Reviews/Reviews';
 import { Packages } from '../pages/Admin/Packages/Packages';
 import { Login } from '../pages/Admin/Login';
+import { Roles } from '../pages/Admin/Roles/Roles';
+import { AddRoles } from '../pages/Admin/Roles/AddRoles';
+import { Users } from '../pages/Admin/Users/Users';
 
 export const AdminRoutes = (
   <>
@@ -27,6 +31,10 @@ export const AdminRoutes = (
       <Route path="products/sizes" element={<Sizes />} />
       <Route path="products/materials" element={<Materials />} />
       <Route path="packages" element={<Packages />} />
+      <Route path="roles" element={<Roles />} />
+      <Route path="roles/add" element={<AddRoles />} />
+      <Route path="roles/edit/:roleId" element={<AddRoles />} />
+      <Route path="users" element={<Users />} />
       <Route path="client" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
     </Route>

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from './axios';
-import { Product, ProductsResponse } from '../../../types/Admin/products';
+import { Product, ProductsResponse, ProductVariant, ProductVariantResponse } from '../../../types/Admin/products';
 
 export const fetchProducts = async (page = 1, perPage = 5): Promise<ProductsResponse> => {
   const response = await api.get<ProductsResponse>('/products', {
@@ -111,8 +111,8 @@ export const useDeleteProductVariantMutation = () => {
   });
 };
 
-export const fetchProductVariant = async (id: number): Promise<any> => {
-  const response = await api.get(`/product-variants/${id}`);
+export const fetchProductVariant = async (id: number): Promise<ProductVariantResponse> => {
+  const response = await api.get<ProductVariantResponse>(`/product-variants/${id}`);
   return response.data;
 };
 
@@ -127,8 +127,8 @@ export const useProductVariantQuery = (id: number | null) => {
 export const useUpdateProductVariantMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
-      const response = await api.post(`/product-variants/${id}`, formData, {
+    mutationFn: async (formData: FormData) => {
+      const response = await api.post('/product-variants/bulk-update', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

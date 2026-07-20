@@ -1,30 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from './axios';
+import type {
+  Material,
+  MaterialsResponse,
+  MaterialDetailResponse,
+  CreateMaterialPayload,
+  UpdateMaterialPayload,
+} from '../../../types/Admin/materials';
 
-export interface Material {
-  id: number;
-  material: string;
-  created_at: string;
-}
-
-export interface MaterialsResponse {
-  data: Material[];
-  links: {
-    first: string;
-    last: string;
-    prev: string | null;
-    next: string | null;
-  };
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  };
-}
+export type {
+  Material,
+  MaterialsResponse,
+  MaterialDetailResponse,
+  CreateMaterialPayload,
+  UpdateMaterialPayload,
+};
 
 export const fetchMaterials = async (page = 1, perPage = 5): Promise<MaterialsResponse> => {
   const response = await api.get<MaterialsResponse>('/materials', {
@@ -47,7 +37,7 @@ export const useMaterialsQuery = (page = 1, perPage = 5) => {
 export const useCreateMaterialMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ materialAr, materialEn }: { materialAr: string; materialEn: string }) => {
+    mutationFn: async ({ materialAr, materialEn }: CreateMaterialPayload) => {
       const formData = new FormData();
       formData.append('material[ar]', materialAr);
       formData.append('material[en]', materialEn);
@@ -67,12 +57,12 @@ export const useCreateMaterialMutation = () => {
 export const useUpdateMaterialMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, materialAr, materialEn }: { id: number; materialAr: string; materialEn: string }) => {
-      const payload = {
-        'material[ar]': materialAr,
-        'material[en]': materialEn,
-      };
-      const response = await api.patch(`/materials/${id}`, payload);
+    mutationFn: async ({ id, formData }: UpdateMaterialPayload) => {
+      const response = await api.post(`/materials/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     },
     onSuccess: () => {
@@ -94,8 +84,8 @@ export const useDeleteMaterialMutation = () => {
   });
 };
 
-export const fetchMaterial = async (id: number): Promise<any> => {
-  const response = await api.get(`/materials/${id}?all_languages=true`);
+export const fetchMaterial = async (id: number): Promise<MaterialDetailResponse> => {
+  const response = await api.get<MaterialDetailResponse>(`/materials/${id}?all_languages=true`);
   return response.data;
 };
 

@@ -48,13 +48,15 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
   const { data: categoryData } = useCategoryQuery(categoryId || null);
 
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<{ url: string; file?: File }[]>([]);
+  const [deletedMediaIds, setDeletedMediaIds] = useState<string[]>([]);
   const watchedImages = watch('image');
 
   useEffect(() => {
     if (!isOpen) {
       reset();
       setImagePreviews([]);
+      setDeletedMediaIds([]);
     }
   }, [isOpen, reset]);
 
@@ -68,10 +70,11 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
         descriptionEn: cat.description?.en || '',
       });
       if (cat.all_images) {
-        setImagePreviews(cat.all_images);
+        setImagePreviews(cat.all_images.map((url: string) => ({ url })));
       } else if (cat.image) {
-        setImagePreviews([cat.image]);
+        setImagePreviews([{ url: cat.image }]);
       }
+      setDeletedMediaIds([]);
     }
   }, [categoryData, categoryId, reset]);
 
@@ -80,8 +83,15 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
       const filesArray = Array.from(watchedImages);
       const urls = filesArray.map((file) => URL.createObjectURL(file));
       setImagePreviews((prev) => {
-        const existing = prev.filter(url => url.startsWith('http'));
-        return [...existing, ...urls];
+        const newPreviews = filesArray.map((file, i) => ({
+          url: urls[i],
+          file,
+        }));
+        const filteredPrev = prev.filter(
+          (existingItem) =>
+            !filesArray.some((newFile) => newFile.name === (existingItem.file?.name || existingItem.url.split('/').pop()))
+        );
+        return [...filteredPrev, ...newPreviews];
       });
 
       return () => {
@@ -92,7 +102,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
-    if (categoryId) {
+    if (categoryId !== null && categoryId !== undefined) {
       formData.append('_method', 'PUT');
     }
     formData.append('name[ar]', data.nameAr);
@@ -100,9 +110,17 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
     formData.append('description[ar]', data.descriptionAr);
     formData.append('description[en]', data.descriptionEn);
 
-    if (data.image) {
-      Array.from(data.image).forEach((file, index) => {
-        formData.append(`image[${index}]`, file);
+    const filesToUpload = imagePreviews
+      .map((item) => item.file)
+      .filter((file): file is File => !!file);
+
+    filesToUpload.forEach((file, index) => {
+      formData.append(`images[${index}]`, file);
+    });
+
+    if (deletedMediaIds.length > 0) {
+      deletedMediaIds.forEach((id, index) => {
+        formData.append(`deleted_media_ids[${index}]`, id);
       });
     }
 
@@ -112,6 +130,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
   const handleClose = () => {
     reset();
     setImagePreviews([]);
+    setDeletedMediaIds([]);
     onClose();
   };
 
@@ -237,12 +256,26 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
             {imagePreviews.length > 0 && (
               <div className="mt-4 grid grid-cols-4 gap-4">
-                {imagePreviews.map((url, index) => (
+                {imagePreviews.map((item, index) => (
                   <div key={index} className="group relative aspect-square rounded-md border overflow-hidden">
-                    <img src={url} alt="preview" className="h-full w-full object-cover" />
+                    <img src={item.url} alt="preview" className="h-full w-full object-cover" />
                     <button
                       type="button"
                       onClick={() => {
+                        const itemToRemove = imagePreviews[index];
+                        if (itemToRemove) {
+                          const originalImages = categoryData?.data?.all_images || (categoryData?.data?.image ? [categoryData.data.image] : []);
+                          const getFilename = (url: string) => url.split('/').pop() || url;
+                          let originalIndex = originalImages.findIndex(
+                            (imgUrl: string) => getFilename(imgUrl) === getFilename(itemToRemove.url)
+                          );
+                          if (originalIndex === -1 && !itemToRemove.url.startsWith('blob:')) {
+                            originalIndex = index;
+                          }
+                          if (originalIndex !== -1) {
+                            setDeletedMediaIds((prev) => [...prev, String(originalIndex + 1)]);
+                          }
+                        }
                         setImagePreviews((prev) => prev.filter((_, i) => i !== index));
                       }}
                       className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"

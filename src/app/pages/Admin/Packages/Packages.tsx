@@ -66,14 +66,16 @@ export const Packages = () => {
 
   const handleAddOrEditPackage = (values: any) => {
     if (selectedPackage) {
+      const formData = new FormData();
+      formData.append('name[ar]', values.nameAr);
+      formData.append('name[en]', values.nameEn);
+      formData.append('price', String(values.price));
+      formData.append('_method', 'PUT');
+
       updateMutation.mutate(
         {
           id: selectedPackage.id,
-          data: {
-            'name[ar]': values.nameAr,
-            'name[en]': values.nameEn,
-            price: Number(values.price),
-          },
+          formData,
         },
         {
           onSuccess: () => {
@@ -132,59 +134,110 @@ export const Packages = () => {
               <p className="text-xs text-black/50">{(error as any)?.message || ''}</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader className="bg-black/5">
-                <TableRow>
-                  <TableHead className="font-bold">{t('admin.name')}</TableHead>
-                  <TableHead className="font-bold">{t('admin.price')}</TableHead>
-                  <TableHead className="hidden sm:table-cell font-bold">{t('admin.created_at')}</TableHead>
-                  <TableHead className="w-[80px] text-center font-bold">{t('admin.actions')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              <div className="hidden md:block overflow-x-auto">
+                <Table>
+                  <TableHeader className="bg-black/5">
+                    <TableRow>
+                      <TableHead className="font-bold">{t('admin.name')}</TableHead>
+                      <TableHead className="font-bold">{t('admin.price')}</TableHead>
+                      <TableHead className="hidden sm:table-cell font-bold">{t('admin.created_at')}</TableHead>
+                      <TableHead className="w-[80px] text-center font-bold">{t('admin.actions')}</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {packagesList.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-32 text-center text-black/40">
+                          {t('admin.no_packages')}
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      packagesList.map((pkg: PackageItem) => (
+                        <TableRow key={pkg.id}>
+                          <TableCell className="font-medium">
+                            {typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}
+                          </TableCell>
+                          <TableCell>{pkg.price}</TableCell>
+                          <TableCell className="hidden sm:table-cell text-sm text-black/50">
+                            {pkg.created_at}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleEditPackage(pkg)}
+                                className="text-black/60 hover:bg-black/5 hover:text-black"
+                                disabled={deleteMutation.isPending}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDeletePackage(pkg.id)}
+                                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                disabled={deleteMutation.isPending}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="block md:hidden space-y-4 p-4 bg-black/[0.01]">
                 {packagesList.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="h-32 text-center text-black/40">
-                      {t('admin.no_packages')}
-                    </TableCell>
-                  </TableRow>
+                  <div className="h-32 flex items-center justify-center text-center text-black/40">
+                    {t('admin.no_packages')}
+                  </div>
                 ) : (
                   packagesList.map((pkg: PackageItem) => (
-                    <TableRow key={pkg.id}>
-                      <TableCell className="font-medium">
-                        {typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}
-                      </TableCell>
-                      <TableCell>{pkg.price}</TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm text-black/50">
-                        {pkg.created_at}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEditPackage(pkg)}
-                            className="text-black/60 hover:bg-black/5 hover:text-black"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDeletePackage(pkg.id)}
-                            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            disabled={deleteMutation.isPending}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                    <div key={pkg.id} className="rounded-xl border border-black/10 bg-white p-4 space-y-3 shadow-sm text-black">
+                      <div className="flex items-center justify-between border-b pb-2">
+                        <span className="text-xs font-bold text-black/45">ID: {pkg.id}</span>
+                        <span className="text-xs text-black/35">{pkg.created_at}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex justify-between items-center text-sm font-bold">
+                          <span>{typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}</span>
+                          <span className="text-sm font-semibold text-green-600">
+                            {pkg.price} {isRtl ? 'ر.س' : 'SAR'}
+                          </span>
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </div>
+                      <div className="flex items-center justify-end gap-2 border-t pt-2 mt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditPackage(pkg)}
+                          className="h-8 gap-1 text-black/75 hover:bg-black/5 hover:text-black cursor-pointer text-xs"
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          {isRtl ? 'تعديل' : 'Edit'}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeletePackage(pkg.id)}
+                          className="h-8 gap-1 text-destructive/85 hover:bg-destructive/10 hover:text-destructive cursor-pointer text-xs"
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          {isRtl ? 'حذف' : 'Delete'}
+                        </Button>
+                      </div>
+                    </div>
                   ))
                 )}
-              </TableBody>
-            </Table>
+              </div>
+            </>
           )}
         </div>
       </div>

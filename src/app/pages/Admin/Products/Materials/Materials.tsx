@@ -45,7 +45,7 @@ export const Materials = () => {
         disabled={createMutation.isPending || updateMutation.isPending}
       >
         <Plus className="h-4 w-4" />
-        {isRtl ? 'إضافة مكون' : 'Add Material'}
+        {t('admin.add_material')}
       </Button>
     );
     return () => setHeaderAction(null);
@@ -58,8 +58,13 @@ export const Materials = () => {
 
   const handleAddOrUpdateMaterial = (values: { materialAr: string; materialEn: string }) => {
     if (selectedMaterialId !== null) {
+      const formData = new FormData();
+      formData.append('material[ar]', values.materialAr);
+      formData.append('material[en]', values.materialEn);
+      formData.append('_method', 'PUT');
+
       updateMutation.mutate(
-        { id: selectedMaterialId, materialAr: values.materialAr, materialEn: values.materialEn },
+        { id: selectedMaterialId, formData },
         {
           onSuccess: () => {
             handleCloseAddModal();
@@ -110,12 +115,12 @@ export const Materials = () => {
           </div>
         ) : isError ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 text-destructive bg-white rounded-2xl border border-black/10 p-6">
-            <p className="font-semibold">{isRtl ? 'حدث خطأ أثناء تحميل المكونات' : 'Error loading materials'}</p>
+            <p className="font-semibold">{t('admin.error_loading_materials')}</p>
             <p className="text-xs text-black/50">{(error as any)?.message || ''}</p>
           </div>
         ) : materialsList.length === 0 ? (
           <div className="flex h-48 flex-col items-center justify-center gap-2 bg-white rounded-2xl border border-black/10 p-6 text-black/40">
-            <p className="font-semibold">{isRtl ? 'لا توجد مكونات حالياً. قم بإضافة مكون جديد.' : 'No materials available. Please add one.'}</p>
+            <p className="font-semibold">{t('admin.no_materials_available')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

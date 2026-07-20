@@ -40,8 +40,12 @@ export const useCreatePackageMutation = () => {
 export const useUpdatePackageMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: { 'name[ar]': string; 'name[en]': string; price: number } }) => {
-      const response = await api.patch(`/packages/${id}`, data);
+    mutationFn: async ({ id, formData }: { id: number; formData: FormData }) => {
+      const response = await api.post(`/packages/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     },
     onSuccess: () => {
