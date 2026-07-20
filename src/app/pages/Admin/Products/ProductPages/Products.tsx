@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import {
-  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight,
-  X, Star, Layers,
+  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, Star, Layers
 } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import { Button } from '../../../../components/ui/button';

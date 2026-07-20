@@ -21,6 +21,11 @@ export const useAddToCartMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
     },
+    onError: (err: any) => {
+      // Show a user-friendly toast with the API error message, fallback to generic text
+      const message = err?.response?.data?.message || err?.message || 'Failed to add item to cart';
+      import('sonner').then(({ toast }) => toast.error(message));
+    },
   });
 };
 
@@ -33,6 +38,10 @@ export const useUpdateCartItemMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
     },
+    onError: (err: any) => {
+      const message = err?.response?.data?.message || err?.message || 'Failed to update cart';
+      import('sonner').then(({ toast }) => toast.error(message));
+    },
   });
 };
 
@@ -44,6 +53,10 @@ export const useRemoveCartItemMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
     },
+    onError: (err: any) => {
+      const message = err?.response?.data?.message || err?.message || 'Failed to remove item';
+      import('sonner').then(({ toast }) => toast.error(message));
+    },
   });
 };
 
@@ -54,6 +67,10 @@ export const useClearCartMutation = () => {
     mutationFn: cartService.clearCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: cartKeys.all });
+    },
+    onError: (err: any) => {
+      const message = err?.response?.data?.message || err?.message || 'Failed to clear cart';
+      import('sonner').then(({ toast }) => toast.error(message));
     },
   });
 };

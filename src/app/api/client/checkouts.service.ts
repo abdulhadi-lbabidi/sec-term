@@ -13,8 +13,15 @@ export const checkoutsService = {
   },
 
   createCheckout: async (payload: Partial<Checkout>) => {
-    const { data } = await apiClient.post<{ data: Checkout }>('/checkouts', payload);
-    return data.data;
+    const response = await apiClient.post<any>('/checkouts', payload);
+    if (response.isError) {
+      let errorMessage = response.message;
+      if (response.errors) {
+        errorMessage = Object.values(response.errors)[0]?.[0] || response.message;
+      }
+      throw new Error(errorMessage || 'Failed to create checkout');
+    }
+    return response.data?.data || response.data;
   },
 
   updateCheckout: async (id: number | string, payload: Partial<Checkout>) => {

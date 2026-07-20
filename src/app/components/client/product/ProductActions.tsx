@@ -1,7 +1,7 @@
 import { Minus, Plus, ShoppingBag, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { Skeleton } from '../../ui/skeleton';
-import { useAppStore } from '@/app/store/useAppStore';
+import { useTranslation } from 'react-i18next';
 
 interface ProductActionsProps {
   qty: number;
@@ -22,12 +22,11 @@ export function ProductActions({
   onIncreaseQty,
   onAddToCart,
   addToCartLabel,
-  outOfStockLabel, // keeping for backward compatibility but overridden
   isInCart = false,
   inCartLabel
 }: ProductActionsProps) {
-  const { language } = useAppStore();
-  const outOfStockText = language === 'ar' ? 'يتم تجهيز الدفعة الطازجة التالية حالياً' : 'The next fresh batch is currently being prepared';
+  const { t } = useTranslation();
+  const outOfStockText = t('outOfStock');
 
   return (
     <div className="mt-auto bg-gray-50 p-6 rounded-3xl border border-gray-100 grid md:grid-cols-2 grid-cols-1 gap-4 items-center">
@@ -51,13 +50,12 @@ export function ProductActions({
       <Button
         onClick={onAddToCart}
         disabled={maxStock <= 0}
-        className={`w-full h-14 text-white rounded-full text-base sm:text-lg font-bold flex items-center justify-center gap-3 transition-colors shadow-lg disabled:opacity-100 ${
-          maxStock <= 0 
-            ? 'bg-orange-100 text-orange-600 border border-orange-200 cursor-not-allowed shadow-none'
-            : isInCart 
-              ? 'bg-green-600 hover:bg-green-700 disabled:hover:bg-green-600'
-              : 'bg-[#111111] hover:bg-[#C5A880] hover:shadow-xl disabled:hover:bg-[#111111]'
-        }`}
+        className={`w-full h-14 text-white rounded-full text-base sm:text-lg font-bold flex items-center justify-center gap-3 transition-colors shadow-lg disabled:opacity-100 ${maxStock <= 0
+          ? 'bg-orange-100 text-orange-600 border border-orange-200 cursor-not-allowed shadow-none'
+          : isInCart
+            ? 'bg-green-600 hover:bg-green-700 disabled:hover:bg-green-600'
+            : 'bg-[#111111] hover:bg-[#C5A880] hover:shadow-xl disabled:hover:bg-[#111111]'
+          }`}
       >
         {maxStock <= 0 ? <Clock size={22} className="shrink-0" /> : (isInCart ? <CheckCircle2 size={22} className="shrink-0" /> : <ShoppingBag size={22} className="shrink-0" />)}
         <span className="truncate">{maxStock <= 0 ? outOfStockText : (isInCart && inCartLabel ? inCartLabel : addToCartLabel)}</span>

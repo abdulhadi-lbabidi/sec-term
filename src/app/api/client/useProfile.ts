@@ -15,6 +15,7 @@ export interface UserProfile {
   is_active: boolean;
   created_at: string;
   roles: UserRole[];
+  cart_id: number;
 }
 
 export const useProfile = () => {
@@ -29,7 +30,7 @@ export const useProfile = () => {
 
       return response.data;
     },
-    enabled: !!localStorage.getItem("nouh_carting_roken"),
+    enabled: !!localStorage.getItem("nouh_client_token"),
   });
 };
 
@@ -57,15 +58,15 @@ export const useChangePassword = () => {
         password: data.newPassword,
         password_confirmation: data.confirmPassword
       };
-      
+
       const response = await ApiClient.put<any>('/profile', payload);
-      
+
       if (response.isError) {
         // If the backend returns detailed validation errors, you might want to show a specific one
-        const errorMessage = response.errors 
-          ? Object.values(response.errors)[0]?.[0] || response.message 
+        const errorMessage = response.errors
+          ? Object.values(response.errors)[0]?.[0] || response.message
           : response.message;
-          
+
         throw new Error(errorMessage as string);
       }
       return response.data;

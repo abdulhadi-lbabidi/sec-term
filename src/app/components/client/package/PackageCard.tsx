@@ -4,7 +4,9 @@ import { translations } from '../../../i18n/translations';
 import { Button } from '../../ui/button';
 import { useAddToCartMutation } from '@/app/api/client/useCart';
 import { toast } from 'sonner';
+import { showAddToCartSuccessToast } from '@/app/components/ui/custom-toast';
 import { Loader2 } from 'lucide-react';
+import { Skeleton } from '../../ui/skeleton';
 
 interface PackageCardProps {
   pkg: any;
@@ -30,7 +32,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) =
     addToCartApi({ product_variant_id: variantId, product_variant_package_id: pkg.id, quantity: 1 }, {
       onSuccess: () => {
         if (triggerToast) triggerToast(t.itemAdded || 'Added to cart');
-        else toast.success(language === 'ar' ? 'تمت إضافة الباقة للسلة' : 'Package added to cart');
+        else showAddToCartSuccessToast((key: string) => t[key]);
       },
       onError: (err: any) => {
         toast.error(err?.message || (language === 'ar' ? 'فشل إضافة الباقة للسلة' : 'Failed to add package to cart'));
@@ -42,7 +44,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) =
     <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-[#EAE5DF] flex flex-col md:flex-row hover:shadow-xl transition-shadow duration-300">
       <div className="md:w-2/5 relative aspect-square md:aspect-auto">
         <img src={pkg.image} alt={name} className="w-full h-full object-cover" />
-        <div className="absolute top-4 right-4 bg-[#C5A880] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-md">
+        <div className="absolute top-4 end-4 bg-[#C5A880] text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-md">
           <Package size={14} /> باقة مميزة
         </div>
       </div>
@@ -68,3 +70,31 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, triggerToast }) =
     </div>
   );
 };
+
+export const PackageCardSkeleton = () => (
+  <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-[#EAE5DF] flex flex-col md:flex-row">
+    <div className="md:w-2/5 relative aspect-square md:aspect-auto">
+      <Skeleton className="w-full h-full" />
+    </div>
+    <div className="p-8 md:w-3/5 flex flex-col justify-center">
+      <Skeleton className="h-8 w-3/4 mb-3" />
+      <div className="space-y-2 mb-6">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+      </div>
+
+      <div className="bg-[#FCFAF7] p-4 rounded-2xl border border-[#EAE5DF] mb-6 space-y-2">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+
+      <div className="flex items-center justify-between mt-auto pt-4">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-8 w-32" />
+        </div>
+        <Skeleton className="h-12 w-32 rounded-xl" />
+      </div>
+    </div>
+  </div>
+);

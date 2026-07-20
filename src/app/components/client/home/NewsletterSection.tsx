@@ -31,8 +31,8 @@ export const NewsletterSection = ({ className }: NewsletterSectionProps) => {
           </div>
         </div>
 
-        <div className="md:w-1/2 mt-8 md:mt-0 relative z-10 flex justify-end">
-          <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=500" alt={t('newsletter.image_alt', 'Chef')} className="h-[300px] object-cover rounded-full border-4 border-white/20 shadow-2xl" />
+        <div className="md:w-1/2 mt-8 md:mt-0 relative z-10 flex justify-center md:justify-end">
+          <img src="https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&q=80&w=500" alt="Chef" className="w-48 h-48 md:w-64 md:h-64 lg:w-[300px] lg:h-[300px] object-cover rounded-full border-4 border-white/20 shadow-2xl" />
         </div>
       </div>
     </section>

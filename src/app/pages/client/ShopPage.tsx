@@ -73,6 +73,9 @@ export default function ShopPage() {
   const handleFilterChange = (key: string, value: string | number) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     setPage(1); // Reset page on filter change
+    if (key !== 'min_price' && key !== 'max_price') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleClearFilters = () => {
@@ -85,6 +88,7 @@ export default function ShopPage() {
       search: '',
     });
     setPage(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Heart, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAppStore } from '@/app/store/useAppStore';
 import { Button } from '@/app/components/ui/button';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { useAddToCartMutation } from '@/app/api/client/useCart';
-import { Loader2 } from 'lucide-react';
 
 interface ProductCardProps {
   product: any;
@@ -14,15 +12,13 @@ interface ProductCardProps {
   layout?: 'grid' | 'list';
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast, layout = 'grid' }) => {
-  const { language, toggleWishlist, wishlist, cart } = useAppStore();
-  const { mutate: addToCartApi, isPending: isAdding } = useAddToCartMutation();
+export const ProductCard: React.FC<ProductCardProps> = ({ product, layout = 'grid' }) => {
+  const { language, toggleWishlist, wishlist } = useAppStore();
   const { t } = useTranslation();
 
   if (!product) return null;
 
   const isFav = wishlist.some(p => p.id === product?.id);
-  const isInCart = cart.some(c => c.product.id === product.id && !c.isPackage);
   const name = language === 'ar' ? (product.nameAr || product.name) : (product.nameEn || product.name);
   const desc = language === 'ar' ? (product.descAr || product.body) : (product.descEn || product.body);
   let displayPrice = product.price;
@@ -41,37 +37,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
   const [imgError, setImgError] = useState(false);
   const imgSrc = product.image && !imgError ? product.image : null;
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-
-    // Find the default variant ID
-    let variantId = product?.variants?.[0]?.id;
-    if (!variantId && product?.available_options?.length > 0) {
-      const firstOption = product.available_options[0];
-      if (firstOption?.available_sizes?.length > 0) {
-        variantId = firstOption.available_sizes[0].variant_id;
-      }
-    }
-
-    if (!variantId) {
-      toast.error(t('productCard.noVariant', 'Product variant not available'));
-      return;
-    }
-
-    addToCartApi({ product_variant_id: variantId, quantity: 1 }, {
-      onSuccess: () => {
-        const msg = t('productCard.itemAdded', 'Added to cart');
-        if (triggerToast) triggerToast(msg);
-        else toast.success(msg);
-      },
-      onError: (err: any) => {
-        toast.error(err?.message || t('productCard.addFailed', 'Failed to add to cart'));
-      }
-    });
-  };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     toggleWishlist(product);
     if (isFav) toast.success(t('productCard.removedFromWishlist', 'Removed from wishlist'));
     else toast.success(t('productCard.addedToWishlist', 'Added to wishlist'));
@@ -80,9 +49,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
   return (
     <Link
       to={`/product/${product.id}`}
-      className={`group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex ${layout === 'list' ? 'flex-row h-48' : 'flex-col h-full'} relative`}
+      className={`group bg-white rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 flex ${layout === 'list' ? 'flex-row min-h-[140px] md:min-h-[160px] p-2 md:p-3 gap-3 md:gap-4' : 'flex-col h-full overflow-hidden'} relative`}
     >
-      <div className={`relative ${layout === 'list' ? 'w-1/3 min-w-[150px] shrink-0' : 'aspect-[4/3] w-full'} overflow-hidden bg-primary/5 flex items-center justify-center`}>
+      <div className={`relative ${layout === 'list' ? 'w-[120px] md:w-[160px] shrink-0 rounded-2xl' : 'aspect-[4/3] w-full'} overflow-hidden bg-[#FCFAF7] border border-[#EAE5DF]/50 flex items-center justify-center`}>
         {imgSrc ? (
           <img
             src={imgSrc}
@@ -99,7 +68,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
             loading="lazy"
           />
         )}
-        <div className={`absolute top-3 ${layout === 'list' ? 'ltr:left-3 rtl:right-3' : 'ltr:right-3 rtl:left-3'} flex flex-col gap-2 z-10`}>
+        <div className={`absolute ${layout === 'list' ? 'top-2 start-2' : 'top-3 end-3'} flex flex-col gap-2 z-10`}>
           <Button
             type="button"
             variant={"ghost"}
@@ -118,29 +87,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, triggerToast,
         )}
       </div>
 
-      <div className={`p-5 flex flex-col flex-grow ${layout === 'list' ? 'justify-center' : ''}`}>
-        <div className="flex justify-between items-start mb-2 gap-2">
-          <h3 className="font-bold text-[#1C1A17] text-base md:text-lg leading-tight group-hover:text-[#C5A880] transition-colors line-clamp-2">{name}</h3>
-          <span className="font-black text-[#C5A880] whitespace-nowrap bg-[#FCFAF7] px-2 py-1 rounded-lg border border-[#EAE5DF] text-sm md:text-base">
-            {Number(price).toFixed(2)} {t('productCard.currency', 'SAR')}
-          </span>
+      <div className={`${layout === 'list' ? 'py-1 pe-1 md:py-2 md:pe-2' : 'p-4 md:p-5'} flex flex-col flex-grow justify-between`}>
+        <div>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2">
+            <h3 className="font-bold text-[#1C1A17] text-base md:text-lg leading-tight group-hover:text-[#C5A880] transition-colors line-clamp-2">{name}</h3>
+            <span className="font-black text-[#C5A880] whitespace-nowrap bg-[#FCFAF7] px-2 py-1 rounded-lg border border-[#EAE5DF] text-sm md:text-base self-start sm:self-auto">
+              {Number(price).toFixed(2)} {t('productCard.currency', 'SAR')}
+            </span>
+          </div>
+          <p className={`text-gray-500 text-xs md:text-sm mb-4 leading-relaxed ${layout === 'list' ? 'line-clamp-2 sm:line-clamp-3' : 'line-clamp-2'}`}>{desc}</p>
         </div>
-        <p className={`text-gray-500 text-xs md:text-sm mb-4 leading-relaxed flex-grow ${layout === 'list' ? 'line-clamp-3' : 'line-clamp-2'}`}>{desc}</p>
 
-        <div className={`flex items-center w-full justify-between pt-4 border-t border-gray-100 mt-auto ${layout === 'list' ? 'md:w-1/2' : ''}`}>
+        <div className={`flex items-center w-full pt-3 border-t border-gray-100 mt-auto justify-end`}>
           <Button
-            onClick={handleAddToCart}
-            disabled={stock <= 0 || isAdding}
-            className={`rounded-full w-full h-10 p-0 transition-all shadow-md group-hover:shadow-lg disabled:opacity-50 disabled:hover:text-white ${isInCart
-              ? 'bg-green-600 hover:bg-green-700 text-white disabled:hover:bg-green-600'
-              : 'bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111111] disabled:hover:bg-[#111111]'
-              }`}
+            disabled={stock <= 0}
+            className={`flex items-center justify-center gap-2 rounded-full h-10 px-4 transition-all shadow-md group-hover:shadow-lg disabled:opacity-50 disabled:hover:text-white bg-[#111111] hover:bg-[#C5A880] text-white hover:text-[#111111] disabled:hover:bg-[#111111] ${layout === 'list' ? 'w-full sm:w-auto min-w-[140px]' : 'w-full'}`}
           >
-            {isAdding ? <Loader2 className="animate-spin" size={18} /> : (isInCart ? <CheckCircle2 size={18} /> : <ShoppingBag size={18} />)}
-            {isAdding ? t('productCard.adding', 'Adding...') : (isInCart
-              ? t('productCard.inCart', 'In Cart')
-              : t('productCard.addToCart', 'Add to cart'))
-            }
+            <ShoppingBag size={18} />
+            <span>{t('productCard.buyNow')}</span>
           </Button>
         </div>
       </div>
