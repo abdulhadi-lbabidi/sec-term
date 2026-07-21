@@ -40,7 +40,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({ fo
           </span>
         </label>
 
-        {/* Placeholder for future payment methods like Credit Card */}
+     
         <div 
           className="relative border-2 border-dashed border-border bg-background rounded-2xl p-6 flex flex-col items-center gap-3 cursor-not-allowed opacity-60"
         >

@@ -4,21 +4,23 @@ import { Category, CategoriesResponse } from '../../../types/Admin/categories';
 export type { Category, CategoriesResponse };
 
 
-export const fetchCategories = async (page = 1, perPage = 5): Promise<CategoriesResponse> => {
-  const response = await api.get<CategoriesResponse>('/categories', {
-    params: {
-      paginate: 1,
-      per_page: perPage,
-      page: page,
-    },
-  });
+export const fetchCategories = async (page = 1, perPage = 5, search?: string): Promise<CategoriesResponse> => {
+  const params: Record<string, any> = {
+    paginate: 1,
+    per_page: perPage,
+    page: page,
+  };
+  if (search && search.trim()) {
+    params['filter[search]'] = search.trim();
+  }
+  const response = await api.get<CategoriesResponse>('/categories', { params });
   return response.data;
 };
 
-export const useCategoriesQuery = (page = 1, perPage = 5) => {
+export const useCategoriesQuery = (page = 1, perPage = 5, search?: string) => {
   return useQuery({
-    queryKey: ['adminCategories', page, perPage],
-    queryFn: () => fetchCategories(page, perPage),
+    queryKey: ['adminCategories', page, perPage, search],
+    queryFn: () => fetchCategories(page, perPage, search),
   });
 };
 

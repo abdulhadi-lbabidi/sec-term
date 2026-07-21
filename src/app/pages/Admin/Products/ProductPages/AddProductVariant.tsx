@@ -272,9 +272,18 @@ export const AddProductVariant = () => {
 
   const handleImageChange = (id: string, files: FileList | null) => {
     if (!files || files.length === 0) return;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     const filesArray = Array.from(files);
-    const urls = filesArray.map((file) => URL.createObjectURL(file));
-    const newPreviews = filesArray.map((file, i) => ({
+    const validFiles = filesArray.filter((file) => file.size <= MAX_FILE_SIZE);
+
+    if (filesArray.length > validFiles.length) {
+      alert(t('admin.image_size_error'));
+    }
+
+    if (validFiles.length === 0) return;
+
+    const urls = validFiles.map((file) => URL.createObjectURL(file));
+    const newPreviews = validFiles.map((file, i) => ({
       url: urls[i],
       file,
     }));
@@ -284,7 +293,7 @@ export const AddProductVariant = () => {
         if (v.id === id) {
           const filteredPrev = v.imagePreviews.filter(
             (existingItem) =>
-              !filesArray.some((newFile) => newFile.name === (existingItem.file?.name || existingItem.url.split('/').pop()))
+              !validFiles.some((newFile) => newFile.name === (existingItem.file?.name || existingItem.url.split('/').pop()))
           );
           return { ...v, imagePreviews: [...filteredPrev, ...newPreviews] };
         }
@@ -510,18 +519,18 @@ export const AddProductVariant = () => {
     <div className="space-y-6">
       {!isEditMode && (
         <div className="rounded-2xl border border-black/10 bg-white p-6 text-black">
-          <h2 className="text-lg font-bold mb-4">{t('admin.generate_variants') || 'Generate Variants'}</h2>
+          <h2 className="text-lg font-bold mb-4">{t('admin.generate_variants')}</h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <MultiSelect
-              label={t('admin.sizes') || 'Sizes'}
-              placeholder={t('admin.select_sizes') || 'Select Sizes'}
+              label={t('admin.sizes')}
+              placeholder={t('admin.select_sizes')}
               options={sizes.map((sz) => ({ id: sz.id, label: sz.size }))}
               selectedValues={selectedSizes}
               onChange={setSelectedSizes}
             />
             <MultiSelect
-              label={t('admin.materials') || 'Materials'}
-              placeholder={t('admin.select_materials') || 'Select Materials'}
+              label={t('admin.materials')}
+              placeholder={t('admin.select_materials')}
               options={materials.map((mat) => ({ id: mat.id, label: mat.material }))}
               selectedValues={selectedMaterials}
               onChange={setSelectedMaterials}
@@ -533,7 +542,7 @@ export const AddProductVariant = () => {
               onClick={handleGenerateVariants}
               disabled={selectedSizes.length === 0 || selectedMaterials.length === 0}
             >
-              {t('admin.generate_products') || 'Generate Products'}
+              {t('admin.generate_products')}
             </Button>
           </div>
         </div>
@@ -542,10 +551,10 @@ export const AddProductVariant = () => {
       {generatedVariants.length === 0 && !isEditMode && (
         <div className="flex flex-col items-center justify-center p-12 border border-dashed border-black/10 rounded-2xl bg-white text-center">
           <p className="text-black/60 mb-2">
-            {t('admin.no_variants_generated') || 'No variants generated yet.'}
+            {t('admin.no_variants_generated')}
           </p>
           <p className="text-xs text-black/40">
-            {t('admin.select_sizes_materials_to_generate') || 'Please select sizes and materials above, then click Generate Products.'}
+            {t('admin.select_sizes_materials_to_generate')}
           </p>
         </div>
       )}
@@ -568,7 +577,7 @@ export const AddProductVariant = () => {
                   )}
 
                   <h3 className="text-md font-bold border-b pb-2 mb-4">
-                    {t('admin.variant') || 'Variant'} #{index + 1}
+                    {t('admin.variant')} #{index + 1}
                   </h3>
 
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -768,7 +777,7 @@ export const AddProductVariant = () => {
                           <Upload className="h-6 w-6 text-gray-500" />
                         </div>
                         <span className="text-sm font-medium text-gray-600">{t('admin.click_to_upload')}</span>
-                        <span className="text-xs text-gray-400">PNG, JPG, JPEG (Max 5MB)</span>
+                        <span className="text-xs text-gray-400">PNG, JPG, JPEG (Max 10MB)</span>
                       </Label>
                     </div>
 

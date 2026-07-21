@@ -24,7 +24,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   return (
     <div className="bg-background border border-border/60 text-foreground p-8 rounded-3xl sticky top-24 shadow-sm relative overflow-hidden">
-      {/* Decorative blurs */}
+    
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary opacity-5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary opacity-5 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none"></div>
       

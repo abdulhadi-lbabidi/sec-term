@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   Plus, Trash2, Pencil, ChevronLeft, ChevronRight,
-  X, Star, Layers, Package, Tag, Barcode,
+  Star, Layers, Package, Tag, Barcode,
 } from 'lucide-react';
 import { Button } from '../../../../components/ui/button';
 import { useAuth } from '../../../../context/AuthContext';
@@ -185,8 +185,8 @@ export const ProductVariantsModal = ({
             <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
               <div className="grid grid-cols-1 lg:grid-cols-12 h-full">
                 {/* Responsive Image Gallery Wrapper */}
-                <div className="lg:col-span-6 bg-black/[0.02] border-b lg:border-b-0 lg:border-r border-black/5 flex flex-col relative h-[280px] sm:h-[350px] lg:h-auto min-h-[250px] lg:min-h-[450px]">
-                  <div className="relative flex-1 w-full bg-white flex items-center justify-center overflow-hidden">
+                <div className="lg:col-span-6 bg-black/[0.02] border-b lg:border-b-0 lg:border-r border-black/5 p-4 md:p-6 flex flex-col items-center gap-4">
+                  <div className="relative w-full h-[340px] sm:h-[380px] md:h-[400px] bg-white rounded-2xl overflow-hidden border border-black/5 shadow-xs flex items-center justify-center shrink-0">
                     {currentVariant.images && currentVariant.images.length > 0 ? (
                       (() => {
                         const variantImages = currentVariant.images;
@@ -202,16 +202,16 @@ export const ProductVariantsModal = ({
                                 <button
                                   type="button"
                                   onClick={() => setVariantImageIndex((prev) => (prev === 0 ? variantImages.length - 1 : prev - 1))}
-                                  className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors cursor-pointer shadow-lg backdrop-blur-xs z-10"
+                                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors cursor-pointer shadow-lg backdrop-blur-xs z-10"
                                 >
-                                  <ChevronLeft className="h-5 w-5" />
+                                  <ChevronLeft className="h-4 w-4" />
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setVariantImageIndex((prev) => (prev === variantImages.length - 1 ? 0 : prev + 1))}
-                                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors cursor-pointer shadow-lg backdrop-blur-xs z-10"
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white hover:bg-black/80 transition-colors cursor-pointer shadow-lg backdrop-blur-xs z-10"
                                 >
-                                  <ChevronRight className="h-5 w-5" />
+                                  <ChevronRight className="h-4 w-4" />
                                 </button>
                               </>
                             )}
@@ -232,15 +232,14 @@ export const ProductVariantsModal = ({
                   </div>
 
                   {currentVariant.images && currentVariant.images.length > 1 && (
-                    <div className="flex gap-2 py-3 px-4 overflow-x-auto justify-center bg-black/5 shrink-0 border-t border-black/5">
+                    <div className="flex gap-2.5 py-2 px-2 overflow-x-auto justify-center w-full shrink-0">
                       {currentVariant.images.map((img, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => setVariantImageIndex(idx)}
-                          className={`w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all shrink-0 ${
-                            variantImageIndex === idx ? 'border-amber-500 scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
-                          }`}
+                          className={`w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${variantImageIndex === idx ? 'border-amber-500 scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-100'
+                            }`}
                         >
                           <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
                         </button>
@@ -270,12 +269,12 @@ export const ProductVariantsModal = ({
                             <span className="flex items-baseline gap-2.5">
                               <span className="text-red-600 text-lg md:text-xl font-black">{currentVariant.final_price}</span>
                               <span className="text-xs md:text-sm text-black/35 line-through font-normal">{currentVariant.price}</span>
-                              <span className="text-[10px] md:text-xs text-black/45 font-medium">{isRtl ? 'ر.س' : 'SAR'}</span>
+                              <span className="text-[10px] md:text-xs text-black/45 font-medium">{t('admin.currency')}</span>
                             </span>
                           ) : (
                             <span className="flex items-baseline gap-1">
                               <span className="text-md md:text-lg font-black">{currentVariant.price}</span>
-                              <span className="text-[10px] md:text-xs text-black/45 font-semibold">{isRtl ? 'ر.س' : 'SAR'}</span>
+                              <span className="text-[10px] md:text-xs text-black/45 font-semibold">{t('admin.currency')}</span>
                             </span>
                           )}
                         </p>
@@ -283,11 +282,10 @@ export const ProductVariantsModal = ({
 
                       <div className="rounded-2xl bg-black/[0.01] border border-black/5 p-4 md:p-5 transition-all hover:bg-black/[0.03]">
                         <p className="text-[10px] font-bold text-black/40 uppercase tracking-wider mb-2">{t('admin.stock')}</p>
-                        <span className={`inline-flex items-center px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs font-bold ${
-                          currentVariant.stock_quantity > 0
-                            ? 'bg-green-50 text-green-700 border border-green-200/50'
-                            : 'bg-red-50 text-red-700 border border-red-200/50'
-                        }`}>
+                        <span className={`inline-flex items-center px-3 md:px-4 py-1 md:py-1.5 rounded-full text-xs font-bold ${currentVariant.stock_quantity > 0
+                          ? 'bg-green-50 text-green-700 border border-green-200/50'
+                          : 'bg-red-50 text-red-700 border border-red-200/50'
+                          }`}>
                           {currentVariant.stock_quantity > 0 ? t('admin.in_stock') : t('admin.out_of_stock')}
                           <span className="ml-1.5 rtl:mr-1.5 rtl:ml-0 font-extrabold">({currentVariant.stock_quantity})</span>
                         </span>
@@ -318,7 +316,7 @@ export const ProductVariantsModal = ({
                               <span className="font-bold text-black/80">{typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}</span>
                               <div className="flex items-center gap-4">
                                 <span className="bg-black/5 px-2.5 py-1 rounded-lg font-bold text-black/60">×{pkg.quantity}</span>
-                                <span className="font-extrabold text-black/80">{pkg.price} {isRtl ? 'ر.س' : 'SAR'}</span>
+                                <span className="font-extrabold text-black/80">{pkg.price} {t('admin.currency')}</span>
                               </div>
                             </div>
                           ))}

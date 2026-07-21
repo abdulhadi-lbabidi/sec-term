@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, X, ImageOff } from 'lucide-react';
+import { Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, X, ImageOff, Search, Package } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
 import { Dialog, DialogContent } from '../../../components/ui/dialog';
 import { AddCategory } from './AddCategory';
 import { DeleteConfirmationModal } from '../../../components/Admin/DeleteConfirmationModal';
@@ -50,6 +51,7 @@ const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPend
   const currentImgUrl = images[currentIdx] || '';
   const categoryName = typeof category.name === 'object' ? (isRtl ? category.name?.ar : category.name?.en) : category.name;
   const categoryDesc = typeof category.description === 'object' ? (isRtl ? category.description?.ar : category.description?.en) : category.description;
+  const productsCount = category.products_count ?? 0;
 
   return (
     <div className="group relative flex flex-col rounded-2xl border border-black/8 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -71,6 +73,13 @@ const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPend
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200" />
             
+            {category.products_count !== undefined && (
+              <div className="absolute top-2 left-2 rtl:right-2 rtl:left-auto flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] font-bold text-white backdrop-blur-sm z-10 shadow-xs">
+                <Package className="h-3 w-3 text-white/80" />
+                <span>{productsCount} {t('admin.products')}</span>
+              </div>
+            )}
+
             {images.length > 1 && (
               <>
                 <button
@@ -94,16 +103,24 @@ const CategoryCard = ({ category, isRtl, onEdit, onDelete, onOpenGallery, isPend
             )}
           </>
         ) : (
-          <div className="flex h-full w-full items-center justify-center">
+          <div className="flex h-full w-full items-center justify-center relative">
             <ImageOff className="h-10 w-10 text-black/20" />
           </div>
         )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-1 p-2">
-        <h3 className="font-semibold text-black text-sm leading-snug line-clamp-1">
-          {categoryName}
-        </h3>
+      <div className="flex flex-1 flex-col gap-1 p-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-semibold text-black text-sm leading-snug line-clamp-1">
+            {categoryName}
+          </h3>
+          {category.products_count !== undefined && (
+            <span className="shrink-0 inline-flex items-center gap-1 rounded-lg bg-black/5 px-2 py-0.5 text-[10px] font-bold text-black/60">
+              <Package className="h-3 w-3 text-black/50" />
+              {productsCount}
+            </span>
+          )}
+        </div>
         {categoryDesc && (
           <p className="text-xs text-black/50 line-clamp-2 leading-relaxed">
             {categoryDesc}
@@ -159,10 +176,12 @@ export const Categories = () => {
   const [categoryIdToDelete, setCategoryIdToDelete] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [searchInput, setSearchInput] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
   const [galleryCategory, setGalleryCategory] = useState<Category | null>(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState<number>(0);
 
-  const { data, isLoading, isError, error } = useCategoriesQuery(page, perPage);
+  const { data, isLoading, isError, error } = useCategoriesQuery(page, perPage, appliedSearch);
   const createMutation = useCreateCategoryMutation();
   const updateMutation = useUpdateCategoryMutation();
   const deleteMutation = useDeleteCategoryMutation();
@@ -171,26 +190,73 @@ export const Categories = () => {
     setHeaderAction: (action: React.ReactNode) => void;
   }>();
 
+  const handleSearchSubmit = () => {
+    setAppliedSearch(searchInput.trim());
+    setPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setAppliedSearch('');
+    setPage(1);
+  };
+
   useEffect(() => {
-    if (canCreate) {
-      setHeaderAction(
-        <Button
-          onClick={() => {
-            setSelectedCategoryId(null);
-            setIsAddModalOpen(true);
-          }}
-          className="flex items-center gap-2"
-          disabled={createMutation.isPending || updateMutation.isPending}
-        >
-          <Plus className="h-4 w-4" />
-          {t('admin.add_category')}
-        </Button>
-      );
-    } else {
-      setHeaderAction(null);
-    }
+    setHeaderAction(
+      <div className="flex items-center gap-2">
+        <div className="relative w-48 sm:w-64">
+          <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
+          <Input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchSubmit();
+              }
+            }}
+            placeholder={t('admin.search_category')}
+            className="pl-9 pr-16 rtl:pr-9 rtl:pl-16 h-9 bg-white border-black/15 text-xs sm:text-sm shadow-xs focus:bg-white"
+          />
+          <div className="absolute right-1.5 rtl:left-1.5 rtl:right-auto top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {(searchInput || appliedSearch) && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="p-1 text-black/40 hover:text-black/70 cursor-pointer rounded-full"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+            {searchInput.trim() && (
+              <button
+                type="button"
+                onClick={handleSearchSubmit}
+                className="flex items-center justify-center p-1 bg-black text-white hover:bg-black/85 transition-colors cursor-pointer rounded-md"
+              >
+                <Search className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {canCreate && (
+          <Button
+            onClick={() => {
+              setSelectedCategoryId(null);
+              setIsAddModalOpen(true);
+            }}
+            className="flex items-center gap-2 shrink-0 cursor-pointer"
+            disabled={createMutation.isPending || updateMutation.isPending}
+          >
+            <Plus className="h-4 w-4" />
+            {t('admin.add_category')}
+          </Button>
+        )}
+      </div>
+    );
     return () => setHeaderAction(null);
-  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate]);
+  }, [isRtl, setHeaderAction, createMutation.isPending, updateMutation.isPending, t, canCreate, searchInput, appliedSearch]);
 
 
 

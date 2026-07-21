@@ -4,9 +4,6 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Users,
-  BarChart3,
-  Settings,
   LogOut,
   ChevronRight,
   PanelLeft,
@@ -19,6 +16,7 @@ import {
 import { useLocalization } from '../../../hooks/useLocalization';
 import { useSidebar } from '../../../components/ui/sidebar';
 import { useAuth } from '../../../context/AuthContext';
+import api from '../../../api/Admin/axios';
 
 type SubItem = {
   label: string;
@@ -27,6 +25,7 @@ type SubItem = {
 };
 
 type SidebarItem = {
+  key: string;
   label: string;
   to?: string;
   icon: React.ElementType;
@@ -41,14 +40,33 @@ export const AdminSidebar = () => {
   const { user, roles, hasPermission } = useAuth();
   const collapsed = state === 'collapsed';
 
-  const [isProductsOpen, setIsProductsOpen] = React.useState(true);
+  const handleLogout = async () => {
+    try {
+      await api.post('/logout');
+    } catch {
+    } finally {
+      localStorage.removeItem('nouh_carting_roken');
+      window.location.href = '/admin/login';
+    }
+  };
+
+  const [openMenus, setOpenMenus] = React.useState<Record<string, boolean>>({
+    Products: true,
+    Sales: true,
+    Auth: true,
+  });
+
+  const toggleMenu = (key: string) => {
+    setOpenMenus((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const items: SidebarItem[] = [
-    { label: t('admin.dashboard'), to: '/admin/dashboard', icon: LayoutDashboard, permission: 'view_dashboard' },
-    { label: t('admin.categories'), to: '/admin/categories', icon: FolderOpen, permission: 'view_category' },
-    { label: t('admin.reviews'), to: '/admin/reviews', icon: Star, permission: 'view_review' },
-    { label: t('admin.packages'), to: '/admin/packages', icon: Gift, permission: 'view_package' },
+    { key: 'dashboard', label: t('admin.dashboard'), to: '/admin/dashboard', icon: LayoutDashboard, permission: 'view_dashboard' },
+    { key: 'categories', label: t('admin.categories'), to: '/admin/categories', icon: FolderOpen, permission: 'view_category' },
+    { key: 'reviews', label: t('admin.reviews'), to: '/admin/reviews', icon: Star, permission: 'view_review' },
+    { key: 'packages', label: t('admin.packages'), to: '/admin/packages', icon: Gift, permission: 'view_package' },
     {
+      key: 'Products',
       label: t('admin.products'),
       icon: Package,
       subItems: [
@@ -57,11 +75,24 @@ export const AdminSidebar = () => {
         { label: t('admin.materials'), to: '/admin/products/materials', permission: 'view_material' }
       ]
     },
-    { label: t('admin.orders'), to: '/admin/orders', icon: ShoppingCart, permission: 'view_order' },
-    { label: t('admin.checkouts'), to: '/admin/checkouts', icon: ShoppingCart, permission: 'view_checkout' },
-    { label: t('admin.users'), to: '/admin/users', icon: Users, permission: 'view_user' },
-    { label: t('admin.roles'), to: '/admin/roles', icon: Shield, permission: 'view_role' },
-
+    {
+      key: 'Sales',
+      label: i18n.language === 'ar' ? 'المبيعات' : 'Sales',
+      icon: ShoppingCart,
+      subItems: [
+        { label: t('admin.orders'), to: '/admin/orders', permission: 'view_order' },
+        { label: t('admin.checkouts'), to: '/admin/checkouts', permission: 'view_checkout' }
+      ]
+    },
+    {
+      key: 'Auth',
+      label: i18n.language === 'ar' ? 'المستخدمين والصلاحيات' : 'Auth',
+      icon: Shield,
+      subItems: [
+        { label: t('admin.users'), to: '/admin/users', permission: 'view_user' },
+        { label: t('admin.roles'), to: '/admin/roles', permission: 'view_role' }
+      ]
+    },
   ];
 
   const filteredItems = items
@@ -117,11 +148,13 @@ export const AdminSidebar = () => {
           {filteredItems.map((item) => {
             if (item.subItems) {
               const hasActiveSub = item.subItems.some(sub => location.pathname === sub.to);
+              const isOpen = !!openMenus[item.key];
+
               return (
-                <li key={item.label} className="space-y-1">
+                <li key={item.key} className="space-y-1">
                   <button
                     type="button"
-                    onClick={() => !collapsed && setIsProductsOpen(!isProductsOpen)}
+                    onClick={() => !collapsed && toggleMenu(item.key)}
                     className={`w-full group flex items-center justify-between rounded-2xl px-3 py-3 text-sm font-medium transition-all cursor-pointer ${hasActiveSub
                         ? 'bg-black/5 text-black'
                         : 'text-black/70 hover:bg-black/5 hover:text-black'
@@ -140,12 +173,12 @@ export const AdminSidebar = () => {
                     {!collapsed && (
                       <ChevronRight
                         size={16}
-                        className={`transition-transform duration-200 ${isProductsOpen ? 'rotate-90' : 'rtl:rotate-180'
+                        className={`transition-transform duration-200 ${isOpen ? 'rotate-90' : 'rtl:rotate-180'
                           }`}
                       />
                     )}
                   </button>
-                  {isProductsOpen && !collapsed && (
+                  {isOpen && !collapsed && (
                     <ul className="space-y-1 ltr:pl-12 rtl:pr-12">
                       {item.subItems.map((sub) => {
                         const subActive = location.pathname === sub.to;
@@ -211,10 +244,7 @@ export const AdminSidebar = () => {
 
             <button
               type="button"
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = '/admin/login';
-              }}
+              onClick={handleLogout}
               className="grid size-10 place-items-center rounded-full border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 cursor-pointer"
               title={t('admin.logout')}
             >
@@ -247,10 +277,7 @@ export const AdminSidebar = () => {
 
             <button
               type="button"
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = '/admin/login';
-              }}
+              onClick={handleLogout}
               className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-red-50 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-red-600 hover:bg-red-100 transition-transform hover:-translate-y-0.5 cursor-pointer"
             >
               <span>{t('admin.logout')}</span>

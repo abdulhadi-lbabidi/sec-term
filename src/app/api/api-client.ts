@@ -535,7 +535,6 @@ function createApi(config: ApiConfig): ApiInstance {
 
 const PROTECTED_HEADER_NAMES = new Set(["authorization", "cookie"]);
 
-/** Strip HTML tags and trim — safe for toast / UI display */
 function sanitizeDisplayMessage(message: string): string {
   return message
     .replace(/<[^>]*>/g, "")
