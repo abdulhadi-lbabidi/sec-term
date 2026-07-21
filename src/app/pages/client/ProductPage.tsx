@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useAppStore } from '@/app/store/useAppStore';
-import { useProductDetailsQuery, useAddReviewMutation, useReviewsQuery } from '@/app/api/client/useProducts';
+import { useProductDetailsQuery, useAddReviewMutation, useReviewsQuery, useProductsQuery } from '@/app/api/client/useProducts';
 import { toast } from 'sonner';
 import { showAddToCartSuccessToast } from '@/app/components/ui/custom-toast';
 import { useAddToCartMutation } from '@/app/api/client/useCart';
@@ -14,6 +14,7 @@ import { MaterialSelector, MaterialSelectorSkeleton } from '@/app/components/cli
 import { SizeSelector, SizeSelectorSkeleton } from '@/app/components/client/product/SizeSelector';
 import { PackageGrid, PackageGridSkeleton } from '@/app/components/client/package/PackageGrid';
 import { ProductActions, ProductActionsSkeleton } from '@/app/components/client/product/ProductActions';
+import { ProductSection } from '@/app/components/client/home/ProductSection';
 import { ReviewList } from '@/app/components/client/review/ReviewList';
 import { ReviewForm } from '@/app/components/client/review/ReviewForm';
 import { useTranslation } from 'react-i18next';
@@ -57,6 +58,11 @@ export default function ProductPage() {
       variantName: variant?.name || r.product_variant?.name,
     };
   });
+
+  const { data: relatedProductsData, isLoading: isLoadingRelated } = useProductsQuery();
+  const relatedProducts = Array.isArray((relatedProductsData as any)?.data)
+    ? (relatedProductsData as any).data.filter((p: any) => p.id != id && p.category_id == product?.category_id).slice(0, 4)
+    : [];
 
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(null);
   const [selectedSizeId, setSelectedSizeId] = useState<number | null>(null);
@@ -206,7 +212,7 @@ export default function ProductPage() {
 
   return (
     <div className="container mx-auto px-4 max-w-7xl py-12">
-      <Link to="/shop" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#C5A880] mb-8 transition-colors">
+      <Link to="/shop" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors">
         {isRTL ? <ArrowRight size={20} /> : <ArrowLeft size={20} />} {t('backToShop')}
       </Link>
 
@@ -317,20 +323,29 @@ export default function ProductPage() {
                   variants={variants}
                 />
               ) : (
-                <div className="bg-[#FCFAF7] rounded-3xl p-8 border border-[#EAE5DF] text-center">
-                  <h3 className="text-xl font-bold text-[#1C1A17] mb-4">
-                    {t('products.shareThought')}
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    {t('products.loginToReviewDesc')}
-                  </p>
-                  <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-[#111111] hover:bg-[#C5A880] text-white px-8 h-12 transition-all shadow-md w-full">
-                    {t('products.logIn')}
+                <div className="flex flex-col items-center justify-center py-10 bg-primary/5 rounded-2xl border border-primary/10">
+                <p className="text-muted-foreground mb-6 text-center max-w-sm">{t('loginToAddReview')}</p>
+                <div className="w-full max-w-xs">
+                  <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 transition-all shadow-md w-full">
+                    {t('login_title')}
                   </Link>
                 </div>
+              </div>
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Related Products */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-16 border-t border-[#EAE5DF] pt-12">
+          <ProductSection
+            title={t('products.relatedTitle', 'Related Products')}
+            subtitle={t('products.relatedSubtitle', 'You might also like these items')}
+            products={relatedProducts}
+            isLoading={isLoadingRelated}
+          />
         </div>
       )}
     </div>

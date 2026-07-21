@@ -31,7 +31,7 @@ export const About = () => {
               transition={{ delay: 0.1 }}
               className="text-lg md:text-xl text-white/90 leading-relaxed font-light drop-shadow"
             >
-              {t('about.subtitle', 'نقدم لكم أفضل المنتجات الغذائية بجودة عالية وتجربة تسوق لا تُنسى.')}
+              {t('about.subtitle', 'نقدم لكم أفضل المنتجات بجودة عالية وتجربة تسوق لا تُنسى.')}
             </motion.p>
           </div>
         </div>
@@ -46,7 +46,7 @@ export const About = () => {
               {t('about.story_title', 'قصتنا')}
             </h2>
             <p className="text-muted-foreground leading-relaxed text-lg font-light">
-              {t('about.story_desc', 'بدأت رحلتنا من شغف تقديم الطعام الأصيل بمكونات طازجة ومختارة بعناية. نحن نؤمن بأن الجودة ليست مجرد كلمة، بل هي التزام نطبقه في كل منتج نقدمه لعملائنا.')}
+              {t('about.story_desc', 'انطلقنا برؤية تهدف إلى إعادة تعريف مفهوم التسوق الإلكتروني وتوفير منتجات مختارة بعناية تلبي تطلعات عملائنا. نضع الابتكار والجودة والموثوقية في صميم عملنا لضمان تجربة سلسة واستثنائية تبدأ من اختيار المنتج وحتى وصوله إليك.')}
             </p>
           </div>
           <div className="order-1 md:order-2">
@@ -67,8 +67,8 @@ export const About = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { icon: <ShieldCheck className="w-10 h-10" />, title: t('about.value1_title', 'الجودة العالية'), desc: t('about.value1_desc', 'نضمن لكم مكونات طازجة ومعايير صحية صارمة.') },
-            { icon: <Star className="w-10 h-10" />, title: t('about.value2_title', 'الطعم الأصيل'), desc: t('about.value2_desc', 'وصفات تقليدية محضرة بأيادي خبراء الطهي.') },
+            { icon: <ShieldCheck className="w-10 h-10" />, title: t('about.value1_title', 'الموثوقية العالية'), desc: t('about.value1_desc', 'نضمن لكم تجربة تسوق آمنة ومنتجات مطابقة لأعلى المعايير.') },
+            { icon: <Star className="w-10 h-10" />, title: t('about.value2_title', 'خيارات واسعة'), desc: t('about.value2_desc', 'مجموعة متنوعة من المنتجات المختارة بعناية لتناسب جميع احتياجاتكم.') },
             { icon: <Package className="w-10 h-10" />, title: t('about.value3_title', 'خدمة ممتازة'), desc: t('about.value3_desc', 'تغليف آمن وتوصيل سريع يضمن وصول المنتج بأفضل حالة.') }
           ].map((item, idx) => (
             <div key={idx} className="bg-primary/5 p-8 rounded-[2.5rem] border border-primary/10 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group">

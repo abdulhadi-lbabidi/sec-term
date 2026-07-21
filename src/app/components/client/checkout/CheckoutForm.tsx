@@ -120,10 +120,10 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({ cart, onSuccess }) =
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      <div className="lg:w-2/3 bg-[#111111] p-6 md:p-10 rounded-3xl shadow-lg border border-[#C5A880]/30 text-white relative overflow-hidden">
+      <div className="lg:w-2/3 bg-background p-6 md:p-10 rounded-3xl shadow-sm border border-border/60 relative overflow-hidden">
         {/* Decorative Background */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C5A880] opacity-5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#C5A880] opacity-5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary opacity-5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary opacity-5 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
 
         <div className="relative z-10">
           {orderError && (

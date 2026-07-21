@@ -38,6 +38,23 @@ export default function ShopPage() {
   const [isDesktopFilterOpen, setIsDesktopFilterOpen] = useState(true);
   const perPage = 12;
 
+  // Sync state when URL searchParams change externally (e.g., from Header search)
+  useEffect(() => {
+    const urlSearch = searchParams.get('search') || '';
+    const urlCategory = searchParams.get('category_id') || 'all';
+    
+    setFilters(prev => {
+      if (prev.search !== urlSearch || prev.category_id !== urlCategory) {
+        return {
+          ...prev,
+          search: urlSearch,
+          category_id: urlCategory
+        };
+      }
+      return prev;
+    });
+  }, [searchParams]);
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.category_id !== 'all') params.set('category_id', filters.category_id);

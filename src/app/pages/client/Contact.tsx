@@ -102,8 +102,8 @@ export const Contact = () => {
           <div className="h-[600px] rounded-3xl overflow-hidden shadow-sm border border-[#EAE5DF] lg:sticky lg:top-32 relative">
             <div className="absolute inset-0 bg-black/5 pointer-events-none z-10"></div>
             <iframe
-              title="Bakery Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.6468750431267!2d46.6752957!3d24.7135517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh!5e0!3m2!1sen!2ssa!4v1654876543210!5m2!1sen!2ssa"
+              title="Location"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3209.6897241318436!2d37.13524671485641!3d36.22325988007271!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x152ff813b9c4501b%3A0xc35dfd974f2603!2sAleppo%2C%20Syria!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
               className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-500"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"

@@ -18,15 +18,15 @@ function drawImageContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, 
   const cr = cw / ch;
   let dw, dh, dx, dy;
   if (ir > cr) {
-    dw = cw;
-    dh = cw / ir;
-    dx = 0;
-    dy = (ch - dh) / 2;
-  } else {
     dh = ch;
     dw = ch * ir;
     dy = 0;
     dx = (cw - dw) / 2;
+  } else {
+    dw = cw;
+    dh = cw / ir;
+    dx = 0;
+    dy = (ch - dh) / 2;
   }
   ctx.drawImage(img, dx, dy, dw, dh);
 }

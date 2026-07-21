@@ -57,7 +57,9 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
 
           <div className="relative z-10 text-white flex items-center justify-between">
             <div>
-              <Croissant className="w-8 h-8 mb-3 text-primary" />
+              <div className="bg-background/80 p-3 rounded-2xl w-fit mb-3 shadow-sm backdrop-blur-md inline-block">
+                <Croissant className="w-8 h-8 text-primary" />
+              </div>
               <h3 className="text-2xl font-bold">{(language === 'ar' ? ((cat1 as any)?.nameAr || cat1?.name) : ((cat1 as any)?.nameEn || cat1?.name)) || t('hotPastries')}</h3>
               <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat1 as any)?.descAr || cat1?.description) : ((cat1 as any)?.descEn || cat1?.description)) || t('freshFromOven')}</p>
             </div>
@@ -77,7 +79,9 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
 
           <div className="relative z-10 text-white flex items-center justify-between">
             <div>
-              <Cake className="w-8 h-8 mb-3 text-primary" />
+              <div className="bg-background/80 p-3 rounded-2xl w-fit mb-3 shadow-sm backdrop-blur-md inline-block">
+                <Cake className="w-8 h-8 text-primary" />
+              </div>
               <h3 className="text-2xl font-bold">{(language === 'ar' ? ((cat2 as any)?.nameAr || cat2?.name) : ((cat2 as any)?.nameEn || cat2?.name)) || t('cakesSweets')}</h3>
               <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat2 as any)?.descAr || cat2?.description) : ((cat2 as any)?.descEn || cat2?.description)) || t('happyMoments')}</p>
             </div>

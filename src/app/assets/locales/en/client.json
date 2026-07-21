@@ -74,7 +74,7 @@
   "footer": {
     "copyright": "© 2024 Bakery. All rights reserved.",
     "brand": "Bakery",
-    "address": "4517 Washington Ave. Manchester, Kentucky 39495",
+    "address": "Aleppo, Al-Sabeel Neighborhood",
     "description": "Baked with love, for your happy moments. A taste that combines authenticity and high quality.",
     "about_title": "About",
     "our_story": "Our Story",
@@ -406,5 +406,8 @@
   "statusDelivered": "Delivered",
   "orderedProducts": "Ordered Products",
   "quantityLabel": "Quantity:",
-  "deliveryDetails": "Delivery Details"
+  "deliveryDetails": "Delivery Details",
+  "viewDetails": "View Details",
+  "itemsCount": "Items",
+  "itemCount": "Item"
 }

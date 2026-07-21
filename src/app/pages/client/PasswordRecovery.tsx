@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/app/api/client/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -128,7 +128,7 @@ export const VerifyOTP = () => {
     try {
       await verifyOTP({ email, otp: values.otp });
       toast.success(t('recovery.otp_verified', 'OTP Verified'));
-      navigate(`/reset-password?email=${encodeURIComponent(email)}`);
+      navigate('/reset-password', { state: { email, verified: true } });
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -192,8 +192,9 @@ export const VerifyOTP = () => {
 export const ResetPassword = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const email = searchParams.get('email');
+  const location = useLocation();
+  const state = location.state as { email?: string, verified?: boolean } | null;
+  const email = state?.email;
   const { resetPassword, isResetLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -204,7 +205,7 @@ export const ResetPassword = () => {
     defaultValues: { password: '', confirmPassword: '' },
   });
 
-  if (!email) {
+  if (!email || !state?.verified) {
     navigate('/forgot-password');
     return null;
   }

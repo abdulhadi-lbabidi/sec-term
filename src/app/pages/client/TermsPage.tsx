@@ -4,20 +4,26 @@ export default function TermsPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="w-full bg-background min-h-screen pb-20">
+    <div className="w-full bg-white text-gray-900 pb-20 max-w-7xl mx-auto">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-4 bg-[#111111] overflow-hidden rounded-b-[3rem] shadow-sm border-b border-[#C5A880]/20 text-center">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C5A880] opacity-10 rounded-full blur-3xl -mr-20 -mt-20"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#C5A880] opacity-5 rounded-full blur-3xl -ml-20 -mb-20"></div>
-        <div className="relative z-10">
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4">
-            {t('terms.title')}
-          </h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-            {t('terms.subtitle')}
-          </p>
+      <div className="px-4 md:px-6 pt-6">
+        <div className="relative rounded-[2.5rem] overflow-hidden shadow-lg flex flex-col justify-center items-center text-center p-8 md:p-12 min-h-[350px] md:min-h-[400px]">
+          <div
+            className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[15s] hover:scale-110"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&q=80&w=1920')` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 z-0"></div>
+
+          <div className="relative z-10 text-white w-full max-w-3xl">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-6 drop-shadow-md">
+              {t('terms.title')}
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto drop-shadow">
+              {t('terms.subtitle')}
+            </p>
+          </div>
         </div>
-      </section>
+      </div>
 
       <div className="px-4 md:px-8 max-w-4xl mx-auto mt-12 min-h-[40vh]">
         <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-[#EAE5DF] space-y-10">

@@ -157,7 +157,7 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Button onClick={() => navigate(`/checkout?id=${profileData.cart_id}`)} className="w-full rounded-full h-12 text-lg bg-[#111111] hover:bg-[#C5A880] text-white">
+            <Button onClick={() => navigate(`/checkout?id=${profileData?.cart_id}`)} className="w-full rounded-full h-12 text-lg bg-[#111111] hover:bg-[#C5A880] text-white">
               {t('cart.checkout_button')}
             </Button>
 

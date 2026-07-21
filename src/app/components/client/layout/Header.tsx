@@ -8,6 +8,7 @@ import { useAppStore } from '@/app/store/useAppStore';
 import { useCategoriesQuery } from '@/app/api/client/useCategories';
 import { useCartQuery } from '@/app/api/client/useCart';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/app/components/ui/sheet';
 import { Button } from '@/app/components/ui/button';
 import ArFlag from '@/imports/AR.svg'
 import EnFlag from '@/imports/US.svg'
@@ -33,8 +34,8 @@ export const Header = ({ className }: HeaderProps) => {
     e.preventDefault();
     if (searchTerm.trim() || selectedCategory) {
       const params = new URLSearchParams();
-      if (searchTerm.trim()) params.append('q', searchTerm.trim());
-      if (selectedCategory) params.append('category', selectedCategory.id);
+      if (searchTerm.trim()) params.append('search', searchTerm.trim());
+      if (selectedCategory) params.append('category_id', selectedCategory.id);
       navigate(`/shop?${params.toString()}`);
     }
   };
@@ -44,11 +45,11 @@ export const Header = ({ className }: HeaderProps) => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 h-20 flex items-center justify-between gap-6">
 
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 shrink-0 transition-transform hover:scale-105 active:scale-95">
-          <div className="bg-primary/5 rounded-full p-1.5 hidden sm:block">
+        <Link to="/" className="flex items-center gap-3 shrink-0 transition-transform hover:scale-105 active:scale-95 min-w-[40px]">
+          <div className="bg-primary/5 rounded-full p-1.5 block shrink-0">
             <img src={logoImg} alt="Logo" className="h-8 md:h-9 w-auto object-contain" />
           </div>
-          <span className="font-bold text-2xl tracking-tight text-foreground">{t('brand.name', 'Nouh carting')}</span>
+          <span className="font-bold text-2xl tracking-tight text-foreground hidden sm:block truncate max-w-[150px] md:max-w-none">{t('brand.name', 'Nouh carting')}</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -132,11 +133,11 @@ export const Header = ({ className }: HeaderProps) => {
 
           <div className="hidden sm:block w-px h-6 bg-border/60 mx-1"></div>
 
-          <Link to="/admin" className="hidden sm:block">
+          {/* <Link to="/admin" className="hidden sm:block">
             <Button variant="ghost" size="icon" className="text-foreground/70 hover:text-primary hover:bg-primary/5 rounded-full w-9 h-9 transition-colors" title="Admin Panel">
               <ShieldCheck size={20} />
             </Button>
-          </Link>
+          </Link> */}
 
           {user ? (
             <DropdownMenu>
@@ -179,9 +180,43 @@ export const Header = ({ className }: HeaderProps) => {
             </Link>
           )}
 
-          <Button variant="ghost" size="icon" className="lg:hidden text-foreground/70 hover:text-primary rounded-full w-9 h-9 ms-1">
-            <Menu size={24} />
-          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden text-foreground/70 hover:text-primary rounded-full w-9 h-9 ms-1">
+                <Menu size={24} />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side={i18n.language === 'ar' ? 'right' : 'left'} className="w-[85vw] sm:w-[400px]">
+              <SheetHeader>
+                <SheetTitle className="text-start">
+                  <Link to="/" className="flex items-center gap-3 shrink-0 mt-4">
+                    <img src={logoImg} alt="Logo" className="h-8 w-auto object-contain" />
+                    <span className="font-bold text-xl tracking-tight text-foreground">{t('brand.name', 'Nouh carting')}</span>
+                  </Link>
+                </SheetTitle>
+              </SheetHeader>
+              <nav className="flex flex-col gap-4 mt-8">
+                <Link to="/" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('nav.home', 'Home')}</Link>
+                <Link to="/shop" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('header.products', 'Products')}</Link>
+                <Link to="/about" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('header.about', 'About')}</Link>
+                <Link to="/contact" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('nav.contact', 'Contact')}</Link>
+                {user ? (
+                   <>
+                     <div className="h-px w-full bg-border/50 my-2"></div>
+                     <Link to="/profile" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><User size={20} /> {t('nav.my_profile')}</Link>
+                     <Link to="/wishlist" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><Heart size={20} /> {t('nav.wishlist')}</Link>
+                     <Link to="/orders" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><Package size={20} /> {t('nav.my_orders')}</Link>
+                     <button onClick={() => { logoutUser(); navigate('/'); }} className="text-lg font-semibold text-destructive hover:text-destructive/80 transition-colors flex items-center gap-3 text-start"><LogOut size={20} /> {t('nav.logout')}</button>
+                   </>
+                ) : (
+                  <>
+                    <div className="h-px w-full bg-border/50 my-2"></div>
+                    <Link to="/login" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('login_title', 'Login')}</Link>
+                  </>
+                )}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
