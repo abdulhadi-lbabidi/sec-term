@@ -46,14 +46,13 @@ export const Checkouts = () => {
                       <TableHead className="font-bold">{t('admin.customer') || 'Customer'}</TableHead>
                       <TableHead className="font-bold">{t('admin.contact') || 'Contact'}</TableHead>
                       <TableHead className="font-bold">{t('admin.address') || 'Address'}</TableHead>
-                      <TableHead className="font-bold">{t('admin.status') || 'Status'}</TableHead>
                       <TableHead className="hidden sm:table-cell font-bold">{t('admin.created_at') || 'Date'}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {checkoutsList.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={5} className="h-32 text-center text-black/40">
+                        <TableCell colSpan={4} className="h-32 text-center text-black/40">
                           {t('admin.no_checkouts') || 'No checkouts found'}
                         </TableCell>
                       </TableRow>
@@ -83,17 +82,6 @@ export const Checkouts = () => {
                             <div className="text-[10px] text-black/45">
                               {item.floor ? `${t('admin.floor') || 'Floor'}: ${item.floor}` : ''} {item.postal_code ? `| ${item.postal_code}` : ''}
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold uppercase ${
-                              item.status === 'pending'
-                                ? 'bg-amber-100 text-amber-800'
-                                : item.status === 'completed'
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {t(`admin.status_${item.status}`) || item.status}
-                            </span>
                           </TableCell>
                           <TableCell className="hidden sm:table-cell text-sm text-black/50">
                             {item.created_at}
@@ -128,18 +116,6 @@ export const Checkouts = () => {
                         <div className="flex justify-between items-start">
                           <span className="text-black/55 shrink-0">{t('admin.address') || 'Address'}:</span>
                           <span className="text-end font-medium max-w-[200px] truncate">{item.city}, {item.street}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-black/55">{t('admin.status') || 'Status'}:</span>
-                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                            item.status === 'pending'
-                              ? 'bg-amber-100 text-amber-800'
-                              : item.status === 'completed'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {t(`admin.status_${item.status}`) || item.status}
-                          </span>
                         </div>
                         {item.additional_information && (
                           <div className="border-t pt-2 mt-1">

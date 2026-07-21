@@ -131,13 +131,13 @@ export const Users = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>ID</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('admin.name')}</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('admin.email')}</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('admin.status')}</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('admin.roles')}</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}>{t('admin.created_at')}</TableHead>
-                    <TableHead className={isRtl ? 'text-right' : 'text-left'}></TableHead>
+                    <TableHead className="text-start">ID</TableHead>
+                    <TableHead className="text-start">{t('admin.name')}</TableHead>
+                    <TableHead className="text-start">{t('admin.email')}</TableHead>
+                    <TableHead className="text-start">{t('admin.status')}</TableHead>
+                    <TableHead className="text-start">{t('admin.roles')}</TableHead>
+                    <TableHead className="text-start">{t('admin.created_at')}</TableHead>
+                    <TableHead className="text-start"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -168,10 +168,10 @@ export const Users = () => {
                           ))}
                         </div>
                       </TableCell>
-                      <TableCell dir="ltr" className={isRtl ? 'text-right' : 'text-left'}>
+                      <TableCell dir="ltr" className="text-start">
                         {user.created_at}
                       </TableCell>
-                      <TableCell className={isRtl ? 'text-left' : 'text-right'}>
+                      <TableCell className="text-end">
                         <div className="flex items-center gap-1 justify-end">
                           {canEdit && (
                             <Button

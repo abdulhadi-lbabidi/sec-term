@@ -30,7 +30,9 @@ api.interceptors.response.use(
       const status = error.response.status;
       if (status === 401 || status === 403) {
         localStorage.removeItem('nouh_carting_roken');
-        window.location.href = '/admin/login';
+        if (window.location.pathname !== '/admin/login') {
+          window.location.href = '/admin/login';
+        }
       } else if (status === 422) {
         const validationErrors = error.response.data?.errors;
         if (validationErrors) {

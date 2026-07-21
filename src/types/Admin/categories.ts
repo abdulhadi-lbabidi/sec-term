@@ -6,6 +6,7 @@ export interface Category {
   images: string;
   all_images: string[];
   created_at: string;
+  products_count?: number;
 }
 
 export interface CategoriesResponse {

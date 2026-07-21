@@ -22,7 +22,7 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
     <section className={cn("w-full min-h-[85vh] py-6 px-4 md:px-6 flex flex-col justify-center", className)}>
       <div className="w-full h-full grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 md:gap-6 max-w-[2400px] mx-auto min-h-[80vh]">
 
-        {/* Main Hero Block (Spans 2 columns, 2 rows) */}
+ 
         <div className="md:col-span-2 md:row-span-2 relative rounded-[2.5rem] overflow-hidden group shadow-lg flex flex-col justify-end p-8 md:p-12 min-h-[350px] md:min-h-[450px]">
           <div
             className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[15s] group-hover:scale-110"
@@ -47,7 +47,7 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
           </div>
         </div>
 
-        {/* Top Right Block 1: First Category */}
+    
         <Link to={`/shop?category_id=${cat1?.id || ''}`} className="md:col-span-1 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md min-h-[250px] flex flex-col justify-end p-6 cursor-pointer">
           <div
             className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] group-hover:scale-110"
@@ -69,7 +69,7 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
           </div>
         </Link>
 
-        {/* Top Right Block 2: Second Category */}
+  
         <Link to={`/shop?category_id=${cat2?.id || ''}`} className="md:col-span-1 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md min-h-[250px] flex flex-col justify-end p-6 cursor-pointer">
           <div
             className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[10s] group-hover:scale-110"
@@ -91,9 +91,9 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
           </div>
         </Link>
 
-        {/* Bottom Wide Block */}
+   
         <div className="md:col-span-2 md:row-span-1 relative rounded-[2.5rem] overflow-hidden group shadow-md bg-primary/10 flex items-center p-6 md:p-10 min-h-[250px]">
-          {/* Decorative blur */}
+   
           <div className="absolute top-0 end-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -translate-y-1/2"></div>
           <div className="absolute bottom-0 start-0 w-64 h-64 bg-secondary/20 rounded-full blur-[80px] translate-y-1/2"></div>
 

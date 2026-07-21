@@ -21,14 +21,14 @@ export const AuthLayout = ({
         reverse ? "md:flex-row-reverse" : "md:flex-row"
       )}>
         
-        {/* Form Side */}
+        
         <div className="w-full md:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative z-10">
           <div className="max-w-md w-full mx-auto">
             {children}
           </div>
         </div>
 
-        {/* Image Side */}
+    
         <div className="hidden md:block w-1/2 relative bg-primary/5">
           <div 
             className="absolute inset-0 w-full h-full bg-cover bg-center transition-transform duration-[20s] hover:scale-110"

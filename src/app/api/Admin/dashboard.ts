@@ -18,14 +18,18 @@ export type {
   RecentOrder,
 };
 
-export const fetchDashboardStatistics = async (): Promise<DashboardResponse> => {
-  const response = await api.get<DashboardResponse>('/dashboard/statistics');
+export const fetchDashboardStatistics = async (month?: number | string, year?: number | string): Promise<DashboardResponse> => {
+  const params: Record<string, any> = {};
+  if (month) params.month = month;
+  if (year) params.year = year;
+
+  const response = await api.get<DashboardResponse>('/dashboard/statistics', { params });
   return response.data;
 };
 
-export const useDashboardStatisticsQuery = () => {
+export const useDashboardStatisticsQuery = (month?: number | string, year?: number | string) => {
   return useQuery({
-    queryKey: ['adminDashboardStatistics'],
-    queryFn: fetchDashboardStatistics,
+    queryKey: ['adminDashboardStatistics', month, year],
+    queryFn: () => fetchDashboardStatistics(month, year),
   });
 };

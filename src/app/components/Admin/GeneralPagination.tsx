@@ -42,7 +42,7 @@ export const GeneralPagination = ({
       {onPerPageChange && (
         <div className={`flex items-center gap-2 ${isRtl ? 'pr-2' : 'pl-2'}`}>
           <span className="text-xs font-semibold text-black/60 hidden sm:inline">
-            {isRtl ? 'عرض:' : 'Show:'}
+            {t('admin.show')}:
           </span>
           <Select
             value={String(perPage || 10)}

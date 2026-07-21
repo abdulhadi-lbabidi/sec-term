@@ -2,21 +2,41 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from './axios';
 import { Product, ProductsResponse, ProductVariant, ProductVariantResponse } from '../../../types/Admin/products';
 
-export const fetchProducts = async (page = 1, perPage = 5): Promise<ProductsResponse> => {
+export interface ProductFilterParams {
+  'filter[search]'?: string;
+  'filter[sku]'?: string;
+  'filter[barcode]'?: string;
+  'filter[category_id]'?: number | string;
+  'filter[size_id]'?: number | string;
+  is_featured?: number | string | boolean;
+  [key: string]: any;
+}
+
+export const fetchProducts = async (page = 1, perPage = 5, filters?: ProductFilterParams): Promise<ProductsResponse> => {
+  const params: Record<string, any> = {
+    paginate: 1,
+    per_page: perPage,
+    page: page,
+  };
+
+  if (filters) {
+    Object.keys(filters).forEach((key) => {
+      if (filters[key] !== undefined && filters[key] !== '' && filters[key] !== null) {
+        params[key] = filters[key];
+      }
+    });
+  }
+
   const response = await api.get<ProductsResponse>('/products', {
-    params: {
-      paginate: 1,
-      per_page: perPage,
-      page: page,
-    },
+    params,
   });
   return response.data;
 };
 
-export const useProductsQuery = (page = 1, perPage = 5) => {
+export const useProductsQuery = (page = 1, perPage = 5, filters?: ProductFilterParams) => {
   return useQuery({
-    queryKey: ['adminProducts', page, perPage],
-    queryFn: () => fetchProducts(page, perPage),
+    queryKey: ['adminProducts', page, perPage, filters],
+    queryFn: () => fetchProducts(page, perPage, filters),
   });
 };
 

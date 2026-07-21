@@ -88,16 +88,25 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
   useEffect(() => {
     if (watchedImages && watchedImages.length > 0) {
+      const MAX_FILE_SIZE = 10 * 1024 * 1024;
       const filesArray = Array.from(watchedImages);
-      const urls = filesArray.map((file) => URL.createObjectURL(file));
+      const validFiles = filesArray.filter((file) => file.size <= MAX_FILE_SIZE);
+
+      if (filesArray.length > validFiles.length) {
+        alert(t('admin.image_size_error') || 'Image size must not exceed 10MB');
+      }
+
+      if (validFiles.length === 0) return;
+
+      const urls = validFiles.map((file) => URL.createObjectURL(file));
       setImagePreviews((prev) => {
-        const newPreviews = filesArray.map((file, i) => ({
+        const newPreviews = validFiles.map((file, i) => ({
           url: urls[i],
           file,
         }));
         const filteredPrev = prev.filter(
           (existingItem) =>
-            !filesArray.some((newFile) => newFile.name === (existingItem.file?.name || existingItem.url.split('/').pop()))
+            !validFiles.some((newFile) => newFile.name === (existingItem.file?.name || existingItem.url.split('/').pop()))
         );
         return [...filteredPrev, ...newPreviews];
       });
@@ -106,7 +115,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
         urls.forEach((url) => URL.revokeObjectURL(url));
       };
     }
-  }, [watchedImages]);
+  }, [watchedImages, t]);
 
   const onSubmit = (data: FormValues) => {
     const formData = new FormData();
@@ -144,7 +153,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="w-full h-full max-h-screen max-w-none rounded-none p-4 md:max-w-4xl md:h-auto md:max-h-[90vh] md:rounded-2xl md:p-6 bg-white text-black flex flex-col overflow-hidden">
+      <DialogContent className="w-full max-w-none rounded-none p-4 md:max-w-3xl md:rounded-2xl md:p-6 bg-white text-black flex flex-col">
         <DialogHeader className="shrink-0 border-b border-black/5 pb-3">
           <DialogTitle className="text-xl font-bold">
             {categoryId
@@ -153,11 +162,10 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden mt-4">
-          {/* Scrollable inputs wrapper */}
-          <div className="space-y-5 overflow-y-auto flex-1 pr-1 py-1">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col mt-4">
+          <div className="space-y-3.5">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="nameAr" className="text-sm font-semibold">
                   {t('admin.name_ar')}
                 </Label>
@@ -174,7 +182,7 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                 )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="nameEn" className="text-sm font-semibold">
                   {t('admin.name_en')}
                 </Label>
@@ -193,12 +201,13 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="descriptionAr" className="text-sm font-semibold">
                   {t('admin.description_ar')}
                 </Label>
                 <Textarea
                   id="descriptionAr"
+                  rows={2}
                   placeholder={t('admin.description_ar_placeholder')}
                   {...register('descriptionAr', {
                     required: t('admin.required_field'),
@@ -210,12 +219,13 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                 )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="descriptionEn" className="text-sm font-semibold">
                   {t('admin.description_en')}
                 </Label>
                 <Textarea
                   id="descriptionEn"
+                  rows={2}
                   placeholder={t('admin.description_en_placeholder')}
                   {...register('descriptionEn', {
                     required: t('admin.required_field'),
@@ -228,11 +238,11 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label className="text-sm font-semibold">
                 {t('admin.images')}
               </Label>
-              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-6 transition-colors hover:border-gray-400">
+              <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-3 transition-colors hover:border-gray-400">
                 <input
                   type="file"
                   id="image"
@@ -243,16 +253,18 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                     required: categoryId ? false : t('admin.required_image'),
                   })}
                 />
-                <Label htmlFor="image" className="flex cursor-pointer flex-col items-center justify-center gap-2">
-                  <div className="rounded-full bg-gray-100 p-3">
-                    <Upload className="h-6 w-6 text-gray-500" />
+                <Label htmlFor="image" className="flex cursor-pointer items-center justify-center gap-2">
+                  <div className="rounded-full bg-gray-100 p-2">
+                    <Upload className="h-4 w-4 text-gray-500" />
                   </div>
-                  <span className="text-sm font-medium text-gray-600">
-                    {t('admin.click_to_upload')}
-                  </span>
-                  <span className="text-xs text-gray-400">
-                    PNG, JPG, JPEG (Max 5MB)
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-gray-600">
+                      {t('admin.click_to_upload')}
+                    </span>
+                    <span className="text-[10px] text-gray-400">
+                      PNG, JPG, JPEG (Max 10MB)
+                    </span>
+                  </div>
                 </Label>
               </div>
               {errors.image && (
@@ -260,9 +272,9 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
               )}
 
               {imagePreviews.length > 0 && (
-                <div className="mt-4 grid grid-cols-4 gap-4">
+                <div className="mt-2 flex flex-wrap gap-2">
                   {imagePreviews.map((item, index) => (
-                    <div key={index} className="group relative aspect-square rounded-md border overflow-hidden">
+                    <div key={index} className="group relative h-14 w-14 rounded-md border overflow-hidden shrink-0">
                       <img src={item.url} alt="preview" className="h-full w-full object-cover" />
                       <button
                         type="button"
@@ -284,9 +296,9 @@ export const AddCategory = ({ isOpen, onClose, onAdd, isPending, categoryId }: A
                           }
                           setImagePreviews((prev) => prev.filter((_, i) => i !== index));
                         }}
-                        className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"
+                        className="absolute right-0.5 top-0.5 rounded-full bg-red-500 p-0.5 text-white opacity-0 transition-opacity group-hover:opacity-100 cursor-pointer"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-2.5 w-2.5" />
                       </button>
                     </div>
                   ))}

@@ -16,17 +16,25 @@ export interface LowStockVariant {
 }
 
 export interface TopSellingProduct {
-  name: string;
-  sales_count: number;
-  revenue: number;
+  variant_id?: number;
+  product_name?: string;
+  name?: string;
+  size?: string;
+  material?: string;
+  quantity_sold?: number;
+  sales_count?: number;
+  revenue?: number;
 }
 
 export interface RecentOrder {
-  id: number;
-  user_name: string;
-  total_price: number;
-  status: string;
-  created_at: string;
+  order_id?: number;
+  id?: number;
+  user_name?: string;
+  customer_name?: string;
+  total_amount?: number;
+  total_price?: number;
+  status?: string;
+  created_at?: string;
 }
 
 export interface DashboardStatistics {

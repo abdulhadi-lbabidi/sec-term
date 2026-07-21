@@ -41,6 +41,7 @@ export const AddUser = ({
     register,
     handleSubmit,
     setValue,
+    unregister,
     watch,
     reset,
     formState: { errors },
@@ -54,11 +55,13 @@ export const AddUser = ({
   useEffect(() => {
     if (isOpen) {
       if (isEditMode && userData) {
+        unregister('password');
+        unregister('password_confirmation');
         reset({
           name: userData.name,
           email: userData.email,
           is_active: userData.is_active,
-          roles: userData.roles.map((r) => r.id),
+          roles: (userData.roles || []).map((r: any) => (typeof r === 'object' ? r.id : r)),
         });
       } else {
         reset({
@@ -71,7 +74,7 @@ export const AddUser = ({
         });
       }
     }
-  }, [isOpen, userData, isEditMode, reset]);
+  }, [isOpen, userData, isEditMode, reset, unregister]);
 
   const onSubmit = (data: any) => {
     if (isEditMode) {
@@ -157,7 +160,7 @@ export const AddUser = ({
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    {...register('password', { required: t('admin.password_required') })}
+                    {...register('password', { required: !isEditMode ? t('admin.password_required') : false })}
                     className={errors.password ? 'border-destructive' : ''}
                   />
                   {errors.password && (
@@ -174,8 +177,11 @@ export const AddUser = ({
                     type="password"
                     placeholder="••••••••"
                     {...register('password_confirmation', {
-                      required: t('admin.required_field'),
-                      validate: (val) => val === watchPassword || t('admin.passwords_dont_match'),
+                      required: !isEditMode ? t('admin.required_field') : false,
+                      validate: (val) => {
+                        if (isEditMode) return true;
+                        return val === watchPassword || t('admin.passwords_dont_match');
+                      },
                     })}
                     className={errors.password_confirmation ? 'border-destructive' : ''}
                   />
@@ -195,7 +201,7 @@ export const AddUser = ({
               <Switch
                 id="is_active"
                 checked={isActive}
-                onCheckedChange={(checked) => setValue('is_active', checked)}
+                onCheckedChange={(checked) => setValue('is_active', checked, { shouldValidate: true, shouldDirty: true })}
               />
             </div>
 
@@ -203,30 +209,23 @@ export const AddUser = ({
               <Label className="text-xs font-semibold">{t('admin.roles')} *</Label>
               <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto border rounded-lg p-2.5">
                 {roles.map((role) => {
-                  const isChecked = selectedRoles.includes(role.id);
+                  const isSelected = selectedRoles.includes(role.id);
                   return (
-                    <div key={role.id} className="flex items-center gap-2">
-                      <Checkbox
-                        id={`modal-role-${role.id}`}
-                        checked={isChecked}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setValue('roles', [...selectedRoles, role.id]);
-                          } else {
-                            setValue(
-                              'roles',
-                              selectedRoles.filter((id: number) => id !== role.id)
-                            );
-                          }
+                    <label key={role.id} className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="radio"
+                        name="user-role"
+                        value={role.id}
+                        checked={isSelected}
+                        onChange={() => {
+                          setValue('roles', [Number(role.id)], { shouldValidate: true, shouldDirty: true });
                         }}
+                        className="h-4 w-4 text-black border-black/20 focus:ring-black cursor-pointer accent-black"
                       />
-                      <Label
-                        htmlFor={`modal-role-${role.id}`}
-                        className="text-[11px] font-medium capitalize cursor-pointer select-none"
-                      >
+                      <span className="text-[11px] font-medium capitalize text-black">
                         {role.name}
-                      </Label>
-                    </div>
+                      </span>
+                    </label>
                   );
                 })}
               </div>

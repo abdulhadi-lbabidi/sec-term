@@ -221,7 +221,7 @@ export const Packages = () => {
                         <div className="flex justify-between items-center text-sm font-bold">
                           <span>{typeof pkg.name === 'object' ? (isRtl ? pkg.name?.ar : pkg.name?.en) : pkg.name}</span>
                           <span className="text-sm font-semibold text-green-600">
-                            {pkg.price} {isRtl ? 'ر.س' : 'SAR'}
+                            {pkg.price} {t('admin.currency')}
                           </span>
                         </div>
                       </div>
@@ -234,7 +234,7 @@ export const Packages = () => {
                           disabled={deleteMutation.isPending}
                         >
                           <Pencil className="h-3.5 w-3.5" />
-                          {isRtl ? 'تعديل' : 'Edit'}
+                          {t('admin.edit')}
                         </Button>
                         <Button
                           variant="ghost"
@@ -244,7 +244,7 @@ export const Packages = () => {
                           disabled={deleteMutation.isPending}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                          {isRtl ? 'حذف' : 'Delete'}
+                          {t('admin.delete')}
                         </Button>
                       </div>
                     </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import {
-  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, Star, Layers
+  Plus, Trash2, Loader2, Pencil, ChevronLeft, ChevronRight, Star, Layers, Filter, Search, RotateCcw
 } from 'lucide-react';
 import { useAuth } from '../../../../context/AuthContext';
 import { Button } from '../../../../components/ui/button';
@@ -13,8 +13,28 @@ import {
   useProductsQuery,
   useDeleteProductMutation,
   useDeleteProductVariantMutation,
+  ProductFilterParams,
 } from '../../../../api/Admin/products';
+import { useCategoriesQuery } from '../../../../api/Admin/categories';
+import { useSizesQuery } from '../../../../api/Admin/sizes';
 import { ProductVariantsModal } from './ProductVariantsModal';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+} from '../../../../components/ui/sheet';
+import { Input } from '../../../../components/ui/input';
+import { Label } from '../../../../components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../../../components/ui/select';
 
 interface ProductCardProps {
   product: any;
@@ -222,7 +242,22 @@ export const Products = () => {
   const [galleryProduct, setGalleryProduct] = useState<any | null>(null);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState<number>(0);
 
-  const { data, isLoading, isError, error } = useProductsQuery(page, perPage);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [sku, setSku] = useState('');
+  const [barcode, setBarcode] = useState('');
+  const [categoryId, setCategoryId] = useState<string>('all');
+  const [sizeId, setSizeId] = useState<string>('all');
+  const [isFeatured, setIsFeatured] = useState<string>('all');
+  const [appliedFilters, setAppliedFilters] = useState<ProductFilterParams>({});
+
+  const { data: categoriesData } = useCategoriesQuery(1, 100);
+  const { data: sizesData } = useSizesQuery(1, 100);
+
+  const categoriesList = categoriesData?.data || [];
+  const sizesList = sizesData?.data || [];
+
+  const { data, isLoading, isError, error } = useProductsQuery(page, perPage, appliedFilters);
   const deleteMutation = useDeleteProductMutation();
   const deleteVariantMutation = useDeleteProductVariantMutation();
 
@@ -230,19 +265,86 @@ export const Products = () => {
     setHeaderAction: (action: React.ReactNode) => void;
   }>();
 
-  useEffect(() => {
-    if (canCreate) {
-      setHeaderAction(
-        <Button onClick={() => navigate('/admin/products/add')} className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          {t('admin.addNewProduct')}
-        </Button>
-      );
-    } else {
-      setHeaderAction(null);
+  const handleApplyFilters = () => {
+    const newFilters: ProductFilterParams = {};
+    if (search.trim()) {
+      newFilters['filter[search]'] = search.trim();
     }
+    if (sku.trim()) {
+      newFilters['filter[sku]'] = sku.trim();
+    }
+    if (barcode.trim()) {
+      newFilters['filter[barcode]'] = barcode.trim();
+    }
+    if (categoryId && categoryId !== 'all') {
+      newFilters['filter[category_id]'] = categoryId;
+    }
+    if (sizeId && sizeId !== 'all') {
+      newFilters['filter[size_id]'] = sizeId;
+    }
+    if (isFeatured === '1') {
+      newFilters['is_featured'] = 1;
+    } else if (isFeatured === '0') {
+      newFilters['is_featured'] = 0;
+    }
+    setAppliedFilters(newFilters);
+    setPage(1);
+    setIsFilterOpen(false);
+  };
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setSku('');
+    setBarcode('');
+    setCategoryId('all');
+    setSizeId('all');
+    setIsFeatured('all');
+    setAppliedFilters({});
+    setPage(1);
+    setIsFilterOpen(false);
+  };
+
+  const activeFiltersCount = Object.keys(appliedFilters).length;
+
+  useEffect(() => {
+    setHeaderAction(
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          onClick={() => setIsFilterOpen(true)}
+          className="flex items-center gap-2 border-black/15 bg-white text-black hover:bg-black/5 cursor-pointer relative"
+        >
+          <Filter className="h-4 w-4" />
+          <span>{t('admin.filter')}</span>
+          {activeFiltersCount > 0 && (
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black text-[10px] font-bold text-white">
+              {activeFiltersCount}
+            </span>
+          )}
+        </Button>
+
+        {activeFiltersCount > 0 && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleResetFilters}
+            className="h-9 w-9 text-black/60 hover:bg-black/5 hover:text-black rounded-lg border border-black/10 cursor-pointer"
+            title={t('admin.reset_filters')}
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
+        )}
+
+        {canCreate && (
+          <Button onClick={() => navigate('/admin/products/add')} className="flex items-center gap-2 cursor-pointer">
+            <Plus className="h-4 w-4" />
+            {t('admin.addNewProduct')}
+          </Button>
+        )}
+      </div>
+    );
     return () => setHeaderAction(null);
-  }, [navigate, setHeaderAction, t, canCreate]);
+  }, [navigate, setHeaderAction, t, canCreate, activeFiltersCount, isRtl]);
 
   const handleDeleteProduct = (id: number) => {
     setProductIdToDelete(id);
@@ -433,6 +535,129 @@ export const Products = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+        <SheetContent side={isRtl ? 'left' : 'right'} className="w-full sm:max-w-md bg-white p-6 flex flex-col justify-between">
+          <div>
+            <SheetHeader className="p-0 pb-4 border-b border-black/10">
+              <SheetTitle className="text-xl font-bold flex items-center gap-2 text-black">
+                <Filter className="h-5 w-5" />
+                {t('admin.filter_products')}
+              </SheetTitle>
+              <SheetDescription className="text-xs text-black/50">
+                {t('admin.filter_desc')}
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="mt-6 space-y-5">
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.search')}</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 rtl:right-3 rtl:left-auto top-1/2 -translate-y-1/2 h-4 w-4 text-black/40" />
+                  <Input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder={t('admin.search_product_placeholder')}
+                    className="pl-9 rtl:pr-9 rtl:pl-3 bg-black/5 border-black/10 focus:bg-white text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.product_sku_label')}</Label>
+                <Input
+                  type="text"
+                  value={sku}
+                  onChange={(e) => setSku(e.target.value)}
+                  placeholder={t('admin.search_sku_placeholder')}
+                  className="bg-black/5 border-black/10 focus:bg-white text-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.product_barcode_label')}</Label>
+                <Input
+                  type="text"
+                  value={barcode}
+                  onChange={(e) => setBarcode(e.target.value)}
+                  placeholder={t('admin.search_barcode_placeholder')}
+                  className="bg-black/5 border-black/10 focus:bg-white text-sm"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.category')}</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger className="w-full bg-black/5 border-black/10 text-sm">
+                    <SelectValue placeholder={t('admin.select_category')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('admin.all_categories')}</SelectItem>
+                    {categoriesList.map((cat: any) => {
+                      const name = typeof cat.name === 'object' ? (isRtl ? cat.name?.ar : cat.name?.en) : cat.name;
+                      return (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                          {name}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.size')}</Label>
+                <Select value={sizeId} onValueChange={setSizeId}>
+                  <SelectTrigger className="w-full bg-black/5 border-black/10 text-sm">
+                    <SelectValue placeholder={t('admin.select_size')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('admin.all_sizes')}</SelectItem>
+                    {sizesList.map((sz: any) => (
+                      <SelectItem key={sz.id} value={String(sz.id)}>
+                        {sz.name || sz.size}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold text-black">{t('admin.featured_product')}</Label>
+                <Select value={isFeatured} onValueChange={setIsFeatured}>
+                  <SelectTrigger className="w-full bg-black/5 border-black/10 text-sm">
+                    <SelectValue placeholder={t('admin.all')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">{t('admin.all')}</SelectItem>
+                    <SelectItem value="1">{t('admin.featured_only')}</SelectItem>
+                    <SelectItem value="0">{t('admin.non_featured_only')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <SheetFooter className="p-0 pt-4 border-t border-black/10 flex flex-row gap-3">
+            <Button
+              variant="outline"
+              onClick={handleResetFilters}
+              className="flex-1 flex items-center justify-center gap-2 border-black/15 text-black hover:bg-black/5 cursor-pointer"
+            >
+              <RotateCcw className="h-4 w-4" />
+              {t('admin.reset')}
+            </Button>
+            <Button
+              onClick={handleApplyFilters}
+              className="flex-1 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Filter className="h-4 w-4" />
+              {t('admin.apply_filters')}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
