@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Lock, MessageSquare } from 'lucide-react';
 import { useAppStore } from '@/app/store/useAppStore';
 import { useProductDetailsQuery, useAddReviewMutation, useReviewsQuery, useProductsQuery } from '@/app/api/client/useProducts';
 import { toast } from 'sonner';
@@ -106,15 +106,7 @@ export default function ProductPage() {
   const currentProductId = product ? (selectedSize ? `${product.id}-${selectedSize.variant_id}` : product.id) : undefined;
   const isInCart = currentProductId ? cart.some(c => c.product.id === currentProductId && !c.isPackage) : false;
 
-  const handleToggleWishlist = () => {
-    if (!product) return;
-    toggleWishlist(product);
-    if (isFav) {
-      toast.success(t('removedFromWishlist'));
-    } else {
-      toast.success(t('addedToWishlist'));
-    }
-  };
+
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -198,17 +190,17 @@ export default function ProductPage() {
       },
       onError: (err: any) => {
         let errorMessage = err?.message || t('error', 'An error occurred');
-        
+
         // Handle specific duplicate review error
         const variantErrors = err?.errors?.product_variant_id || [];
-        const isDuplicate = variantErrors.some((e: string) => e.includes('already been taken')) || 
-                            errorMessage.includes('already been taken') || 
-                            errorMessage.includes('product variant id has already');
+        const isDuplicate = variantErrors.some((e: string) => e.includes('already been taken')) ||
+          errorMessage.includes('already been taken') ||
+          errorMessage.includes('product variant id has already');
 
         if (isDuplicate) {
           errorMessage = t('reviews.alreadyReviewed', 'You have already reviewed this variant.');
         }
-        
+
         toast.error(errorMessage);
       }
     });
@@ -242,11 +234,10 @@ export default function ProductPage() {
         {/* Gallery */}
         {isLoading || !product ? <ProductGallerySkeleton />
           : <ProductGallery
+            product={product}
             activeImage={activeImage}
             name={product.name}
-            isFav={isFav}
             allImages={currentVariantImages}
-            onToggleWishlist={handleToggleWishlist}
             onImageSelect={setActiveImage}
           />
         }
@@ -346,11 +337,19 @@ export default function ProductPage() {
                   initialVariantId={selectedSize?.variant_id || product?.variants?.[0]?.id || product?.available_options?.[0]?.available_sizes?.[0]?.variant_id}
                 />
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 bg-primary/5 rounded-2xl border border-primary/10">
-                  <p className="text-muted-foreground mb-6 text-center max-w-sm">{t('loginToAddReview')}</p>
-                  <div className="w-full max-w-xs">
-                    <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 transition-all shadow-md w-full">
-                      {t('login_title')}
+                <div className="flex flex-col items-center justify-center p-10 bg-white rounded-[32px] border border-[#EAE5DF] shadow-sm text-center relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#FCFAF7] to-white z-0 pointer-events-none" />
+                  <div className="relative z-10 flex flex-col items-center">
+                    <div className="w-16 h-16 bg-[#FCFAF7] border border-[#EAE5DF] rounded-full flex items-center justify-center mb-5 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                      <Lock className="w-7 h-7 text-[#C5A880]" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-xl font-black text-[#1C1A17] mb-2">{t('auth.loginToAddReview')}</h3>
+                    <p className="text-gray-500 mb-8 max-w-sm leading-relaxed text-sm">
+                      {t('auth.loginToAddReviewDesc')}
+                    </p>
+                    <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-[#1C1A17] hover:bg-[#2A2825] text-white px-8 h-12 transition-all shadow-md w-full font-bold gap-2 group-hover:shadow-lg">
+                      <MessageSquare className="w-4 h-4" />
+                      {t('auth.login_title')}
                     </Link>
                   </div>
                 </div>

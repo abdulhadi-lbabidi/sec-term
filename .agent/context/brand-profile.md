@@ -36,18 +36,18 @@ If any information conflicts with the codebase, translations, placeholder conten
 
 # Online Presence
 
-- **Domain:** nouhcatering.vercel.app
-- **Website:** nouhcatering.vercel.app
+- **Domain:** nouhcarting.vercel.app
+- **Website:** nouhcarting.vercel.app
 
 ## Social Media
 
 ### Facebook
-- **Username:** nouhcatering
-- **URL:** fb.com/nouhcatering
+- **Username:** nouhcarting
+- **URL:** fb.com/nouhcarting
 
 ### Instagram
-- **Username:** nouhcatering
-- **URL:** instagram.com/nouhcatering
+- **Username:** nouhcarting
+- **URL:** instagram.com/nouhcarting
 
 ### WhatsApp
 - **Phone:** +963 945 036 513
@@ -103,7 +103,7 @@ If any information conflicts with the codebase, translations, placeholder conten
 
 - **Site Title:** Gold & Wheat – Bakery & Food Store
 - **Meta Description:** Discover a modern bakery e-commerce platform that offers seamless shopping for baked goods, featuring multi-language support and dynamic product displays.
-- **Canonical URL:** nouhcatering.vercel.app
+- **Canonical URL:** nouhcarting.vercel.app
 - **Open Graph:** Enabled
 - **Twitter Card:** summary_large_image
 - **Structured Data:** Product Schema, Breadcrumb Schema

@@ -6,6 +6,8 @@ import { Button } from '@/app/components/ui/button';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
+import { FavoriteButton } from './FavoriteButton';
+
 interface ProductCardProps {
   product: any;
   triggerToast?: (msg: string) => void;
@@ -13,12 +15,11 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, layout = 'grid' }) => {
-  const { language, toggleWishlist, wishlist } = useAppStore();
+  const { language } = useAppStore();
   const { t } = useTranslation();
 
   if (!product) return null;
 
-  const isFav = wishlist.some(p => p.id === product?.id);
   const name = language === 'ar' ? (product.nameAr || product.name) : (product.nameEn || product.name);
   const desc = language === 'ar' ? (product.descAr || product.body) : (product.descEn || product.body);
   let displayPrice = product.price;
@@ -36,15 +37,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, layout = 'gri
   const price = displayPrice ?? 0; // Fallback price
   const [imgError, setImgError] = useState(false);
   const imgSrc = product.image && !imgError ? product.image : null;
-
-
-  const handleToggleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleWishlist(product);
-    if (isFav) toast.success(t('productCard.removedFromWishlist', 'Removed from wishlist'));
-    else toast.success(t('productCard.addedToWishlist', 'Added to wishlist'));
-  };
 
   return (
     <Link
@@ -69,14 +61,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, layout = 'gri
           />
         )}
         <div className={`absolute ${layout === 'list' ? 'top-2 start-2' : 'top-3 end-3'} flex flex-col gap-2 z-10`}>
-          <Button
-            type="button"
-            variant={"ghost"}
-            onClick={handleToggleWishlist}
-            className={`w-9 h-9 rounded-full bg-white/90 backdrop-blur shadow-sm flex items-center justify-center transition-all ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-white'}`}
-          >
-            <Heart size={18} fill={isFav ? "currentColor" : "none"} />
-          </Button>
+          <FavoriteButton 
+            product={product} 
+            className="w-9 h-9 shadow-sm" 
+            iconSize={18} 
+          />
         </div>
         {stock <= 0 && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-sm">

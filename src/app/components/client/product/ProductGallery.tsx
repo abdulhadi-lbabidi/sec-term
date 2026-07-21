@@ -5,12 +5,13 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../ui/dial
 import { useAppStore } from '@/app/store/useAppStore';
 import { ScrollableRow } from '../../ui/scrollable-row';
 
+import { FavoriteButton } from './FavoriteButton';
+
 interface ProductGalleryProps {
+  product: any;
   activeImage: string;
   name: string;
-  isFav: boolean;
   allImages: string[];
-  onToggleWishlist: () => void;
   onImageSelect: (img: string) => void;
 }
 
@@ -33,11 +34,10 @@ function drawImageContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement, 
 }
 
 export function ProductGallery({
+  product,
   activeImage,
   name,
-  isFav,
   allImages,
-  onToggleWishlist,
   onImageSelect
 }: ProductGalleryProps) {
   const { language } = useAppStore();
@@ -101,48 +101,24 @@ export function ProductGallery({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      if (oldSrc !== newSrc && imgOld && imgOld.complete) {
+      if (imgOld && imgOld.complete) {
         ctx.globalAlpha = 1 - progress;
         drawImageContain(ctx, imgOld, canvas.width, canvas.height);
       }
 
       if (imgNew && imgNew.complete) {
-        ctx.globalAlpha = oldSrc === newSrc ? 1 : progress;
+        ctx.globalAlpha = progress;
         drawImageContain(ctx, imgNew, canvas.width, canvas.height);
       }
 
-      ctx.globalAlpha = 1.0;
-
-      if (progress < 1 && oldSrc !== newSrc) {
+      if (progress < 1) {
         animationFrameId = requestAnimationFrame(render);
       } else {
-        currentImageRef.current = newSrc;
+        currentImageRef.current = targetImage;
       }
     };
-
-    if (oldSrc !== newSrc) {
-      if (imgNew && !imgNew.complete) {
-        imgNew.onload = () => {
-          animationFrameId = requestAnimationFrame(render);
-        };
-      } else {
-        animationFrameId = requestAnimationFrame(render);
-      }
-    } else {
-      if (imgNew && imgNew.complete) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        drawImageContain(ctx, imgNew, canvas.width, canvas.height);
-      } else if (imgNew) {
-        imgNew.onload = () => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawImageContain(ctx, imgNew, canvas.width, canvas.height);
-        }
-      }
-    }
-
-    return () => {
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    };
+    animationFrameId = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(animationFrameId);
   }, [targetImage]);
 
   useEffect(() => {
@@ -205,12 +181,11 @@ export function ProductGallery({
             </button>
           </DialogTrigger>
 
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(); }}
-            className={`absolute top-4 end-4 w-11 h-11 rounded-full bg-white/90 backdrop-blur shadow-md flex items-center justify-center transition-all z-20 ${isFav ? 'text-red-500 hover:bg-red-50' : 'text-gray-400 hover:text-red-500 hover:bg-white'}`}
-          >
-            <Heart size={22} fill={isFav ? "currentColor" : "none"} />
-          </button>
+          <FavoriteButton 
+            product={product} 
+            className="absolute top-4 end-4 w-11 h-11 shadow-md" 
+            iconSize={22} 
+          />
         </div>
 
         <DialogContent className="max-w-screen-xl w-[95vw] h-[90vh] p-1 sm:p-6 bg-transparent border-none shadow-none flex flex-col justify-center outline-none">

@@ -9,6 +9,11 @@
     "my_profile": "My Profile",
     "logout": "Logout"
   },
+  "messages": {
+    "loginRequired": "Please login to use this feature",
+    "removedFromWishlist": "Removed from wishlist",
+    "addedToWishlist": "Added to wishlist"
+  },
   "hero": {
     "title": "Freshly Baked Every Day",
     "subtitle": "Discover the art of traditional baking with our artisanal bread and pastries.",
@@ -108,6 +113,7 @@
   "contact": {
     "subtitle": "We are happy to connect with you. We are here to answer all your inquiries and fulfill your requests.",
     "call_us": "Call Us",
+    "social_media": "Social Media",
     "email_us": "Email Us",
     "visit_us": "Visit Us",
     "address": "Aleppo, Al-Sabeel Neighborhood",
@@ -161,6 +167,8 @@
   },
   "auth": {
     "login_title": "Login to your account",
+    "loginToAddReview": "Please login to share your review",
+    "loginToAddReviewDesc": "Join us and share your unique experience with this delicious product! Your opinion matters.",
     "register_title": "Create an Account",
     "name": "Full Name",
     "name_placeholder": "John Doe",
@@ -325,7 +333,10 @@
     "emptyRatingError": "Please select a rating first",
     "variantLabel": "Product Variant",
     "selectVariantPlaceholder": "Select a variant to review",
-    "emptyVariantError": "Please select a variant to review"
+    "emptyVariantError": "Please select a variant to review",
+    "noReviewsMatch": "No reviews match your filters",
+    "tryAdjustingFilters": "Try selecting a different rating or variant to see more reviews.",
+    "clearAllFilters": "Clear all filters"
   },
   "checkout": {
     "shipping_details": "Shipping Details",

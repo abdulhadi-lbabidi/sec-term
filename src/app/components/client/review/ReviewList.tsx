@@ -1,14 +1,13 @@
 import { RatingStars } from './RatingStars';
 import { useAppStore } from '@/app/store/useAppStore';
 import { format } from 'date-fns';
-import { Dialog, DialogContent, DialogTitle } from '../../ui/dialog';
 import { Button } from '../../ui/button';
 import { Skeleton } from '../../ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { useState, useMemo } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ScrollableRow } from '../../ui/scrollable-row';
+import { ReviewDialog } from './ReviewDialog';
 
 export interface Review {
   id: string | number;
@@ -35,7 +34,7 @@ interface ReviewListProps {
   isLoading?: boolean;
 }
 
-const ReviewItem = ({ review }: { review: Review }) => (
+export const ReviewItem = ({ review }: { review: Review }) => (
   <div className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm flex flex-col gap-4 transition-all hover:shadow-md">
     <div className="flex justify-between items-start">
       <div className="flex items-center gap-3">
@@ -117,7 +116,7 @@ export function ReviewList({ reviews, averageRating, totalReviews, isLoading }: 
     return { stars, count, percentage };
   });
 
-  const displayedReviews = filteredReviews.slice(0, 3);
+  const displayedReviews = filteredReviews.slice(0, 4);
   const hasMore = filteredReviews.length > 3;
 
   const handleRatingClick = (stars: number) => {
@@ -238,152 +237,35 @@ export function ReviewList({ reviews, averageRating, totalReviews, isLoading }: 
             )}
           </div>
         ) : (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <div className="grid gap-6">
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {displayedReviews.map(review => (
-                <ReviewItem key={review.id} review={review} />
+                <ReviewItem key={`review-${review.id}`} review={review} />
               ))}
             </div>
-
             {hasMore && (
-              <div className="mt-8 text-center">
+              <div className="flex justify-center pt-4">
                 <Button
                   variant="outline"
                   onClick={() => setIsDialogOpen(true)}
-                  className="rounded-full px-8 border-[#EAE5DF] text-[#1C1A17] font-bold hover:bg-[#FCFAF7] transition-all"
+                  className="rounded-full px-8 font-bold border-[#EAE5DF] text-[#1C1A17] hover:bg-gray-50"
                 >
-                  {t('reviews.readAll')} ({filteredReviews.length})
+                  {t('reviews.viewAll', 'View All Reviews')} ({filteredReviews.length})
                 </Button>
               </div>
             )}
-
-            <DialogContent className="max-w-[700px] h-[90vh] sm:h-[85vh] flex flex-col p-0 overflow-hidden bg-white sm:rounded-[32px] shadow-2xl gap-0 border-0">
-              <div className="px-6 py-5 bg-white border-b border-[#EAE5DF] shrink-0 sticky top-0 z-20 flex justify-between items-center shadow-sm">
-                <DialogTitle className="text-xl font-black text-[#1C1A17]">
-                  {t('reviews.loversLog')}
-                </DialogTitle>
-              </div>
-
-              <div className="overflow-y-auto flex-1 select-none flex flex-col no-scrollbar bg-[#FCFAF7]">
-                <div className="p-6 sm:p-8 bg-white shrink-0 border-b border-[#EAE5DF]">
-                  <div className="flex flex-col sm:flex-row gap-8 items-center">
-                    <div className="flex flex-col items-center justify-center space-y-1">
-                      <span className="text-7xl font-black text-[#1C1A17] tracking-tighter leading-none">{averageRating.toFixed(1)}</span>
-                      <div className="pt-2">
-                        <RatingStars rating={averageRating} size={20} />
-                      </div>
-                      <span className="text-sm font-medium text-gray-400 mt-2">{totalReviews} {t('reviews.loversShared')}</span>
-                    </div>
-
-                    <div className="flex-1 w-full space-y-2.5 select-none">
-                      {distribution.map(({ stars, count, percentage }) => {
-                        const isSelected = selectedRating === stars;
-                        return (
-                          <div
-                            key={stars}
-                            onClick={() => handleRatingClick(stars)}
-                            className={cn(
-                              "flex items-center gap-3 text-sm cursor-pointer group p-1 -mx-1 rounded-full transition-all duration-300",
-                              isSelected ? "bg-[#FCFAF7]" : "hover:bg-gray-50"
-                            )}
-                          >
-                            <div className="w-4 text-xs font-bold text-gray-500 text-right">{stars}</div>
-                            <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden relative">
-                              <div
-                                className={cn("h-full rounded-full transition-all duration-500", isSelected ? "bg-[#1C1A17]" : "bg-yellow-400 group-hover:bg-yellow-500")}
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col bg-white border-b border-[#EAE5DF] sticky top-0 z-10 shadow-sm shrink-0">
-                  <ScrollableRow className="px-6 py-4 gap-2.5">
-                    <button
-                      onClick={clearFilters}
-                      className={cn(
-                        "shrink-0 px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200 flex items-center gap-2",
-                        !selectedRating && !selectedVariant
-                          ? "bg-[#1C1A17] text-white border-[#1C1A17]"
-                          : "bg-white text-gray-600 border-[#EAE5DF] hover:border-gray-300 hover:bg-gray-50"
-                      )}
-                    >
-                      {t("reviews.all-reviews")}
-
-                    </button>
-
-                    {[5, 4, 3, 2, 1].map(star => {
-                      const isSelected = selectedRating === star;
-                      return (
-                        <button
-                          key={`chip-star-${star}`}
-                          onClick={() => handleRatingClick(star)}
-                          className={cn(
-                            "shrink-0 px-4 py-2 flex items-center gap-1.5 rounded-full text-sm font-bold border transition-all duration-200",
-                            isSelected
-                              ? "bg-[#C5A880]/10 text-[#A68A64] border-[#C5A880]/30"
-                              : "bg-white text-gray-600 border-[#EAE5DF] hover:border-gray-300 hover:bg-gray-50"
-                          )}
-                        >
-                          {star} <Star size={14} className={cn("mb-0.5", isSelected ? "fill-[#A68A64] text-[#A68A64]" : "fill-gray-400 text-gray-400")} />
-                        </button>
-                      )
-                    })}
-                  </ScrollableRow>
-
-                  {uniqueVariants.length > 1 && (
-                    <ScrollableRow className="px-6 pb-4 gap-2.5 pt-1 border-t border-gray-50">
-                      {uniqueVariants.map(variant => {
-                        const isSelected = selectedVariant === variant.id;
-                        return (
-                          <button
-                            key={`chip-var-${variant.id}`}
-                            onClick={() => setSelectedVariant(prev => prev === variant.id ? null : variant.id)}
-                            className={cn(
-                              "shrink-0 px-4 py-2 rounded-full text-sm font-bold border transition-all duration-200",
-                              isSelected
-                                ? "bg-[#1C1A17] text-white border-[#1C1A17]"
-                                : "bg-white text-gray-600 border-[#EAE5DF] hover:border-gray-300 hover:bg-gray-50"
-                            )}
-                          >
-                            {variant.name}
-                          </button>
-                        );
-                      })}
-                    </ScrollableRow>
-                  )}
-                </div>
-
-                <div className="p-6 flex-1">
-                  {filteredReviews.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center py-12 text-center">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-[#EAE5DF]">
-                        <Star className="text-gray-300 w-8 h-8" />
-                      </div>
-                      <h4 className="text-lg font-bold text-[#1C1A17] mb-2">No reviews match your filters</h4>
-                      <p className="text-gray-500 text-sm max-w-[250px] mb-6">
-                        Try selecting a different rating or variant to see more reviews.
-                      </p>
-                      <Button onClick={clearFilters} variant="outline" className="rounded-full font-bold">
-                        Clear all filters
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid gap-4 max-w-3xl mx-auto">
-                      {filteredReviews.map(review => (
-                        <ReviewItem key={review.id} review={review} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+          </>
         )}
+
+        <ReviewDialog
+          isOpen={isDialogOpen}
+          setIsOpen={setIsDialogOpen}
+          reviews={reviews}
+          averageRating={averageRating}
+          totalReviews={totalReviews}
+          distribution={distribution}
+          uniqueVariants={uniqueVariants}
+        />
       </div>
     </div>
   );

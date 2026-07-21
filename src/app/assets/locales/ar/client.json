@@ -9,6 +9,11 @@
     "my_orders": "طلباتي",
     "logout": "تسجيل الخروج"
   },
+  "messages": {
+    "loginRequired": "يرجى تسجيل الدخول لاستخدام هذه الميزة",
+    "removedFromWishlist": "تم الحذف من المفضلة",
+    "addedToWishlist": "تم الإضافة إلى المفضلة"
+  },
   "hero": {
     "title": "خبز طازج كل يوم",
     "subtitle": "اكتشف فن الخبز التقليدي مع خبزنا وحلوياتنا المصنوعة يدويًا.",
@@ -107,6 +112,7 @@
   },
   "contact": {
     "subtitle": "نسعد بتواصلكم معنا. نحن هنا للإجابة على جميع استفساراتكم وتلبية طلباتكم.",
+    "social_media": "تابعنا على وسائل التواصل",
     "call_us": "اتصل بنا",
     "email_us": "البريد الإلكتروني",
     "visit_us": "تفضل بزيارتنا",
@@ -161,6 +167,8 @@
   },
   "auth": {
     "login_title": "تسجيل الدخول",
+    "loginToAddReview": "يرجى تسجيل الدخول لمشاركة رأيك",
+    "loginToAddReviewDesc": "انضم إلينا وشاركنا تجربتك الفريدة مع هذا المنتج اللذيذ! رأيك يهمنا.",
     "register_title": "إنشاء حساب جديد",
     "name": "الاسم الكامل",
     "name_placeholder": "أحمد محمد",
@@ -325,7 +333,10 @@
     "emptyRatingError": "يرجى اختيار التقييم أولاً",
     "variantLabel": "متغير المنتج",
     "selectVariantPlaceholder": "اختر متغيراً لتقييمه",
-    "emptyVariantError": "يرجى اختيار متغير لتقييمه"
+    "emptyVariantError": "يرجى اختيار متغير لتقييمه",
+    "noReviewsMatch": "لا توجد تقييمات مطابقة",
+    "tryAdjustingFilters": "حاول تغيير الفلاتر لرؤية المزيد من التقييمات.",
+    "clearAllFilters": "مسح جميع الفلاتر"
   },
   "checkout": {
     "shipping_details": "تفاصيل الشحن",

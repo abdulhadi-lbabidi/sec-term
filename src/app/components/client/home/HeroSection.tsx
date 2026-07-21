@@ -64,7 +64,7 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
               <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat1 as any)?.descAr || cat1?.description) : ((cat1 as any)?.descEn || cat1?.description)) || t('freshFromOven')}</p>
             </div>
             <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+              <ArrowLeft className={`w-5 h-5 ltr:rotate-180`} />
             </div>
           </div>
         </Link>
@@ -86,7 +86,7 @@ export const HeroSection = ({ className, topCategories, topProducts }: HeroSecti
               <p className="text-sm text-white/80 font-light">{(language === 'ar' ? ((cat2 as any)?.descAr || cat2?.description) : ((cat2 as any)?.descEn || cat2?.description)) || t('happyMoments')}</p>
             </div>
             <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              {language === 'ar' ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
+              <ArrowLeft className={`w-5 h-5 ltr:rotate-180`} />
             </div>
           </div>
         </Link>

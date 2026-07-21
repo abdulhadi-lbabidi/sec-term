@@ -177,7 +177,7 @@ export const Header = ({ className }: HeaderProps) => {
           ) : (
             <Link to="/login">
               <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all">
-                {t('login_title')}
+                {t('auth.login_title')}
               </Button>
             </Link>
           )}
