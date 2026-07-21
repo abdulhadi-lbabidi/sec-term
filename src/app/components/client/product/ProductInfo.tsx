@@ -1,4 +1,5 @@
 import { Skeleton } from '../../ui/skeleton';
+import { sanitizeHtml } from '../security/sanitize';
 
 interface ProductInfoProps {
   name: string;
@@ -27,7 +28,7 @@ export function ProductInfo({
         </span>
         {originalPrice && originalPrice > currentPrice && <span className="text-xl text-gray-400 line-through">{originalPrice} {currency}</span>}
       </div>
-      {description && <div className="text-lg text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: description }} />}
+      {description && <div className="text-lg text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: sanitizeHtml(description) }} />}
     </div>
   );
 }

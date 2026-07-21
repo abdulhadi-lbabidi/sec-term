@@ -1,4 +1,4 @@
-import { Search, ShoppingCart, Menu, ChevronDown, Heart, LucideLayoutGrid, User, ShieldCheck, LogOut, Package } from 'lucide-react';
+import { Search, ShoppingCart, Menu, ChevronDown, Heart, LucideLayoutGrid, User, ShieldCheck, LogOut, Package, Home, ShoppingBag, Info, PhoneCall } from 'lucide-react';
 import logoImg from '@/imports/noughs-signe.png';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLocalization } from '@/app/hooks/useLocalization';
@@ -23,8 +23,10 @@ export const Header = ({ className }: HeaderProps) => {
   const { t, i18n, toggleLanguage } = useLocalization();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<{ id: string, name: string, slug: string } | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const { data: categories, isLoading: isLoadingCategories }: any = useCategoriesQuery();
+
+  const selectedCategory = categories?.find((c: any) => c.id === selectedCategoryId) || null;
 
   const { data: cartData } = useCartQuery();
   const cartItems = Array.isArray(cartData) ? cartData : (cartData?.items || []);
@@ -75,7 +77,7 @@ export const Header = ({ className }: HeaderProps) => {
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-48 sm:w-[200px] rounded-2xl shadow-lg border-border/40 p-2">
-                <DropdownMenuItem onClick={() => setSelectedCategory(null)} className="rounded-xl cursor-pointer text-sm font-medium">
+                <DropdownMenuItem onClick={() => setSelectedCategoryId(null)} className="rounded-xl cursor-pointer text-sm font-medium">
                   {t('header.all_categories', 'All Categories')}
                 </DropdownMenuItem>
                 {isLoadingCategories ? (
@@ -87,7 +89,7 @@ export const Header = ({ className }: HeaderProps) => {
                   ))
                 ) : (
                   categories?.map((cat: any) => (
-                    <DropdownMenuItem key={cat.id} onClick={() => setSelectedCategory(cat)} className="rounded-xl cursor-pointer text-sm font-medium flex items-center gap-3 mt-1">
+                    <DropdownMenuItem key={cat.id} onClick={() => setSelectedCategoryId(cat.id)} className="rounded-xl cursor-pointer text-sm font-medium flex items-center gap-3 mt-1">
                       {cat?.image && <img src={cat?.image} alt={cat.name} className="w-6 h-6 rounded-full shadow-sm object-cover" />}
                       {cat.name}
                     </DropdownMenuItem>
@@ -175,7 +177,7 @@ export const Header = ({ className }: HeaderProps) => {
           ) : (
             <Link to="/login">
               <Button variant="default" className="hidden sm:flex bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 text-sm h-9 font-semibold shadow-sm hover:shadow-md transition-all">
-                {t('login_title', 'تسجيل الدخول')}
+                {t('login_title')}
               </Button>
             </Link>
           )}
@@ -186,35 +188,75 @@ export const Header = ({ className }: HeaderProps) => {
                 <Menu size={24} />
               </Button>
             </SheetTrigger>
-            <SheetContent side={i18n.language === 'ar' ? 'right' : 'left'} className="w-[85vw] sm:w-[400px]">
-              <SheetHeader>
-                <SheetTitle className="text-start">
-                  <Link to="/" className="flex items-center gap-3 shrink-0 mt-4">
-                    <img src={logoImg} alt="Logo" className="h-8 w-auto object-contain" />
-                    <span className="font-bold text-xl tracking-tight text-foreground">{t('brand.name', 'Nouh carting')}</span>
+            <SheetContent side={i18n.language === 'ar' ? 'right' : 'left'} className="w-[85vw] sm:w-[400px] flex flex-col p-0 border-none">
+              <div className="p-6 pb-4 border-b border-border/50 bg-muted/20">
+                <SheetHeader>
+                  <SheetTitle className="text-start">
+                    <Link to="/" className="flex items-center gap-3 shrink-0">
+                      <div className="bg-primary/10 rounded-xl p-2 shrink-0">
+                        <img src={logoImg} alt="Logo" className="h-8 w-auto object-contain" />
+                      </div>
+                      <span className="font-bold text-2xl tracking-tight text-foreground truncate">{t('brand.name', 'Nouh carting')}</span>
+                    </Link>
+                  </SheetTitle>
+                </SheetHeader>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+                {/* Main Navigation */}
+                <div className="space-y-1 mb-4">
+                  <Link to="/" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                    <Home size={22} className="text-primary/70 shrink-0" />
+                    {t('nav.home', 'Home')}
                   </Link>
-                </SheetTitle>
-              </SheetHeader>
-              <nav className="flex flex-col gap-4 mt-8">
-                <Link to="/" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('nav.home', 'Home')}</Link>
-                <Link to="/shop" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('header.products', 'Products')}</Link>
-                <Link to="/about" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('header.about', 'About')}</Link>
-                <Link to="/contact" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('nav.contact', 'Contact')}</Link>
+                  <Link to="/shop" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                    <ShoppingBag size={22} className="text-primary/70 shrink-0" />
+                    {t('header.products', 'Products')}
+                  </Link>
+                  <Link to="/about" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                    <Info size={22} className="text-primary/70 shrink-0" />
+                    {t('header.about', 'About')}
+                  </Link>
+                  <Link to="/contact" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                    <PhoneCall size={22} className="text-primary/70 shrink-0" />
+                    {t('nav.contact', 'Contact')}
+                  </Link>
+                </div>
+
+                <div className="h-px w-full bg-border/50 my-2"></div>
+
+                {/* Account Section */}
                 {user ? (
-                   <>
-                     <div className="h-px w-full bg-border/50 my-2"></div>
-                     <Link to="/profile" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><User size={20} /> {t('nav.my_profile')}</Link>
-                     <Link to="/wishlist" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><Heart size={20} /> {t('nav.wishlist')}</Link>
-                     <Link to="/orders" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors flex items-center gap-3"><Package size={20} /> {t('nav.my_orders')}</Link>
-                     <button onClick={() => { logoutUser(); navigate('/'); }} className="text-lg font-semibold text-destructive hover:text-destructive/80 transition-colors flex items-center gap-3 text-start"><LogOut size={20} /> {t('nav.logout')}</button>
-                   </>
+                  <div className="space-y-1 mt-2">
+                    <div className="px-4 py-2 mb-2">
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('nav.account', 'My Account')}</p>
+                    </div>
+                    <Link to="/profile" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                      <User size={22} className="text-primary/70 shrink-0" />
+                      {t('nav.my_profile', 'My Profile')}
+                    </Link>
+                    <Link to="/wishlist" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                      <Heart size={22} className="text-primary/70 shrink-0" />
+                      {t('nav.wishlist', 'Wishlist')}
+                    </Link>
+                    <Link to="/orders" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-foreground/80 hover:text-primary hover:bg-primary/5 transition-all">
+                      <Package size={22} className="text-primary/70 shrink-0" />
+                      {t('nav.my_orders', 'My Orders')}
+                    </Link>
+                    <button onClick={() => { logoutUser(); navigate('/'); }} className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-base font-semibold text-destructive hover:bg-destructive/10 transition-all mt-4">
+                      <LogOut size={22} className="shrink-0" />
+                      {t('nav.logout', 'Logout')}
+                    </button>
+                  </div>
                 ) : (
-                  <>
-                    <div className="h-px w-full bg-border/50 my-2"></div>
-                    <Link to="/login" className="text-lg font-semibold text-foreground/70 hover:text-primary transition-colors">{t('login_title', 'Login')}</Link>
-                  </>
+                  <div className="mt-4 px-2">
+                    <Link to="/login" className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3.5 rounded-2xl font-bold transition-all shadow-sm">
+                      <User size={20} className="shrink-0" />
+                      {t('login_title', 'Login')}
+                    </Link>
+                  </div>
                 )}
-              </nav>
+              </div>
             </SheetContent>
           </Sheet>
         </div>

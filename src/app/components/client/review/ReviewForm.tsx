@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { RatingStars } from './RatingStars';
 import { Button } from '../../ui/button';
 import { Textarea } from '../../ui/textarea';
@@ -7,18 +7,25 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 interface ReviewFormProps {
-  onSubmit: (rating: number, comment: string, variantId?: number) => void;
+  onSubmit: (rating: number, comment: string, variantId?: string | number) => void;
   isSubmitting?: boolean;
-  variants?: { id: number; name: string }[];
+  variants?: { id: string | number; name: string }[];
   variantName?: string;
+  initialVariantId?: string | number;
 }
 
-export function ReviewForm({ onSubmit, isSubmitting = false, variants = [], variantName }: ReviewFormProps) {
+export function ReviewForm({ onSubmit, isSubmitting = false, variants = [], variantName, initialVariantId }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [selectedVariantId, setSelectedVariantId] = useState<number | ''>('');
+  const [selectedVariantId, setSelectedVariantId] = useState<string | number | ''>(initialVariantId || '');
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (initialVariantId) {
+      setSelectedVariantId(initialVariantId);
+    }
+  }, [initialVariantId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,17 +37,16 @@ export function ReviewForm({ onSubmit, isSubmitting = false, variants = [], vari
       toast.error(t('reviews.emptyVariantError', 'Please select a variant to review'));
       return;
     }
-    onSubmit(rating, comment, selectedVariantId !== '' ? Number(selectedVariantId) : undefined);
+    onSubmit(rating, comment, selectedVariantId !== '' ? selectedVariantId : undefined);
     // Reset form after submission
     setRating(0);
     setComment('');
-    setSelectedVariantId('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-[#FCFAF7] rounded-3xl p-6 md:p-8 border border-[#EAE5DF]">
       <h3 className="text-2xl font-black text-[#1C1A17] mb-2">{t('reviews.formTitle')}</h3>
-      {variantName && (
+      {variantName && variants.length === 0 && (
         <div className="mb-6 inline-block bg-[#111111]/5 px-3 py-1.5 rounded-lg text-sm text-[#111111]/70 font-semibold border border-[#111111]/10">
           {variantName}
         </div>
@@ -65,7 +71,7 @@ export function ReviewForm({ onSubmit, isSubmitting = false, variants = [], vari
           </label>
           <Select
             value={selectedVariantId ? String(selectedVariantId) : undefined}
-            onValueChange={(val) => setSelectedVariantId(Number(val))}
+            onValueChange={(val) => setSelectedVariantId(val)}
           >
             <SelectTrigger id="variant" className="w-full h-12 px-4 rounded-2xl bg-white border border-gray-200 focus-visible:ring-1 focus-visible:ring-[#C5A880] focus-visible:outline-none transition-all">
               <SelectValue placeholder={t('reviews.selectVariantPlaceholder', 'Select a variant to review')} />

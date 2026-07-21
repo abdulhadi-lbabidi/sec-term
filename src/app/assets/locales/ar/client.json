@@ -66,9 +66,9 @@
     }
   },
   "productCard": {
-    "itemAdded": "تمت الإضافة للسلة",
-    "removedFromWishlist": "تم الحذف من المفضلة",
-    "addedToWishlist": "تمت الإضافة للمفضلة",
+    "itemAdded": "أُضيف للسلة",
+    "removedFromWishlist": "حُذف من المفضلة",
+    "addedToWishlist": "أُضيف للمفضلة",
     "outOfStock": "نفذت الكمية",
     "currency": "ل.س",
     "inCart": "في السلة",
@@ -76,8 +76,8 @@
     "buyNow": "شراء الآن"
   },
   "footer": {
-    "copyright": "© 2024 Bakery. جميع الحقوق محفوظة.",
-    "brand": "Bakery",
+    "copyright": "© 2026 Nouh Carting. جميع الحقوق محفوظة.",
+    "brand": "Nouh Carting",
     "address": "حلب، حي السبيل",
     "description": "مخبوزات بحب، من أجل لحظاتك السعيدة. طعم يجمع بين الأصالة والجودة العالية.",
     "about_title": "من نحن",
@@ -102,7 +102,7 @@
     "accessibility": "سهولة الوصول",
     "quick_touch": "تواصل سريع",
     "download_app": "حمل التطبيق",
-    "developedBy": "تم التطوير بواسطة",
+    "developedBy": "طُوّر بواسطة",
     "developer": "وكالة نوح"
   },
   "contact": {
@@ -147,7 +147,7 @@
     "summary": "ملخص الطلب",
     "subtotal": "المجموع الفرعي",
     "shipping": "الشحن",
-    "calculated_at_checkout": "يتم حسابه عند الدفع",
+    "calculated_at_checkout": "يُحسب عند الدفع",
     "total": "الإجمالي",
     "checkout_button": "إتمام الطلب",
     "secure_checkout": "عملية دفع آمنة ومشفرة"
@@ -176,11 +176,12 @@
     "has_account": "لديك حساب بالفعل؟",
     "register_link": "سجل الآن",
     "login_link": "سجل دخولك",
-    "login_success": "تم تسجيل الدخول بنجاح!",
-    "register_success": "تم إنشاء الحساب بنجاح!",
+    "login_success": "سجلت الدخول!",
+    "register_success": "حسابك جاهز!",
     "confirm_password": "تأكيد كلمة المرور",
     "forgot_password": "نسيت كلمة المرور؟",
     "login_subtitle": "سجل دخولك للمتابعة",
+    "or_continue_with": "أو أكمل بواسطة",
     "register_subtitle": "املأ البيانات لإنشاء حسابك"
   },
   "recovery": {
@@ -197,7 +198,8 @@
     "new_password": "كلمة المرور الجديدة",
     "confirm_password": "تأكيد كلمة المرور",
     "reset_btn": "تحديث كلمة المرور",
-    "success": "تم تغيير كلمة المرور بنجاح!"
+    "otp_sent": "تم إرسال رمز التحقق بنجاح!",
+    "success": "تغيرت كلمة المرور!"
   },
   "profile": {
     "tabs": {
@@ -206,13 +208,13 @@
       "addresses": "إدارة العناوين"
     },
     "update_btn": "تحديث البيانات",
-    "update_success": "تم تحديث البيانات بنجاح!",
+    "update_success": "تحدثت البيانات!",
     "password": {
       "current": "كلمة المرور الحالية",
       "new": "كلمة المرور الجديدة",
       "confirm": "تأكيد كلمة المرور",
       "change_btn": "تغيير كلمة المرور",
-      "success": "تم تغيير كلمة المرور بنجاح!"
+      "success": "تغيرت كلمة المرور!"
     },
     "addresses": {
       "title": "عناويني",
@@ -241,7 +243,9 @@
     "loading": "جاري التحميل",
     "shareThought": "شاركنا رأيك",
     "loginToReviewDesc": "سجل دخولك لتقييم المنتج",
-    "logIn": "سجل دخول"
+    "logIn": "سجل دخول",
+    "relatedTitle": "منتجات قد تعجبك",
+    "relatedSubtitle": "خيارات لذيذة أخرى نوصي بها لك"
   },
   "cookies": {
     "title": "نحن نستخدم ملفات تعريف الارتباط",
@@ -305,12 +309,13 @@
     }
   },
   "reviews": {
-    "loversShared": "عاشق شاركنا رأيه",
-    "loversOpinions": "آراء العشاق",
-    "beFirst": "كن أول من يتذوق ويشاركنا سحر اللحظة!",
-    "noReviews": "لم يقم أحد بمشاركة تجربته مع هذه التحفة الفنية بعد. جربها الآن واكتب لنا رأيك ليلهم عشاق الطعم الأصيل.",
-    "readAll": "اقرأ جميع رسائل العشاق",
-    "loversLog": "سجل إعجاب العشاق",
+    "all-reviews": "كل التقييمات",
+    "loversShared": "عميل شاركنا رأيه",
+    "loversOpinions": "آراء العملاء",
+    "beFirst": "كن أول من يشاركنا رأيه!",
+    "noReviews": "لم يشارك أحد تجربته مع هذا المنتج بعد. جربه الآن واكتب رأيك لمشاركة تجربتك مع الآخرين.",
+    "readAll": "اقرأ جميع التقييمات",
+    "loversLog": "سجل التقييمات",
     "formTitle": "أضف تقييمك",
     "ratingLabel": "التقييم",
     "commentLabel": "التعليق",
@@ -340,6 +345,8 @@
     "order_notes": "ملاحظات الطلب",
     "order_notes_placeholder": "ملاحظات خاصة بالتوصيل..."
   },
+  "AM": "صباحاً",
+  "PM": "مساءً",
   "heroTitle": "عالم من المخبوزات والحلويات",
   "heroSubtitle": "اكتشف طعم السعادة في كل قضمة مع تشكيلتنا الواسعة",
   "shopNow": "تسوق الآن",
@@ -372,7 +379,6 @@
   "postalCode": "الرمز البريدي",
   "orderNotes": "ملاحظات الطلب",
   "orderNotesPlaceholder": "اكتب ملاحظاتك هنا...",
-  "deliveryDetails": "تفاصيل التوصيل",
   "viewDetails": "عرض التفاصيل",
   "itemsCount": "منتجات",
   "itemCount": "منتج",
@@ -388,13 +394,13 @@
   "requiredField": "هذا الحقل مطلوب",
   "invalidEmail": "البريد الإلكتروني غير صالح",
   "checkoutError": "حدث خطأ أثناء إتمام الطلب",
-  "orderSuccessTitle": "تم الطلب بنجاح!",
-  "orderSuccessDesc": "شكراً لك. سنقوم بالتواصل معك قريباً لتأكيد الطلب.",
+  "orderSuccessTitle": "أُرسل الطلب!",
+  "orderSuccessDesc": "شكراً لك. سنتواصل معك قريباً لتأكيد الطلب.",
   "backToHome": "العودة للرئيسية",
   "emptyCartTitle": "سلتك فارغة",
   "backToShop": "العودة للمتجر",
-  "itemAddedSuccessTitle": "تمت الإضافة بنجاح!",
-  "itemAddedSuccessDesc": "تمت إضافة المنتج إلى سلة المشتريات الخاصة بك.",
+  "itemAddedSuccessTitle": "أُضيف بنجاح!",
+  "itemAddedSuccessDesc": "أُضيف المنتج إلى سلتك.",
   "reviewSuccess": "شكراً لمشاركة تجربتك اللذيذة!",
   "common": {
     "pagination": "ترقيم الصفحات",
@@ -405,13 +411,13 @@
     "morePages": "المزيد من الصفحات"
   },
   "myOrders": "طلباتي",
-  "noOrders": "لم تقم بأي طلبات بعد، تصفح منتجاتنا وابدأ رحلة التسوق!",
+  "noOrders": "لم تطلب بعد، تصفح منتجاتنا وابدأ رحلة التسوق!",
   "orderId": "رقم الطلب",
   "orderDate": "تاريخ الطلب",
   "orderStatus": "حالة الطلب",
   "statusPending": "قيد الانتظار",
-  "statusShipped": "تم الشحن",
-  "statusDelivered": "تم التوصيل",
+  "statusShipped": "مُشحون",
+  "statusDelivered": "وُصّل",
   "orderedProducts": "المنتجات المطلوبة",
   "quantityLabel": "الكمية:",
   "deliveryDetails": "تفاصيل التوصيل"

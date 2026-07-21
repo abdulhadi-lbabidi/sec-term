@@ -382,7 +382,11 @@ class ApiCore implements ApiInstance {
         if ('data' in rawObj) {
           payload = rawObj;
         } else {
-          payload = { data: rawObj };
+          payload = { 
+            data: rawObj,
+            ...(rawObj.message ? { message: rawObj.message } : {}),
+            ...(rawObj.errors ? { errors: rawObj.errors } : {})
+          };
         }
       } else {
         payload = { data: raw };
@@ -429,7 +433,7 @@ class ApiCore implements ApiInstance {
 
     this.config.onError?.(error as Error);
 
-    const errorObj = error as { status?: number };
+    const errorObj = error as { status?: number, errors?: Record<string, string[]> };
     if (errorObj.status === 401 || errorObj.status === 403) {
       this.config.onUnauthorized?.();
       return {
@@ -438,6 +442,7 @@ class ApiCore implements ApiInstance {
         message:
           errorMessage ||
           this.userFacingMessage("تم تسجيل الخروج - انتهت صلاحية الجلسة", options),
+        errors: errorObj.errors,
         status: errorObj.status || 401,
       };
     }
@@ -455,6 +460,7 @@ class ApiCore implements ApiInstance {
       isError: true,
       data: undefined,
       message: errorMessage,
+      errors: errorObj.errors,
       status: errorObj.status || 500,
     };
   }

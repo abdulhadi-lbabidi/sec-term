@@ -15,11 +15,11 @@ const Product = lazy(() => import('../pages/client/ProductPage'));
 const Checkout = lazy(() => import('../pages/client/CheckoutPage'));
 const Orders = lazy(() => import('../pages/client/OrdersPage'));
 
-const Login = lazy(() => import('../pages/client/Auth').then(m => ({ default: m.Login })).catch(() => ({ default: () => <div>Login</div> })));
-const Register = lazy(() => import('../pages/client/Auth').then(m => ({ default: m.Register })).catch(() => ({ default: () => <div>Register</div> })));
-const ForgotPassword = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.ForgotPassword })));
-const VerifyOTP = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.VerifyOTP })));
-const ResetPassword = lazy(() => import('../pages/client/PasswordRecovery').then(m => ({ default: m.ResetPassword })));
+const Login = lazy(() => import('../pages/client/LoginPage'));
+const Register = lazy(() => import('../pages/client/RegisterPage'));
+const ForgotPassword = lazy(() => import('../pages/client/ForgotPasswordPage'));
+const ResetPassword = lazy(() => import('../pages/client/ResetPasswordPage'));
+const AuthCallback = lazy(() => import('../pages/client/AuthCallbackPage'));
 const Cart = lazy(() => import('../pages/client/CartPage'));
 const About = lazy(() => import('../pages/client/About').then(m => ({ default: m.About })));
 const Contact = lazy(() => import('../pages/client/Contact').then(m => ({ default: m.Contact })));
@@ -63,8 +63,8 @@ export const ClientRoutes = (
     <Route path="login" element={<Login />} />
     <Route path="register" element={<Register />} />
     <Route path="forgot-password" element={<ForgotPassword />} />
-    <Route path="verify-otp" element={<VerifyOTP />} />
     <Route path="reset-password" element={<ResetPassword />} />
+    <Route path="auth/callback" element={<AuthCallback />} />
 
     <Route path="cart" element={<Cart />} />
     <Route path="wishlist" element={<Wishlist />} />

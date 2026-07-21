@@ -9,6 +9,7 @@ import { useProductsQuery } from '@/app/api/client/useProducts';
 import { ProductCard } from '@/app/components/client/product/ProductCard';
 import { ProductSkeleton } from '@/app/components/client/product/ProductSkeleton';
 import { ProductFilters } from '@/app/components/client/product/ProductFilters';
+import { SEO } from '@/app/components/client/seo/SEO';
 import {
   Pagination,
   PaginationContent,
@@ -81,7 +82,7 @@ export default function ShopPage() {
   if (filters.min_price > 0) queryPayload['filter[min_price]'] = filters.min_price;
   if (filters.max_price < 1000) queryPayload['filter[max_price]'] = filters.max_price;
 
-  const { data: productsData, isLoading: loadingProducts, isFetching }: any = useProductsQuery(queryPayload);
+  const { data: productsData, isLoading: loadingProducts, isFetching } = useProductsQuery(queryPayload);
 
   const products = productsData?.data || [];
   const meta = productsData?.meta;
@@ -110,6 +111,7 @@ export default function ShopPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12">
+      <SEO title={t('shop', 'Shop')} description={t('shop.description', 'Browse our products')} />
       <div className="flex flex-col md:flex-row gap-8">
 
         {/* Mobile Filters Trigger */}
