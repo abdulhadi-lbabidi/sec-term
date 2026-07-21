@@ -9,9 +9,10 @@ interface ProductSectionProps {
   isLoading?: boolean;
   title?: string;
   subtitle?: string;
+  more?: boolean;
 }
 
-export const ProductSection = ({ products, isLoading, title, subtitle }: ProductSectionProps) => {
+export const ProductSection = ({ products, isLoading, title, subtitle, more = true }: ProductSectionProps) => {
   const { t } = useTranslation();
 
   return (
@@ -21,9 +22,11 @@ export const ProductSection = ({ products, isLoading, title, subtitle }: Product
           <h2 className="text-2xl font-bold text-[var(--color-primary)] mb-2">{title || t('sectionTitle')}</h2>
           {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
         </div>
-        <Link to="/shop" className="text-sm font-medium text-gray-500 hover:text-[var(--color-primary)] transition-colors duration-300">
-          {t('viewAllText')}
-        </Link>
+        {more && (
+          <Link to="/shop" className="text-sm font-medium text-gray-500 hover:text-[var(--color-primary)] transition-colors duration-300">
+            {t('viewAllText')}
+          </Link>
+        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -1,10 +1,35 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Loader2 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Button } from '@/app/components/ui/button';
+import { toast } from 'sonner';
+import { useContactUsMutation } from '@/app/api/client/useContact';
 
 export const Contact = () => {
   const { t } = useTranslation();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const { mutateAsync: sendContactMail, isPending: isLoading } = useContactUsMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !message) {
+      toast.error(t('contact.error_fill_all', 'الرجاء تعبئة جميع الحقول'));
+      return;
+    }
+    
+    try {
+      await sendContactMail({ name, email, message });
+      toast.success(t('contact.success_message', 'تم إرسال رسالتك بنجاح! سنتواصل معك قريباً.'));
+      setName('');
+      setEmail('');
+      setMessage('');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || t('contact.error_send', 'حدث خطأ أثناء إرسال الرسالة. الرجاء المحاولة مرة أخرى.'));
+    }
+  };
 
   return (
     <div className="w-full bg-white text-gray-900 pb-20 max-w-7xl mx-auto">
@@ -25,7 +50,7 @@ export const Contact = () => {
             >
               {t('nav.contact')}
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
@@ -41,58 +66,77 @@ export const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div className="space-y-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
+              <a href="tel:+963960000" className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-[#111111] text-[#C5A880] rounded-xl flex items-center justify-center mb-4">
                   <Phone size={24} />
                 </div>
                 <h4 className="font-bold text-[#1C1A17] mb-2">{t('contact.call_us', 'اتصل بنا')}</h4>
-                <p className="text-[#C5A880] font-bold" dir="ltr">+963 960 000</p>
-              </div>
+                <a href="tel:+963960000" className="text-[#C5A880] font-bold hover:underline transition-colors block" dir="ltr">+963 960 000</a>
+              </a>
 
-              <div className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
+              <a href="mailto:hello@nouh-carting.com" className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-[#111111] text-[#C5A880] rounded-xl flex items-center justify-center mb-4">
                   <Mail size={24} />
                 </div>
                 <h4 className="font-bold text-[#1C1A17] mb-2">{t('contact.email_us', 'البريد الإلكتروني')}</h4>
-                <p className="text-gray-600 font-medium">hello@nouh-carting.com</p>
-              </div>
+                <a href="mailto:hello@nouh-carting.com" className="text-gray-600 font-medium hover:text-[#C5A880] transition-colors block">hello@nouh-carting.com</a>
+              </a>
 
-              <div className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
+              <a href="https://maps.app.goo.gl/uKp1R82xuEV1CPAX6" className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-[#111111] text-[#C5A880] rounded-xl flex items-center justify-center mb-4">
                   <MapPin size={24} />
                 </div>
                 <h4 className="font-bold text-[#1C1A17] mb-2">{t('contact.visit_us', 'تفضل بزيارتنا')}</h4>
-                <p className="text-gray-600 font-medium">{t('contact.address', 'حلب، حي السبيل')}</p>
-              </div>
+                <a href="https://maps.app.goo.gl/uKp1R82xuEV1CPAX6" target="_blank" rel="noreferrer" className="text-gray-600 font-medium hover:text-[#C5A880] transition-colors block">{t('contact.address', 'حلب، حي السبيل')}</a>
+              </a>
 
               <div className="bg-white p-6 rounded-3xl border border-[#EAE5DF] shadow-sm hover:shadow-md transition-shadow">
                 <div className="w-12 h-12 bg-[#111111] text-[#C5A880] rounded-xl flex items-center justify-center mb-4">
                   <Clock size={24} />
                 </div>
                 <h4 className="font-bold text-[#1C1A17] mb-2">{t('contact.open_hours', 'أوقات العمل')}</h4>
-                <p className="text-gray-600 font-medium" dir="ltr">8:00 AM - 11:00 PM</p>
+                <p className="text-gray-600 font-medium" >8:00 {t("AM")} - 11:00 {t("PM")}</p>
               </div>
             </div>
 
             {/* Form Placeholder */}
             <div className="bg-[#FCFAF7] p-8 rounded-3xl border border-[#EAE5DF]">
               <h3 className="text-2xl font-black text-[#1C1A17] mb-6">{t('contact.send_message', 'أرسل لنا رسالة')}</h3>
-              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-gray-700">{t('contact.name', 'الاسم')}</label>
-                    <input type="text" className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors" />
+                    <input 
+                      type="text" 
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-gray-700">{t('contact.email', 'البريد الإلكتروني')}</label>
-                    <input type="email" className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors" />
+                    <input 
+                      type="email" 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors" 
+                    />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-gray-700">{t('contact.message', 'الرسالة')}</label>
-                  <textarea rows={4} className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors resize-none" />
+                  <textarea 
+                    rows={4} 
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full bg-white border border-[#EAE5DF] focus:border-[#C5A880] outline-none px-4 py-3 rounded-xl transition-colors resize-none" 
+                  />
                 </div>
-                <Button className="w-full bg-[#111111] text-white hover:bg-[#C5A880] h-12 rounded-xl font-bold text-lg transition-colors">
+                <Button 
+                  disabled={isLoading}
+                  className="w-full bg-[#111111] text-white hover:bg-[#C5A880] h-12 rounded-xl font-bold text-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {isLoading && <Loader2 className="w-5 h-5 animate-spin" />}
                   {t('contact.submit', 'إرسال')}
                 </Button>
               </form>

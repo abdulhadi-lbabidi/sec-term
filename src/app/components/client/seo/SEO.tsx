@@ -11,6 +11,7 @@ interface SEOProps {
   ogType?: string;
   product?: ProductSchemaData;
   breadcrumbs?: BreadcrumbItem[];
+  image?: string;
 }
 
 export const SEO = ({

@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, MapPin, Phone, Mail } from 'lucide-react';
+import { Facebook, Instagram, MapPin, Phone, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoImg from '@/imports/noughs-signe.png';
 import { useTranslation } from 'react-i18next';
@@ -31,22 +31,26 @@ export const Footer = ({ className }: FooterProps) => {
             </p>
 
             <div className="flex flex-col gap-3 text-sm text-muted-foreground font-medium mb-8">
-              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary shrink-0" /> {t('footer.address', '4517 Washington Ave. Manchester, Kentucky 39495')}</span>
-              <p className="flex items-center gap-2" >
+              <a href="https://maps.app.goo.gl/uKp1R82xuEV1CPAX6" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <MapPin className="w-4 h-4 text-primary shrink-0" /> {t('footer.address', '4517 Washington Ave. Manchester, Kentucky 39495')}
+              </a>
+              <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-primary shrink-0" />
-                <span className="flex items-center gap-2" dir="ltr">                  +963 960 000</span>
+                <a href="tel:+963945036513" className="flex items-center gap-2 hover:text-primary transition-colors" dir="ltr">+963 945 036 513</a>
               </p>
-              <span className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary shrink-0" /> hello@nouh-carting.com</span>
+              <a href="mailto:hello@nouh-carting.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+                <Mail className="w-4 h-4 text-primary shrink-0" /> hello@nouh-carting.com
+              </a>
             </div>
 
             <div className="flex gap-4">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
+              <a href="https://instagram.com/nouhcatering" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
-                <Twitter className="w-5 h-5" />
+              <a href="https://wa.me/963945036513" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
+                <Phone className="w-5 h-5" />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
+              <a href="https://fb.com/nouhcatering" target="_blank" rel="noreferrer" className="w-12 h-12 rounded-2xl bg-background border border-border flex items-center justify-center text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all shadow-sm hover:shadow-md hover:-translate-y-1">
                 <Facebook className="w-5 h-5" />
               </a>
             </div>
@@ -97,7 +101,7 @@ export const Footer = ({ className }: FooterProps) => {
           </p>
 
           <p className="text-muted-foreground font-medium text-sm text-center">
-            {t('footer.copyright', '© 2024 Nouh carting. All rights reserved.')}
+            {t('footer.copyright')}
           </p>
         </div>
 

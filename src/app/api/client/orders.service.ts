@@ -3,8 +3,11 @@ import { Order, PaginationParams, PaginatedResponse } from '@/lib/types/api.type
 
 export const ordersService = {
   getOrders: async (params?: PaginationParams) => {
-    const { data } = await apiClient.get<PaginatedResponse<Order>>('/orders', { params });
-    return data;
+    const response = await apiClient.get<PaginatedResponse<Order>>('/orders', { params });
+    return {
+      data: response.data || [],
+      meta: response.meta
+    };
   },
 
   getOrderById: async (id: number | string) => {

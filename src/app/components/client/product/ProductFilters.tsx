@@ -3,12 +3,10 @@ import { Filter, X, Search } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Slider } from '@/app/components/ui/slider';
 import { Input } from '@/app/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/app/components/ui/accordion';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { useCategoriesQuery } from '@/app/api/client/useCategories';
 import { useSizesQuery } from '@/app/api/client/useSizes';
-import { useMaterialsQuery } from '@/app/api/client/useMaterials';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +29,6 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
 
   const { data: categories, isLoading: loadingCategories }: any = useCategoriesQuery();
   const { data: sizes, isLoading: loadingSizes }: any = useSizesQuery();
-  const { data: materials, isLoading: loadingMaterials }: any = useMaterialsQuery();
 
   const [minPriceValue, setMinPriceValue] = React.useState(filters.min_price.toString());
   const [maxPriceValue, setMaxPriceValue] = React.useState(filters.max_price.toString());
@@ -176,29 +173,6 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ filters, onFilte
                 ))
               )}
             </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Material Filter */}
-        <AccordionItem value="material" className="border-none">
-          <AccordionTrigger className="py-2 hover:no-underline rounded-lg px-2 hover:bg-muted/50 data-[state=open]:bg-muted/30 transition-colors">
-            <h4 className="font-semibold text-sm text-foreground">{t('filters.materials', 'Materials')}</h4>
-          </AccordionTrigger>
-          <AccordionContent className="pt-4 px-2 pb-2">
-            <Select value={filters.material_id === 'all' ? 'all' : filters.material_id} onValueChange={(val) => onFilterChange('material_id', val)}>
-              <SelectTrigger className="w-full rounded-xl bg-background border-border/60">
-                <SelectValue placeholder={t('filters.select_material', 'Select material')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t('filters.all', 'All')}</SelectItem>
-                {!loadingMaterials && materials?.map((mat: any) => (
-                  <SelectItem key={mat.id} value={mat.id.toString()}>
-                    {mat.material_image && <img src={mat.material_image} alt={mat.material || mat.name} width={24} height={24} />}
-                    {mat.material || mat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </AccordionContent>
         </AccordionItem>
 

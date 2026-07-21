@@ -3,6 +3,7 @@ import { Heart, Maximize2 } from 'lucide-react';
 import { Skeleton } from '../../ui/skeleton';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '../../ui/dialog';
 import { useAppStore } from '@/app/store/useAppStore';
+import { ScrollableRow } from '../../ui/scrollable-row';
 
 interface ProductGalleryProps {
   activeImage: string;
@@ -91,7 +92,7 @@ export function ProductGallery({
 
     let animationFrameId: number;
     let startTime: number | null = null;
-    const duration = 300; 
+    const duration = 300;
 
     const render = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
@@ -146,19 +147,19 @@ export function ProductGallery({
 
   useEffect(() => {
     const handleResize = () => {
-       const canvas = canvasRef.current;
-       if (!canvas) return;
-       const rect = canvas.getBoundingClientRect();
-       canvas.width = rect.width;
-       canvas.height = rect.height;
-       
-       const ctx = canvas.getContext('2d');
-       if (!ctx) return;
-       const currentImg = imageCache.current.get(targetImage);
-       if (currentImg && currentImg.complete) {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          drawImageContain(ctx, currentImg, canvas.width, canvas.height);
-       }
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const currentImg = imageCache.current.get(targetImage);
+      if (currentImg && currentImg.complete) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawImageContain(ctx, currentImg, canvas.width, canvas.height);
+      }
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -225,7 +226,7 @@ export function ProductGallery({
       </Dialog>
 
       {imagesToRender.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2 px-1 snap-x no-scrollbar">
+        <ScrollableRow className="gap-3 pb-2 px-1 snap-x no-scrollbar">
           {imagesToRender.map((img, index) => (
             <button
               key={index}
@@ -235,7 +236,7 @@ export function ProductGallery({
               <img src={img} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
             </button>
           ))}
-        </div>
+        </ScrollableRow>
       )}
     </div>
   );

@@ -22,7 +22,7 @@ export const productsService = {
   },
 
   addReview: async (reviewData: { rating: number; comment?: string; product_id: number | string; product_variant_id: number | string }) => {
-    const { data } = await apiClient.post<any>(`/reviews`, reviewData);
+    const { data } = await apiClient.post<any>(`/reviews`, reviewData, { showErrorToast: false });
     return data;
   },
 

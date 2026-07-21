@@ -9,7 +9,7 @@ export const useWishlist = () => {
       if (response.isError) throw new Error(response.message);
       return response.data?.data || response.data || [];
     },
-    enabled: !!localStorage.getItem("token"),
+    enabled: !!localStorage.getItem("nouh_client_token"),
   });
 };
 

@@ -18,6 +18,7 @@ import { ProductSection } from '@/app/components/client/home/ProductSection';
 import { ReviewList } from '@/app/components/client/review/ReviewList';
 import { ReviewForm } from '@/app/components/client/review/ReviewForm';
 import { useTranslation } from 'react-i18next';
+import { SEO } from '@/app/components/client/seo/SEO';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,8 @@ export default function ProductPage() {
 
   const fetchedReviews = reviewsData?.data || [];
   const reviews = fetchedReviews.map((r: any) => {
-    const variant = variants.find((v: any) => v.id == r.product_variant_id);
+    const variantId = r.product_variant_id ?? r.product_variant?.id;
+    const variant = variants.find((v: any) => v.id == variantId);
     return {
       id: r.id,
       user: { name: r.user?.name || r.name || 'Anonymous' },
@@ -56,6 +58,7 @@ export default function ProductPage() {
       comment: r.comment,
       created_at: r.created_at || new Date().toISOString(),
       variantName: variant?.name || r.product_variant?.name,
+      product_variant: r.product_variant,
     };
   });
 
@@ -171,7 +174,7 @@ export default function ProductPage() {
     }
   };
 
-  const handleAddReview = (rating: number, comment: string, variantId?: number) => {
+  const handleAddReview = (rating: number, comment: string, variantId?: string | number) => {
     if (!user) {
       toast.error(t('loginToAddReview'));
       return;
@@ -191,10 +194,22 @@ export default function ProductPage() {
 
     addReviewApi({ rating, comment, product_variant_id: finalVariantId, product_id: id }, {
       onSuccess: () => {
-        toast.success(t('reviewSuccess'));
+        toast.success(t('reviewSuccess', 'Review added successfully'));
       },
       onError: (err: any) => {
-        toast.error(err?.message || t('error'));
+        let errorMessage = err?.message || t('error', 'An error occurred');
+        
+        // Handle specific duplicate review error
+        const variantErrors = err?.errors?.product_variant_id || [];
+        const isDuplicate = variantErrors.some((e: string) => e.includes('already been taken')) || 
+                            errorMessage.includes('already been taken') || 
+                            errorMessage.includes('product variant id has already');
+
+        if (isDuplicate) {
+          errorMessage = t('reviews.alreadyReviewed', 'You have already reviewed this variant.');
+        }
+        
+        toast.error(errorMessage);
       }
     });
   };
@@ -212,6 +227,13 @@ export default function ProductPage() {
 
   return (
     <div className="container mx-auto px-4 max-w-7xl py-12">
+      {product && (
+        <SEO
+          title={product.name}
+          description={product.description || product.body}
+          ogImage={product.image}
+        />
+      )}
       <Link to="/shop" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors">
         {isRTL ? <ArrowRight size={20} /> : <ArrowLeft size={20} />} {t('backToShop')}
       </Link>
@@ -321,16 +343,17 @@ export default function ProductPage() {
                   onSubmit={handleAddReview}
                   isSubmitting={isAddingReview}
                   variants={variants}
+                  initialVariantId={selectedSize?.variant_id || product?.variants?.[0]?.id || product?.available_options?.[0]?.available_sizes?.[0]?.variant_id}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 bg-primary/5 rounded-2xl border border-primary/10">
-                <p className="text-muted-foreground mb-6 text-center max-w-sm">{t('loginToAddReview')}</p>
-                <div className="w-full max-w-xs">
-                  <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 transition-all shadow-md w-full">
-                    {t('login_title')}
-                  </Link>
+                  <p className="text-muted-foreground mb-6 text-center max-w-sm">{t('loginToAddReview')}</p>
+                  <div className="w-full max-w-xs">
+                    <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 transition-all shadow-md w-full">
+                      {t('login_title')}
+                    </Link>
+                  </div>
                 </div>
-              </div>
               )}
             </div>
           </div>
@@ -339,10 +362,11 @@ export default function ProductPage() {
 
       {/* Related Products */}
       {relatedProducts.length > 0 && (
-        <div className="mt-16 border-t border-[#EAE5DF] pt-12">
+        <div className=" pt-12">
           <ProductSection
-            title={t('products.relatedTitle', 'Related Products')}
-            subtitle={t('products.relatedSubtitle', 'You might also like these items')}
+            more={false}
+            title={t('products.relatedTitle')}
+            subtitle={t('products.relatedSubtitle')}
             products={relatedProducts}
             isLoading={isLoadingRelated}
           />

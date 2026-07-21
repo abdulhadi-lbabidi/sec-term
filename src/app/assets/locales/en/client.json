@@ -3,7 +3,11 @@
     "home": "Home",
     "shop": "Shop",
     "about": "About Us",
-    "contact": "Contact"
+    "contact": "Contact",
+    "my_orders": "My Orders",
+    "wishlist": "Wishlist",
+    "my_profile": "My Profile",
+    "logout": "Logout"
   },
   "hero": {
     "title": "Freshly Baked Every Day",
@@ -72,7 +76,7 @@
     "buyNow": "Buy now"
   },
   "footer": {
-    "copyright": "© 2024 Bakery. All rights reserved.",
+    "copyright": "© 2026 Bakery. All rights reserved.",
     "brand": "Bakery",
     "address": "Aleppo, Al-Sabeel Neighborhood",
     "description": "Baked with love, for your happy moments. A taste that combines authenticity and high quality.",
@@ -177,6 +181,7 @@
     "confirm_password": "Confirm Password",
     "forgot_password": "Forgot Password?",
     "login_subtitle": "Sign in to continue",
+    "or_continue_with": "Or continue with",
     "register_subtitle": "Fill in your details to create an account"
   },
   "recovery": {
@@ -193,6 +198,7 @@
     "new_password": "New Password",
     "confirm_password": "Confirm Password",
     "reset_btn": "Reset Password",
+    "otp_sent": "OTP sent successfully",
     "success": "Password reset successfully!"
   },
   "profile": {
@@ -237,7 +243,9 @@
     "loading": "Loading...",
     "shareThought": "Share your thought",
     "loginToReviewDesc": "Login to review the product",
-    "logIn": "Login"
+    "logIn": "Login",
+    "relatedTitle": "Related Products",
+    "relatedSubtitle": "You might also like these items"
   },
   "cookies": {
     "title": "We use cookies",
@@ -301,12 +309,13 @@
     }
   },
   "reviews": {
-    "loversShared": "lovers shared opinions",
-    "loversOpinions": "Lovers Opinions",
-    "beFirst": "Be the first to taste and share the magic!",
-    "noReviews": "No one has shared their experience with this masterpiece yet. Try it now and write your review to inspire other lovers of authentic taste.",
-    "readAll": "Read all lovers messages",
-    "loversLog": "Lovers Admiration Log",
+    "all-reviews": "All Reviews",
+    "loversShared": "customers shared opinions",
+    "loversOpinions": "Customer Opinions",
+    "beFirst": "Be the first to share your opinion!",
+    "noReviews": "No one has shared their experience with this product yet. Try it now and write your review to share your experience.",
+    "readAll": "Read all reviews",
+    "loversLog": "Reviews Log",
     "formTitle": "Share your opinion",
     "ratingLabel": "Rating",
     "commentLabel": "Comment",
@@ -336,6 +345,8 @@
     "order_notes": "Order Notes",
     "order_notes_placeholder": "Special instructions..."
   },
+  "AM": "AM",
+  "PM": "PM",
   "heroTitle": "A World of Pastries & Sweets",
   "heroSubtitle": "Discover the taste of happiness in every bite with our wide selection",
   "shopNow": "Shop Now",
